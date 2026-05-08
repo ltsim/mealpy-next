@@ -27,7 +27,7 @@
 # >>> g_best = model.solve(problem)
 # >>> print(f"Best solution: {g_best.solution}, Best fitness: {g_best.target.fitness}")
 
-__version__ = "3.0.3"
+__version__ = "3.0.4"
 
 import sys
 import inspect
