@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -39,6 +40,7 @@ class OriginalSSO(Optimizer):
     [1] Mirjalili, S., Gandomi, A.H., Mirjalili, S.Z., Saremi, S., Faris, H. and Mirjalili, S.M., 2017.
     Salp Swarm Algorithm: A bio-inspired optimizer for engineering design problems. Advances in Engineering Software, 114, pp.163-191.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -65,8 +67,10 @@ class OriginalSSO(Optimizer):
             if idx < self.pop_size / 2:
                 c2_list = self.generator.random(self.problem.n_dims)
                 c3_list = self.generator.random(self.problem.n_dims)
-                pos_new_1 = self.g_best.solution + c1 * ((self.problem.ub - self.problem.lb) * c2_list + self.problem.lb)
-                pos_new_2 = self.g_best.solution - c1 * ((self.problem.ub - self.problem.lb) * c2_list + self.problem.lb)
+                pos_new_1 = self.g_best.solution + c1 * (
+                        (self.problem.ub - self.problem.lb) * c2_list + self.problem.lb)
+                pos_new_2 = self.g_best.solution - c1 * (
+                        (self.problem.ub - self.problem.lb) * c2_list + self.problem.lb)
                 pos_new = np.where(c3_list < 0.5, pos_new_1, pos_new_2)
             else:
                 # Eq. (3.4) in the paper

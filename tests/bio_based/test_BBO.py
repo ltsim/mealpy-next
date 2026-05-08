@@ -4,15 +4,17 @@
 #       Github: https://github.com/thieu1995        %                         
 # --------------------------------------------------%
 
-from mealpy import FloatVar, BBO, Optimizer
 import numpy as np
 import pytest
+
+from mealpy import FloatVar, BBO, Optimizer
 
 
 @pytest.fixture(scope="module")  # scope: Call only 1 time at the beginning
 def problem():
     def objective_function(solution):
         return np.sum(solution ** 2)
+
     prob = {
         "obj_func": objective_function,
         "bounds": FloatVar(lb=[-10, -15, -4, -2, -8], ub=[10, 15, 12, 8, 20]),

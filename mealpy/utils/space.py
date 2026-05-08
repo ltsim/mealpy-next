@@ -4,9 +4,11 @@
 #       Github: https://github.com/thieu1995        %                         
 # --------------------------------------------------%
 
-import numpy as np
 import numbers as nb
 from abc import ABC, abstractmethod
+
+import numpy as np
+
 from mealpy.utils import transfer
 
 
@@ -34,6 +36,7 @@ class LabelEncoder:
         y : list, tuple
             Labels to encode.
         """
+
         def safe_key(val):
             # Chuyển None -> 0, số -> 1, chuỗi -> 2, object khác -> 3
             if val is None:
@@ -162,7 +165,7 @@ class FloatVar(BaseVar):
 
     def _set_bounds(self, lb, ub):
         if isinstance(lb, nb.Number) and isinstance(ub, nb.Number):
-            self.lb, self.ub = np.array((lb, ), dtype=float), np.array((ub,), dtype=float)
+            self.lb, self.ub = np.array((lb,), dtype=float), np.array((ub,), dtype=float)
             self.n_vars = 1
         elif type(lb) in self.SUPPORTED_ARRAY and type(ub) in self.SUPPORTED_ARRAY:
             if len(lb) == len(ub):
@@ -196,7 +199,7 @@ class IntegerVar(BaseVar):
     def _set_bounds(self, lb, ub):
         if isinstance(lb, nb.Number) and isinstance(ub, nb.Number):
             lb, ub = int(lb) - 0.5, int(ub) + 0.5 - self.eps
-            self.lb, self.ub = np.array((lb, ), dtype=float), np.array((ub, ), dtype=float)
+            self.lb, self.ub = np.array((lb,), dtype=float), np.array((ub,), dtype=float)
             self.n_vars = 1
         elif type(lb) in self.SUPPORTED_ARRAY and type(ub) in self.SUPPORTED_ARRAY:
             if len(lb) == len(ub):
@@ -219,7 +222,7 @@ class IntegerVar(BaseVar):
         return np.clip(x, self.lb, self.ub)
 
     def generate(self):
-        return self.generator.integers(self.lb+0.5, self.ub+0.5+self.eps)
+        return self.generator.integers(self.lb + 0.5, self.ub + 0.5 + self.eps)
 
 
 class StringVar(BaseVar):
@@ -362,7 +365,6 @@ class BinaryVar(BaseVar):
 
 
 class TransferBinaryVar(BinaryVar):
-
     SUPPORTED_TF_FUNCS = ["vstf_01", "vstf_02", "vstf_03", "vstf_04", "sstf_01", "sstf_02", "sstf_03", "sstf_04"]
 
     def __init__(self, n_vars=1, name="tf-binary", tf_func="vstf_01", lb=-8., ub=8., all_zeros=True):
@@ -420,7 +422,6 @@ class BoolVar(BaseVar):
 
 
 class TransferBoolVar(BoolVar):
-
     SUPPORTED_TF_FUNCS = ["vstf_01", "vstf_02", "vstf_03", "vstf_04", "sstf_01", "sstf_02", "sstf_03", "sstf_04"]
 
     def __init__(self, n_vars=1, name="boolean", tf_func="vstf_01", lb=-8., ub=8.):

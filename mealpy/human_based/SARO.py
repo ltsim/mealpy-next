@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -36,7 +37,8 @@ class DevSARO(Optimizer):
     >>> print(f"Solution: {model.g_best.solution}, Fitness: {model.g_best.target.fitness}")
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, se: float = 0.5, mu: int = 15, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, se: float = 0.5, mu: int = 15,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -48,7 +50,7 @@ class DevSARO(Optimizer):
         self.epoch = self.validator.check_int("epoch", epoch, [1, 100000])
         self.pop_size = self.validator.check_int("pop_size", pop_size, [5, 10000])
         self.se = self.validator.check_float("se", se, (0, 1.0))
-        self.mu = self.validator.check_int("mu", mu, [2, 2+int(self.pop_size/2)])
+        self.mu = self.validator.check_int("mu", mu, [2, 2 + int(self.pop_size / 2)])
         self.set_parameters(["epoch", "pop_size", "se", "mu"])
         self.sort_flag = True
 
@@ -83,7 +85,8 @@ class DevSARO(Optimizer):
             #### Remove third loop here, also using random flight back when out of bound
             pos_new_1 = self.pop[k].solution + self.generator.uniform() * sd
             pos_new_2 = pop_x[idx].solution + self.generator.uniform() * sd
-            condition = np.logical_and(self.generator.uniform(0, 1, self.problem.n_dims) < self.se, self.pop[k].target.fitness < pop_x[idx].target.fitness)
+            condition = np.logical_and(self.generator.uniform(0, 1, self.problem.n_dims) < self.se,
+                                       self.pop[k].target.fitness < pop_x[idx].target.fitness)
             pos_new = np.where(condition, pos_new_1, pos_new_2)
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
@@ -160,7 +163,8 @@ class OriginalSARO(DevSARO):
     algorithm based on search and rescue operations. Mathematical Problems in Engineering, 2019.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, se: float = 0.5, mu: int = 15, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, se: float = 0.5, mu: int = 15,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000

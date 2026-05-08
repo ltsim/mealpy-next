@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -40,7 +41,8 @@ class DevMVO(Optimizer):
     >>> print(f"Solution: {model.g_best.solution}, Fitness: {model.g_best.target.fitness}")
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, wep_min: float = 0.2, wep_max: float = 1.0, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, wep_min: float = 0.2, wep_max: float = 1.0,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -74,8 +76,10 @@ class DevMVO(Optimizer):
                 white_hole_id = self.get_index_roulette_wheel_selection(list_fitness)
                 black_hole_pos_1 = self.pop[idx].solution + tdr * self.generator.normal(0, 1) * \
                                    (self.pop[white_hole_id].solution - self.pop[idx].solution)
-                black_hole_pos_2 = self.g_best.solution + tdr * self.generator.normal(0, 1) * (self.g_best.solution - self.pop[idx].solution)
-                black_hole_pos = np.where(self.generator.random(self.problem.n_dims) < 0.5, black_hole_pos_1, black_hole_pos_2)
+                black_hole_pos_2 = self.g_best.solution + tdr * self.generator.normal(0, 1) * (
+                        self.g_best.solution - self.pop[idx].solution)
+                black_hole_pos = np.where(self.generator.random(self.problem.n_dims) < 0.5, black_hole_pos_1,
+                                          black_hole_pos_2)
             else:
                 black_hole_pos = self.problem.generate_solution()
             pos_new = self.correct_solution(black_hole_pos)
@@ -126,7 +130,8 @@ class OriginalMVO(DevMVO):
     algorithm for global optimization. Neural Computing and Applications, 27(2), pp.495-513.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, wep_min: float = 0.2, wep_max: float = 1.0, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, wep_min: float = 0.2, wep_max: float = 1.0,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -178,7 +183,8 @@ class OriginalMVO(DevMVO):
             list_fitness_normalized = self.generator.uniform(0, 0.1, self.pop_size)
         else:
             ### Normalize inflation rates (NI in Eq. (3.1) in the paper)
-            list_fitness_normalized = np.reshape(self.normalize__(np.array([list_fitness_raw])), self.pop_size)  # Matrix
+            list_fitness_normalized = np.reshape(self.normalize__(np.array([list_fitness_raw])),
+                                                 self.pop_size)  # Matrix
         pop_new = []
         for idx in range(0, self.pop_size):
             black_hole_pos = self.pop[idx].solution.copy()
@@ -195,9 +201,11 @@ class OriginalMVO(DevMVO):
                 if r2 < wep:
                     r3 = self.generator.uniform()
                     if r3 < 0.5:
-                        black_hole_pos[jdx] = self.g_best.solution[jdx] + tdr * self.generator.uniform(self.problem.lb[jdx], self.problem.ub[jdx])
+                        black_hole_pos[jdx] = self.g_best.solution[jdx] + tdr * self.generator.uniform(
+                            self.problem.lb[jdx], self.problem.ub[jdx])
                     else:
-                        black_hole_pos[jdx] = self.g_best.solution[jdx] - tdr * self.generator.uniform(self.problem.lb[jdx], self.problem.ub[jdx])
+                        black_hole_pos[jdx] = self.g_best.solution[jdx] - tdr * self.generator.uniform(
+                            self.problem.lb[jdx], self.problem.ub[jdx])
             pos_new = self.correct_solution(black_hole_pos)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)

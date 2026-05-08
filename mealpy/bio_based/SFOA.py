@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -87,8 +88,9 @@ class OriginalSFOA(Optimizer):
                     pos = np.where(self.generator.random(size=self.problem.n_dims) < self.gp, pos1, pos2)
                     pos_new[jp1] = pos[jp1]
                     # Boundary check for individual dimension
-                    pos_new[jp1] = np.where((pos_new[jp1] < self.problem.lb[jp1]) | (pos_new[jp1] > self.problem.ub[jp1]),
-                                            self.pop[idx].solution[jp1], pos_new[jp1])
+                    pos_new[jp1] = np.where(
+                        (pos_new[jp1] < self.problem.lb[jp1]) | (pos_new[jp1] > self.problem.ub[jp1]),
+                        self.pop[idx].solution[jp1], pos_new[jp1])
                 else:
                     # for nD is not larger than 5
                     jp2 = self.generator.integers(0, self.problem.n_dims)
@@ -121,8 +123,9 @@ class OriginalSFOA(Optimizer):
                 r1, r2 = self.generator.random(size=2)
                 kp = self.generator.choice(5, size=2, replace=False)
                 pos_new = self.pop[idx].solution + r1 * dm[kp[0]] + r2 * dm[kp[1]]  # exploitation
-                if idx == self.pop_size - 1:    # last individual
-                    pos_new = np.exp(-epoch * self.pop_size / self.epoch) * self.pop[idx].solution  # regeneration of starfish
+                if idx == self.pop_size - 1:  # last individual
+                    pos_new = np.exp(-epoch * self.pop_size / self.epoch) * self.pop[
+                        idx].solution  # regeneration of starfish
                 pos_new = self.correct_solution(pos_new)
                 agent = self.generate_empty_agent(pos_new)
                 pop_new.append(agent)

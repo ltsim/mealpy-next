@@ -4,8 +4,10 @@
 #       Github: https://github.com/thieu1995        %
 # --------------------------------------------------%
 
-import numpy as np
 from math import gamma
+
+import numpy as np
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -42,6 +44,7 @@ class OriginalSLO(Optimizer):
     ~~~~~~~~~~
     [1] Masadeh, R., Mahafzah, B.A. and Sharieh, A., 2019. Sea lion optimization algorithm. Sea, 10(5), p.388.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -75,12 +78,15 @@ class OriginalSLO(Optimizer):
         for idx in range(0, self.pop_size):
             if SP_leader < 0.25:
                 if c < 1:
-                    pos_new = self.g_best.solution - c * np.abs(2 * self.generator.random() * self.g_best.solution - self.pop[idx].solution)
+                    pos_new = self.g_best.solution - c * np.abs(
+                        2 * self.generator.random() * self.g_best.solution - self.pop[idx].solution)
                 else:
                     ri = self.generator.choice(list(set(range(0, self.pop_size)) - {idx}))  # random index
-                    pos_new = self.pop[ri].solution - c * np.abs(2 * self.generator.random() * self.pop[ri].solution - self.pop[idx].solution)
+                    pos_new = self.pop[ri].solution - c * np.abs(
+                        2 * self.generator.random() * self.pop[ri].solution - self.pop[idx].solution)
             else:
-                pos_new = np.abs(self.g_best.solution - self.pop[idx].solution) * np.cos(2 * np.pi * self.generator.uniform(-1, 1)) + self.g_best.solution
+                pos_new = np.abs(self.g_best.solution - self.pop[idx].solution) * np.cos(
+                    2 * np.pi * self.generator.uniform(-1, 1)) + self.g_best.solution
             # In the paper doesn't check also doesn't update old solution at this point
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
@@ -121,6 +127,7 @@ class ModifiedSLO(Optimizer):
     >>> print(f"Solution: {g_best.solution}, Fitness: {g_best.target.fitness}")
     >>> print(f"Solution: {model.g_best.solution}, Fitness: {model.g_best.target.fitness}")
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -184,7 +191,8 @@ class ModifiedSLO(Optimizer):
         for idx in range(0, self.pop_size):
             agent = self.pop[idx].copy()
             if SP_leader >= 0.6:
-                pos_new = np.cos(2 * np.pi * self.generator.normal(0, 1)) * np.abs(self.g_best.solution - self.pop[idx].solution) + self.g_best.solution
+                pos_new = np.cos(2 * np.pi * self.generator.normal(0, 1)) * np.abs(
+                    self.g_best.solution - self.pop[idx].solution) + self.g_best.solution
             else:
                 if self.generator.uniform() < pa:
                     dist1 = self.generator.uniform() * np.abs(2 * self.g_best.solution - self.pop[idx].solution)
@@ -239,7 +247,9 @@ class ImprovedSLO(ModifiedSLO):
     [1] Nguyen, Binh Minh, Trung Tran, Thieu Nguyen, and Giang Nguyen. "An improved sea lion optimization for workload elasticity
     prediction with neural networks." International Journal of Computational Intelligence Systems 15, no. 1 (2022): 90.
     """
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, c1: float = 1.2, c2: float = 1.2, **kwargs: object) -> None:
+
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, c1: float = 1.2, c2: float = 1.2,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -281,16 +291,19 @@ class ImprovedSLO(ModifiedSLO):
                     # Create a new solution by equation below
                     # Then create an opposition solution of above solution
                     # Compare both of them and keep the good one (Searching at both direction)
-                    pos_new = self.g_best.solution + c * self.generator.normal(0, 1, self.problem.n_dims) * (self.g_best.solution - self.pop[idx].solution)
+                    pos_new = self.g_best.solution + c * self.generator.normal(0, 1, self.problem.n_dims) * (
+                            self.g_best.solution - self.pop[idx].solution)
                     pos_new = self.correct_solution(pos_new)
                     target_new = self.get_target(pos_new)
-                    pos_new_oppo = self.problem.lb + self.problem.ub - self.g_best.solution + self.generator.random() * (self.g_best.solution - pos_new)
+                    pos_new_oppo = self.problem.lb + self.problem.ub - self.g_best.solution + self.generator.random() * (
+                            self.g_best.solution - pos_new)
                     pos_new_oppo = self.correct_solution(pos_new_oppo)
                     target_new_oppo = self.get_target(pos_new_oppo)
                     if self.compare_target(target_new_oppo, target_new, self.problem.minmax):
                         pos_new = pos_new_oppo
             else:  # Exploitation
-                pos_new = self.g_best.solution + np.cos(2 * np.pi * self.generator.uniform(-1, 1)) * np.abs(self.g_best.solution - self.pop[idx].solution)
+                pos_new = self.g_best.solution + np.cos(2 * np.pi * self.generator.uniform(-1, 1)) * np.abs(
+                    self.g_best.solution - self.pop[idx].solution)
             pos_new = self.correct_solution(pos_new)
             agent.solution = pos_new
             pop_new.append(agent)

@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -39,6 +40,7 @@ class OriginalPFA(Optimizer):
     [1] Yapici, H. and Cetinkaya, N., 2019. A new meta-heuristic optimizer: Pathfinder algorithm.
     Applied soft computing, 78, pp.545-568.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -63,7 +65,8 @@ class OriginalPFA(Optimizer):
         t = 1. - epoch * 1.0 / self.epoch
         space = self.problem.ub - self.problem.lb
         ## Update the position of pathfinder and check the bound
-        pos_new = self.pop[0].solution + 2 * self.generator.uniform() * (self.g_best.solution - self.pop[0].solution) + A
+        pos_new = self.pop[0].solution + 2 * self.generator.uniform() * (
+                self.g_best.solution - self.pop[0].solution) + A
         pos_new = self.correct_solution(pos_new)
         agent = self.generate_agent(pos_new)
         pop_new = [agent, ]

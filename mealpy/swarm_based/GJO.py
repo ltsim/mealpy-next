@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -40,6 +41,7 @@ class OriginalGJO(Optimizer):
     [1] Chopra, N., & Ansari, M. M. (2022). Golden jackal optimization: A novel nature-inspired
     optimizer for engineering applications. Expert Systems with Applications, 198, 116924.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -59,7 +61,7 @@ class OriginalGJO(Optimizer):
         Args:
             epoch (int): The current iteration
         """
-        E1 = 1.5*(1.-(epoch/self.epoch))
+        E1 = 1.5 * (1. - (epoch / self.epoch))
         RL = self.get_levy_flight_step(beta=1.5, multiplier=0.05, size=(self.pop_size, self.problem.n_dims), case=-1)
         _, (male, female), _ = self.get_special_agents(self.pop, n_best=2, n_worst=1, minmax=self.problem.minmax)
         pop_new = []
@@ -68,14 +70,14 @@ class OriginalGJO(Optimizer):
             female_pos = female.solution.copy()
             for jdx in range(0, self.problem.n_dims):
                 r1 = self.generator.random()
-                E0 = 2*r1 - 1
+                E0 = 2 * r1 - 1
                 E = E1 * E0
-                if np.abs(E) < 1:       # EXPLOITATION
-                    t1 = np.abs( (RL[idx, jdx] * male.solution[jdx] - self.pop[idx].solution[jdx]) )
-                    male_pos[jdx] = male.solution[jdx] - E*t1
-                    t2 = np.abs( (RL[idx, jdx] * female.solution[jdx] - self.pop[idx].solution[jdx]) )
-                    female_pos[jdx] = female.solution[jdx] - E*t2
-                else:                   # EXPLORATION
+                if np.abs(E) < 1:  # EXPLOITATION
+                    t1 = np.abs((RL[idx, jdx] * male.solution[jdx] - self.pop[idx].solution[jdx]))
+                    male_pos[jdx] = male.solution[jdx] - E * t1
+                    t2 = np.abs((RL[idx, jdx] * female.solution[jdx] - self.pop[idx].solution[jdx]))
+                    female_pos[jdx] = female.solution[jdx] - E * t2
+                else:  # EXPLORATION
                     t1 = np.abs((male.solution[jdx] - RL[idx, jdx] * self.pop[idx].solution[jdx]))
                     male_pos[jdx] = male.solution[jdx] - E * t1
                     t2 = np.abs((female.solution[jdx] - RL[idx, jdx] * self.pop[idx].solution[jdx]))

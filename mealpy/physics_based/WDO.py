@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -76,7 +77,8 @@ class OriginalWDO(Optimizer):
         self.sort_flag = False
 
     def initialize_variables(self):
-        self.dyn_list_velocity = self.max_v * self.generator.uniform(self.problem.lb, self.problem.ub, (self.pop_size, self.problem.n_dims))
+        self.dyn_list_velocity = self.max_v * self.generator.uniform(self.problem.lb, self.problem.ub,
+                                                                     (self.pop_size, self.problem.n_dims))
 
     def evolve(self, epoch):
         """
@@ -90,7 +92,8 @@ class OriginalWDO(Optimizer):
             rand_dim = self.generator.integers(0, self.problem.n_dims)
             temp = self.dyn_list_velocity[idx][rand_dim] * np.ones(self.problem.n_dims)
             vel = (1 - self.alp) * self.dyn_list_velocity[idx] - self.g_c * self.pop[idx].solution + \
-                  (1 - 1.0 / (idx + 1)) * self.RT * (self.g_best.solution - self.pop[idx].solution) + self.c_e * temp / (idx + 1)
+                  (1 - 1.0 / (idx + 1)) * self.RT * (
+                          self.g_best.solution - self.pop[idx].solution) + self.c_e * temp / (idx + 1)
             vel = np.clip(vel, -self.max_v, self.max_v)
             # Update air parcel positions, check the bound and calculate pressure (fitness)
             self.dyn_list_velocity[idx] = vel

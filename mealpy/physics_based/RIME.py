@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -44,6 +45,7 @@ class OriginalRIME(Optimizer):
     ~~~~~~~~~~
     [1] Su, H., Zhao, D., Heidari, A. A., Liu, L., Zhang, X., Mafarja, M., & Chen, H. (2023). RIME: A physics-based optimization. Neurocomputing.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, sr: float = 5., **kwargs: object) -> None:
         """
         Args:
@@ -65,8 +67,9 @@ class OriginalRIME(Optimizer):
         Args:
             epoch (int): The current iteration
         """
-        rime_factor = (self.generator.random() - 0.5)*2*np.cos(np.pi*epoch/(self.epoch/10)) * (1 - np.round(epoch*self.sr/self.epoch) / self.sr)
-        ee = np.sqrt((epoch+1)/self.epoch)
+        rime_factor = (self.generator.random() - 0.5) * 2 * np.cos(np.pi * epoch / (self.epoch / 10)) * (
+                1 - np.round(epoch * self.sr / self.epoch) / self.sr)
+        ee = np.sqrt((epoch + 1) / self.epoch)
         fits = np.array([agent.target.fitness for agent in self.pop]).reshape((1, -1))
         fits_norm = fits / np.linalg.norm(fits, axis=1, keepdims=True)
         LB = self.problem.lb
@@ -77,7 +80,8 @@ class OriginalRIME(Optimizer):
             for jdx in range(0, self.problem.n_dims):
                 # Soft-rime search strategy
                 if self.generator.random() < ee:
-                    pos_new[jdx] = self.g_best.solution[jdx] + rime_factor*(LB[jdx] + self.generator.random() * (UB[jdx] - LB[jdx]))
+                    pos_new[jdx] = self.g_best.solution[jdx] + rime_factor * (
+                            LB[jdx] + self.generator.random() * (UB[jdx] - LB[jdx]))
                 # Hard-rime puncture mechanism
                 if self.generator.random() < fits_norm[0, idx]:
                     pos_new[jdx] = self.g_best.solution[jdx]

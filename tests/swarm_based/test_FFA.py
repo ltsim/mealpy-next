@@ -4,9 +4,10 @@
 #       Github: https://github.com/thieu1995        %                         
 # --------------------------------------------------%
 
-from mealpy import FloatVar, FFA, Optimizer
 import numpy as np
 import pytest
+
+from mealpy import FloatVar, FFA, Optimizer
 
 
 @pytest.fixture(scope="module")  # scope: Call only 1 time at the beginning
@@ -25,7 +26,8 @@ def problem():
 
 def test_FFA_results(problem):
     models = [
-        FFA.OriginalFFA(epoch=10, pop_size=50, gamma=0.001, beta_base=2, alpha=0.2, alpha_damp=0.99, delta=0.05, exponent=2)
+        FFA.OriginalFFA(epoch=10, pop_size=50, gamma=0.001, beta_base=2, alpha=0.2, alpha_damp=0.99, delta=0.05,
+                        exponent=2)
     ]
     for model in models:
         g_best = model.solve(problem)

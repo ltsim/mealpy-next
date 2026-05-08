@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -78,7 +79,8 @@ class DevEPC(Optimizer):
         self.body_temperature = 308.15  # K (35°C)
         self.mu = 0.01  # Attenuation coefficient (can be tuned)
         # Calculate heat radiation using Stefan-Boltzmann law (Equation 6)
-        self.heat_radiation = (self.surface_area * self.emissivity * self.stefan_boltzmann * (self.body_temperature ** 4))
+        self.heat_radiation = (
+                self.surface_area * self.emissivity * self.stefan_boltzmann * (self.body_temperature ** 4))
 
     def calculate_attractiveness(self, heat_radiation: float, distance: float) -> float:
         """

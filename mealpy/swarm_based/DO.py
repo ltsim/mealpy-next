@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -67,7 +68,8 @@ class OriginalDO(Optimizer):
         Args:
             epoch (int): The current iteration
         """
-        _, (self.g_best, ), (self.g_worst, ) = self.get_special_agents(self.pop, n_best=1, n_worst=1, minmax=self.problem.minmax)
+        _, (self.g_best,), (self.g_worst,) = self.get_special_agents(self.pop, n_best=1, n_worst=1,
+                                                                     minmax=self.problem.minmax)
 
         r = (self.problem.ub - self.problem.lb) / 4 + ((self.problem.ub - self.problem.lb) * (2 * epoch / self.epoch))
         w = 0.9 - epoch * ((0.9 - 0.4) / self.epoch)
@@ -126,7 +128,8 @@ class OriginalDO(Optimizer):
             if np.any(dist_to_food > r):
                 if neighbours_num > 1:
                     temp = w * self.pop_delta[idx].solution + self.generator.uniform(0, 1, self.problem.n_dims) * A + \
-                           self.generator.uniform(0, 1, self.problem.n_dims) * C + self.generator.uniform(0, 1, self.problem.n_dims) * S
+                           self.generator.uniform(0, 1, self.problem.n_dims) * C + self.generator.uniform(0, 1,
+                                                                                                          self.problem.n_dims) * S
                     temp = np.clip(temp, -1 * self.delta_max, self.delta_max)
                     pos_delta_new = temp.copy()
                     pos_new += temp

@@ -4,8 +4,10 @@
 #       Github: https://github.com/thieu1995        %
 # --------------------------------------------------%
 
-import numpy as np
 from functools import reduce
+
+import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -69,7 +71,8 @@ class DevTLO(Optimizer):
             ## Teaching Phrase
             TF = self.generator.integers(1, 3)  # 1 or 2 (never 3)
             list_pos = np.array([agent.solution for agent in self.pop])
-            DIFF_MEAN = self.generator.random(self.problem.n_dims) * (self.g_best.solution - TF * np.mean(list_pos, axis=0))
+            DIFF_MEAN = self.generator.random(self.problem.n_dims) * (
+                    self.g_best.solution - TF * np.mean(list_pos, axis=0))
             pos_new = self.pop[idx].solution + DIFF_MEAN
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
@@ -86,9 +89,11 @@ class DevTLO(Optimizer):
             pos_new = self.pop[idx].solution.copy().astype(float)
             id_partner = self.generator.choice(np.setxor1d(np.array(range(self.pop_size)), np.array([idx])))
             if self.compare_target(self.pop[idx].target, self.pop[id_partner].target, self.problem.minmax):
-                pos_new += self.generator.random(self.problem.n_dims) * (self.pop[idx].solution - self.pop[id_partner].solution)
+                pos_new += self.generator.random(self.problem.n_dims) * (
+                        self.pop[idx].solution - self.pop[id_partner].solution)
             else:
-                pos_new += self.generator.random(self.problem.n_dims) * (self.pop[id_partner].solution - self.pop[idx].solution)
+                pos_new += self.generator.random(self.problem.n_dims) * (
+                        self.pop[id_partner].solution - self.pop[idx].solution)
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_child.append(agent)
@@ -219,7 +224,7 @@ class ImprovedTLO(DevTLO):
             n_teachers (int): number of teachers in class
         """
         super().__init__(epoch, pop_size, **kwargs)
-        self.n_teachers = self.validator.check_int("n_teachers", n_teachers, [2, int(np.sqrt(self.pop_size)-1)])
+        self.n_teachers = self.validator.check_int("n_teachers", n_teachers, [2, int(np.sqrt(self.pop_size) - 1)])
         self.set_parameters(["epoch", "pop_size", "n_teachers"])
         self.n_students = self.pop_size - self.n_teachers
         self.n_students_in_team = int(self.n_students / self.n_teachers)
@@ -261,9 +266,11 @@ class ImprovedTLO(DevTLO):
                 diff_mean = self.generator.random() * (teacher.solution - TF * mean_team)  # Step 8
                 id2 = self.generator.choice(list(set(range(0, self.n_teachers)) - {id_teach}))
                 if self.compare_target(teacher.target, team[id2].target, self.problem.minmax):
-                    pos_new = (student.solution + diff_mean) + self.generator.random() * (team[id2].solution - student.solution)
+                    pos_new = (student.solution + diff_mean) + self.generator.random() * (
+                            team[id2].solution - student.solution)
                 else:
-                    pos_new = (student.solution + diff_mean) + self.generator.random() * (student.solution - team[id2].solution)
+                    pos_new = (student.solution + diff_mean) + self.generator.random() * (
+                            student.solution - team[id2].solution)
                 pos_new = self.correct_solution(pos_new)
                 agent = self.generate_empty_agent(pos_new)
                 pop_new.append(agent)

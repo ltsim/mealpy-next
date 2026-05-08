@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -94,7 +95,7 @@ class OriginalACOR(Optimizer):
             for jdx in range(0, self.problem.n_dims):
                 rdx = self.get_index_roulette_wheel_selection(matrix_p)
                 child[jdx] = self.pop[rdx].solution[jdx] + self.generator.normal() * matrix_sigma[rdx, jdx]  # (1)
-            pos_new = self.correct_solution(child)      # (2)
+            pos_new = self.correct_solution(child)  # (2)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)
             if self.mode not in self.AVAILABLE_MODES:

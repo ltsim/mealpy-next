@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -40,6 +41,7 @@ class OriginalSCSO(Optimizer):
     [1] Seyyedabbasi, A., & Kiani, F. (2022). Sand Cat swarm optimization: a nature-inspired algorithm to
     solve global optimization problems. Engineering with Computers, 1-25.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -53,7 +55,7 @@ class OriginalSCSO(Optimizer):
         self.sort_flag = False
 
     def initialize_variables(self):
-        self.ss = 2      # maximum Sensitivity range
+        self.ss = 2  # maximum Sensitivity range
         self.pp = np.arange(1, 361)
 
     def get_index_roulette_wheel_selection__(self, p):
@@ -72,7 +74,7 @@ class OriginalSCSO(Optimizer):
         pop_new = []
         for idx in range(0, self.pop_size):
             r = self.generator.random() * guides_r
-            R = (2*guides_r)*self.generator.random() - guides_r        # controls to transition phases
+            R = (2 * guides_r) * self.generator.random() - guides_r  # controls to transition phases
             pos_new = self.pop[idx].solution.copy()
             for jdx in range(0, self.problem.n_dims):
                 teta = self.get_index_roulette_wheel_selection__(self.pp)
@@ -81,7 +83,8 @@ class OriginalSCSO(Optimizer):
                     pos_new[jdx] = self.g_best.solution[jdx] - r * rand_pos * np.cos(teta)
                 else:
                     cp = int(self.generator.random() * self.pop_size)
-                    pos_new[jdx] = r * (self.pop[cp].solution[jdx] - self.generator.random() * self.pop[idx].solution[jdx])
+                    pos_new[jdx] = r * (
+                            self.pop[cp].solution[jdx] - self.generator.random() * self.pop[idx].solution[jdx])
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)

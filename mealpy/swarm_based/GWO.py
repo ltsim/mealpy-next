@@ -5,9 +5,10 @@
 # --------------------------------------------------%
 
 import numpy as np
+
+from mealpy.optimizer import Optimizer
 from mealpy.utils.chaotic import ChaoticMap as CM
 from mealpy.utils.fuzzy import FuzzySystem as FS
-from mealpy.optimizer import Optimizer
 
 
 class OriginalGWO(Optimizer):
@@ -244,7 +245,8 @@ class GWO_WOA(OriginalGWO):
                 da = self.generator.random() * np.abs(C1 * list_best[0].solution - self.pop[idx].solution)
             else:
                 P, L = self.generator.random(), self.generator.uniform(-1, 1)
-                da = P * np.exp(self.bb * L) * np.cos(2*np.pi*L) * np.abs(C1 * list_best[0].solution - self.pop[idx].solution)
+                da = P * np.exp(self.bb * L) * np.cos(2 * np.pi * L) * np.abs(
+                    C1 * list_best[0].solution - self.pop[idx].solution)
             X1 = list_best[0].solution - A1 * da
             X2 = list_best[1].solution - A2 * np.abs(C2 * list_best[1].solution - self.pop[idx].solution)
             X3 = list_best[2].solution - A3 * np.abs(C3 * list_best[2].solution - self.pop[idx].solution)
@@ -297,7 +299,8 @@ class IGWO(OriginalGWO):
     Engineering with Computers. 34. 10.1007/s00366-017-0567-1.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, a_min: float = 0.02, a_max: float = 2.2, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, a_min: float = 0.02, a_max: float = 2.2,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -404,7 +407,8 @@ class ChaoticGWO(Optimizer):
         self.epoch = self.validator.check_int("epoch", epoch, [1, 100000])
         self.pop_size = self.validator.check_int("pop_size", pop_size, [5, 10000])
         self.chaotic_name = self.validator.check_str("chaotic_name", chaotic_name, ChaoticGWO.CHAOTIC_MAPS.keys())
-        self.initial_chaotic_value = self.validator.check_float("initial_chaotic_value", initial_chaotic_value, [0.0, 1.0])
+        self.initial_chaotic_value = self.validator.check_float("initial_chaotic_value", initial_chaotic_value,
+                                                                [0.0, 1.0])
         self.set_parameters(["epoch", "pop_size", "chaotic_name", "initial_chaotic_value"])
         self.sort_flag = False
 
@@ -598,7 +602,7 @@ class IncrementalGWO(Optimizer):
             epoch (int): The current iteration
         """
         # linearly decreased from 2 to 0
-        a = 2 * (1. - (epoch / self.epoch)**self.explore_factor)
+        a = 2 * (1. - (epoch / self.epoch) ** self.explore_factor)
         pop_sorted, list_best, _ = self.get_special_agents(self.pop, n_best=3, minmax=self.problem.minmax)
         pop_new = []
         for idx in range(0, self.pop_size):
@@ -886,15 +890,16 @@ class IOBL_GWO(Optimizer):
         for idx in range(0, self.pop_size):
             # Try explorative equation first
             r1, r2, r3, r4, r5 = self.generator.random(5)
-            if r5 >= 0.5:   # Exploration around random wolf
+            if r5 >= 0.5:  # Exploration around random wolf
                 # Select random wolf from population
                 jdx = self.generator.choice(list(set(range(self.pop_size)) - {idx}))
                 x_rand = self.pop[jdx].solution
                 pos_new = x_rand - r1 * np.abs(x_rand - 2 * r2 * self.pop[idx].solution)
-            else:           # Exploration around alpha wolf
+            else:  # Exploration around alpha wolf
                 # Calculate average position of all wolves
                 x_avg = np.mean([agent.solution for agent in self.pop], axis=0)
-                pos_new = (list_best[0].solution - x_avg) - r3 * (self.problem.lb + r4 * (self.problem.ub - self.problem.lb))
+                pos_new = (list_best[0].solution - x_avg) - r3 * (
+                        self.problem.lb + r4 * (self.problem.ub - self.problem.lb))
             # Apply boundary constraints
             pos_new = self.correct_solution(pos_new)
             tar_new = self.get_target(pos_new)
@@ -934,7 +939,7 @@ class IOBL_GWO(Optimizer):
 
         # Replace worst 3 wolves with opposite solutions if they are better
         for idx in range(0, 3):
-            if self.compare_target(obl_pop[idx].target, self.pop[indices[-3+idx]].target, self.problem.minmax):
+            if self.compare_target(obl_pop[idx].target, self.pop[indices[-3 + idx]].target, self.problem.minmax):
                 self.pop[idx] = obl_pop[idx]
 
 
@@ -999,7 +1004,8 @@ class OGWO(Optimizer):
             agent_opposite.target = self.get_target(pos_opposite)
             pop_opposite.append(agent_opposite)
         # Combine original and opposite populations
-        self.pop = self.get_sorted_and_trimmed_population(self.pop + pop_opposite, self.pop_size, minmax=self.problem.minmax)
+        self.pop = self.get_sorted_and_trimmed_population(self.pop + pop_opposite, self.pop_size,
+                                                          minmax=self.problem.minmax)
 
     def evolve(self, epoch):
         """
@@ -1009,7 +1015,7 @@ class OGWO(Optimizer):
             epoch (int): The current iteration
         """
         # linearly decreased from 2 to 0
-        a = 2. * (1 - (epoch / self.epoch)**self.miu_factor)
+        a = 2. * (1 - (epoch / self.epoch) ** self.miu_factor)
         _, list_best, _ = self.get_special_agents(self.pop, n_best=3, minmax=self.problem.minmax)
         pop_new = []
         for idx in range(0, self.pop_size):
@@ -1043,7 +1049,8 @@ class OGWO(Optimizer):
                 agent_opposite.target = self.get_target(pos_opposite)
                 pop_opposite.append(agent_opposite)
             # Combine original and opposite populations
-            self.pop = self.get_sorted_and_trimmed_population(self.pop + pop_opposite, self.pop_size, minmax=self.problem.minmax)
+            self.pop = self.get_sorted_and_trimmed_population(self.pop + pop_opposite, self.pop_size,
+                                                              minmax=self.problem.minmax)
 
 
 class ER_GWO(Optimizer):
@@ -1096,7 +1103,7 @@ class ER_GWO(Optimizer):
         self.pop_size = self.validator.check_int("pop_size", pop_size, [5, 10000])
         self.a_initial = self.validator.check_float("a_initial", a_initial, [0.0, 10.0])
         self.a_final = self.validator.check_float("a_final", a_final, [0.0, self.a_initial])
-        self.miu_factor = self.validator.check_float("miu_factor", miu_factor, [1.0001, 1.01])     # Required in paper
+        self.miu_factor = self.validator.check_float("miu_factor", miu_factor, [1.0001, 1.01])  # Required in paper
         self.set_parameters(["epoch", "pop_size", "a_initial", "a_final", "miu_factor"])
         self.sort_flag = False
 
@@ -1204,8 +1211,8 @@ class CG_GWO(Optimizer):
         else:
             sigma = 1.0
         # Generate Cauchy and Gaussian random variables
-        c_rand = self.generator.standard_cauchy(size=self.problem.n_dims) * sigma**2 + 0
-        g_rand = self.generator.normal(loc=0, scale=sigma**2, size=self.problem.n_dims)
+        c_rand = self.generator.standard_cauchy(size=self.problem.n_dims) * sigma ** 2 + 0
+        g_rand = self.generator.normal(loc=0, scale=sigma ** 2, size=self.problem.n_dims)
 
         # Apply mutation (equation 8)
         mutated_pos = leader.solution * (1 + eps1 * c_rand + eps2 * g_rand)
@@ -1253,7 +1260,8 @@ class CG_GWO(Optimizer):
             else:  # Exploration around alpha wolf
                 # Calculate average position of all wolves
                 x_avg = np.mean([agent.solution for agent in self.pop], axis=0)
-                pos_new = (list_best[0].solution - x_avg) - r3 * (self.problem.lb + r4 * (self.problem.ub - self.problem.lb))
+                pos_new = (list_best[0].solution - x_avg) - r3 * (
+                        self.problem.lb + r4 * (self.problem.ub - self.problem.lb))
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_agent(pos_new)
 

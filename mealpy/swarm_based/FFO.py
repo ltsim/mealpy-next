@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -45,6 +46,7 @@ class OriginalFFO(Optimizer):
     [1] Trojovská, E., Dehghani, M., & Trojovský, P. (2022). Fennec Fox Optimization: A New
     Nature-Inspired Optimization Algorithm. IEEE Access, 10, 84417-84443.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -77,9 +79,11 @@ class OriginalFFO(Optimizer):
             # PHASE 2: ESCAPE STRATEGY FROM THE PREDATORS’ ATTACK (EXPLORATION)
             kk = self.generator.choice(list(set(range(0, self.pop_size)) - {idx}))
             if self.compare_target(self.pop[kk].target, self.pop[idx].target, self.problem.minmax):
-                pos_new = self.pop[idx].solution + self.generator.random() * (self.pop[kk].solution - self.generator.integers(1, 3) * self.pop[idx].solution)
+                pos_new = self.pop[idx].solution + self.generator.random() * (
+                        self.pop[kk].solution - self.generator.integers(1, 3) * self.pop[idx].solution)
             else:
-                pos_new = self.pop[idx].solution + self.generator.random() * (self.pop[idx].solution - self.pop[kk].solution)
+                pos_new = self.pop[idx].solution + self.generator.random() * (
+                        self.pop[idx].solution - self.pop[kk].solution)
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_agent(pos_new)
             if self.compare_target(agent.target, self.pop[idx].target, self.problem.minmax):

@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -76,14 +77,14 @@ class OriginalWarSO(Optimizer):
         for idx in range(0, self.pop_size):
             r1 = self.generator.random()
             if r1 < self.rr:
-                pos_new = 2*r1*(self.g_best.solution - self.pop[com[idx]].solution) + \
-                          self.wl[idx]*self.generator.random()*(pop_sorted[idx].solution - self.pop[idx].solution)
+                pos_new = 2 * r1 * (self.g_best.solution - self.pop[com[idx]].solution) + \
+                          self.wl[idx] * self.generator.random() * (pop_sorted[idx].solution - self.pop[idx].solution)
             else:
-                pos_new = 2*r1*(pop_sorted[idx].solution - self.g_best.solution) + \
+                pos_new = 2 * r1 * (pop_sorted[idx].solution - self.g_best.solution) + \
                           self.generator.random() * (self.wl[idx] * self.g_best.solution - self.pop[idx].solution)
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_agent(pos_new)
             if self.compare_target(agent.target, self.pop[idx].target, self.problem.minmax):
                 self.pop[idx] = agent
                 self.wg[idx] += 1
-                self.wl[idx] = 1 * self.wl[idx] * (1 - self.wg[idx] / self.epoch)**2
+                self.wl[idx] = 1 * self.wl[idx] * (1 - self.wg[idx] / self.epoch) ** 2

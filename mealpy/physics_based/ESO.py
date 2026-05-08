@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -60,7 +61,7 @@ class OriginalESO(Optimizer):
         # Calculate field resistance based on population spread
         pos_pop = np.array([agent.solution for agent in self.pop])
         mean_pos = np.mean(pos_pop, axis=0)
-        std_pos = np.sqrt(np.mean(np.sum((pos_pop - mean_pos)**2, axis=1)))
+        std_pos = np.sqrt(np.mean(np.sum((pos_pop - mean_pos) ** 2, axis=1)))
         # std_pos = np.std(pos_pop, axis=0)
         peak_to_peak = np.max(np.max(pos_pop, axis=0) - np.min(pos_pop, axis=0))
         # Field resistance
@@ -146,7 +147,8 @@ class OriginalESO(Optimizer):
                     # Average position of ionized areas
                     avg_ionized = np.mean([agent.solution for agent in ionized_pop], axis=0)
                     # Random perturbation
-                    pos_new = avg_ionized + storm_power * np.exp(fc) * self.generator.uniform(-fc, fc, self.problem.n_dims)
+                    pos_new = avg_ionized + storm_power * np.exp(fc) * self.generator.uniform(-fc, fc,
+                                                                                              self.problem.n_dims)
                 else:
                     # Random search
                     pos_new = self.generator.uniform(self.problem.lb, self.problem.ub, self.problem.n_dims)

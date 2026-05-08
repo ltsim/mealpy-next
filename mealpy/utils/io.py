@@ -7,7 +7,7 @@
 import pickle
 
 
-def save_model(model, path_save:str):
+def save_model(model, path_save: str):
     if path_save is None:
         path_save = "model.pkl"
     else:
@@ -16,7 +16,7 @@ def save_model(model, path_save:str):
     pickle.dump(model, open(path_save, 'wb'))
 
 
-def load_model(path_load:str):
+def load_model(path_load: str):
     if path_load is None:
         path_load = "model.pkl"
     else:

@@ -4,8 +4,9 @@
 #       Github: https://github.com/thieu1995        %                         
 # --------------------------------------------------%
 
-from mealpy.utils import validator
 import pytest
+
+from mealpy.utils import validator
 
 
 @pytest.mark.parametrize("value, bound, output",

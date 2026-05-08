@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -46,7 +47,8 @@ class OriginalASO(Optimizer):
     hydrogeologic parameter estimation problem. Knowledge-Based Systems, 163, pp.283-304.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, alpha: int = 10, beta: float = 0.2, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, alpha: int = 10, beta: float = 0.2,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -115,7 +117,8 @@ class OriginalASO(Optimizer):
                 # calculate LJ-potential
                 radius = np.linalg.norm(pop[idx].solution - atom.solution)
                 potential = self.find_LJ_potential__(iteration, dist_average, radius)
-                temp += potential * self.generator.uniform(0, 1, self.problem.n_dims) * ((atom.solution - pop[idx].solution) / (radius + eps))
+                temp += potential * self.generator.uniform(0, 1, self.problem.n_dims) * (
+                        (atom.solution - pop[idx].solution) / (radius + eps))
             temp = self.alpha * temp + self.beta * (g_best.solution - pop[idx].solution)
             # calculate acceleration
             acc = G * temp / pop[idx].mass

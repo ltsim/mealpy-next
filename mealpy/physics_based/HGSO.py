@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -53,7 +54,7 @@ class OriginalHGSO(Optimizer):
         super().__init__(**kwargs)
         self.epoch = self.validator.check_int("epoch", epoch, [1, 100000])
         self.pop_size = self.validator.check_int("pop_size", pop_size, [10, 10000])
-        self.n_clusters = self.validator.check_int("n_clusters", n_clusters, [2, int(self.pop_size/5)])
+        self.n_clusters = self.validator.check_int("n_clusters", n_clusters, [2, int(self.pop_size / 5)])
         self.set_parameters(["epoch", "pop_size", "n_clusters"])
         self.n_elements = int(self.pop_size / self.n_clusters)
         self.sort_flag = False
@@ -107,9 +108,12 @@ class OriginalHGSO(Optimizer):
                 ##### Based on Eq. 8, 9, 10
                 self.H_j = self.H_j * np.exp(-self.C_j * (1.0 / np.exp(-epoch / self.epoch) - 1.0 / self.T0))
                 S_ij = self.K * self.H_j * self.P_ij
-                gama = self.beta * np.exp(- ((self.p_best[idx].target.fitness + self.epsilon) / (self.pop_group[idx][jdx].target.fitness + self.epsilon)))
-                pos_new = self.pop_group[idx][jdx].solution + F * self.generator.uniform() * gama * (self.p_best[idx].solution - self.pop_group[idx][jdx].solution) + \
-                       F * self.generator.uniform() * self.alpha * (S_ij * self.g_best.solution - self.pop_group[idx][jdx].solution)
+                gama = self.beta * np.exp(- ((self.p_best[idx].target.fitness + self.epsilon) / (
+                        self.pop_group[idx][jdx].target.fitness + self.epsilon)))
+                pos_new = self.pop_group[idx][jdx].solution + F * self.generator.uniform() * gama * (
+                        self.p_best[idx].solution - self.pop_group[idx][jdx].solution) + \
+                          F * self.generator.uniform() * self.alpha * (
+                                  S_ij * self.g_best.solution - self.pop_group[idx][jdx].solution)
                 pos_new = self.correct_solution(pos_new)
                 agent = self.generate_empty_agent(pos_new)
                 pop_new.append(agent)

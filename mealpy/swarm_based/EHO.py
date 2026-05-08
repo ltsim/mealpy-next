@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -45,7 +46,8 @@ class OriginalEHO(Optimizer):
     In 2015 3rd international symposium on computational and business intelligence (ISCBI) (pp. 1-5). IEEE.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, alpha: float = 0.5, beta: float = 0.5, n_clans: int = 5, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, alpha: float = 0.5, beta: float = 0.5, n_clans: int = 5,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -59,7 +61,7 @@ class OriginalEHO(Optimizer):
         self.pop_size = self.validator.check_int("pop_size", pop_size, [5, 10000])
         self.alpha = self.validator.check_float("alpha", alpha, (0, 3.0))
         self.beta = self.validator.check_float("beta", beta, (0, 1.0))
-        self.n_clans = self.validator.check_int("n_clans", n_clans, [2, int(self.pop_size/5)])
+        self.n_clans = self.validator.check_int("n_clans", n_clans, [2, int(self.pop_size / 5)])
         self.set_parameters(["epoch", "pop_size", "alpha", "beta", "n_clans"])
         self.n_individuals = int(self.pop_size / self.n_clans)
         self.sort_flag = False

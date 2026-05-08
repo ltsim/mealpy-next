@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -47,7 +48,9 @@ class OriginalFOX(Optimizer):
     ~~~~~~~~~~
     [1] Mohammed, H., & Rashid, T. (2023). FOX: a FOX-inspired optimization algorithm. Applied Intelligence, 53(1), 1030-1050.
     """
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, c1: float = 0.18, c2: float = 0.82, **kwargs: object) -> None:
+
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, c1: float = 0.18, c2: float = 0.82,
+                 **kwargs: object) -> None:
         super().__init__(**kwargs)
         self.epoch = self.validator.check_int("epoch", epoch, [1, 100000])
         self.pop_size = self.validator.check_int("pop_size", pop_size, [5, 10000])
@@ -130,6 +133,7 @@ class DevFOX(Optimizer):
     ~~~~~~~~~~
     [1] Mohammed, H., & Rashid, T. (2023). FOX: a FOX-inspired optimization algorithm. Applied Intelligence, 53(1), 1030-1050.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, c1: float = 0.18, c2: float = 0.82,
                  pp=0.5, **kwargs: object) -> None:
         super().__init__(**kwargs)

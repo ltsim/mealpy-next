@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -68,7 +69,7 @@ class OriginalEAO(Optimizer):
             epoch: The current iteration
         """
         # Adaptation Factor - tăng dần theo thời gian
-        AF = np.sqrt(epoch/ self.epoch)
+        AF = np.sqrt(epoch / self.epoch)
 
         # Handle each enzyme
         for idx in range(self.pop_size):
@@ -84,14 +85,16 @@ class OriginalEAO(Optimizer):
             ## Candidate A: vector-valued random factors
             scA1 = self.ec + (1 - self.ec) * self.generator.random(size=self.problem.n_dims)
             exA = AF * (self.ec + (1 - self.ec) * self.generator.random(size=self.problem.n_dims))
-            posA = self.pop[idx].solution + scA1 * (self.pop[j1].solution - self.pop[j2].solution) + exA * (self.g_best.solution - self.pop[idx].solution)
+            posA = self.pop[idx].solution + scA1 * (self.pop[j1].solution - self.pop[j2].solution) + exA * (
+                    self.g_best.solution - self.pop[idx].solution)
             posA = self.correct_solution(posA)
             agentA = self.generate_agent(posA)
 
             ## Candidate B: scalar random factors
             scB1 = self.ec + (1 - self.ec) * self.generator.random()
             exB = AF * (self.ec + (1 - self.ec) * self.generator.random())
-            posB = self.pop[idx].solution + scB1 * (self.pop[j1].solution - self.pop[j2].solution) + exB * (self.g_best.solution - self.pop[idx].solution)
+            posB = self.pop[idx].solution + scB1 * (self.pop[j1].solution - self.pop[j2].solution) + exB * (
+                    self.g_best.solution - self.pop[idx].solution)
             posB = self.correct_solution(posB)
             agentB = self.generate_agent(posB)
 

@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -62,7 +63,7 @@ class ImprovedBSO(Optimizer):
         super().__init__(**kwargs)
         self.epoch = self.validator.check_int("epoch", epoch, [1, 100000])
         self.pop_size = self.validator.check_int("pop_size", pop_size, [10, 10000])
-        self.m_clusters = self.validator.check_int("m_clusters", m_clusters, [2, int(self.pop_size/5)])
+        self.m_clusters = self.validator.check_int("m_clusters", m_clusters, [2, int(self.pop_size / 5)])
         self.p1 = self.validator.check_float("p1", p1, (0, 1.0))
         self.p2 = self.validator.check_float("p2", p2, (0, 1.0))
         self.p3 = self.validator.check_float("p3", p3, (0, 1.0))
@@ -103,14 +104,16 @@ class ImprovedBSO(Optimizer):
 
             if self.generator.uniform() < self.p2:  # p_6b
                 if self.generator.uniform() < self.p3:
-                    pos_new = self.centers[cluster_id].solution + epsilon * self.generator.normal(0, 1, self.problem.n_dims)
+                    pos_new = self.centers[cluster_id].solution + epsilon * self.generator.normal(0, 1,
+                                                                                                  self.problem.n_dims)
                 else:  # 2. Using levy flight here
                     levy_step = self.get_levy_flight_step(beta=1.0, multiplier=0.001, size=self.problem.n_dims, case=-1)
                     pos_new = self.pop_group[cluster_id][location_id].solution + levy_step
             else:
                 id1, id2 = self.generator.choice(range(0, self.m_clusters), 2, replace=False)
                 if self.generator.uniform() < self.p4:
-                    pos_new = 0.5 * (self.centers[id1].solution + self.centers[id2].solution) + epsilon * self.generator.normal(0, 1, self.problem.n_dims)
+                    pos_new = 0.5 * (self.centers[id1].solution + self.centers[
+                        id2].solution) + epsilon * self.generator.normal(0, 1, self.problem.n_dims)
                 else:
                     rand_id1 = self.generator.integers(0, self.m_solution)
                     rand_id2 = self.generator.integers(0, self.m_solution)
@@ -121,11 +124,14 @@ class ImprovedBSO(Optimizer):
             pop_group[cluster_id][location_id] = agent
             if self.mode not in self.AVAILABLE_MODES:
                 agent.target = self.get_target(pos_new)
-                pop_group[cluster_id][location_id] = self.get_better_agent(agent, self.pop_group[cluster_id][location_id], self.problem.minmax)
+                pop_group[cluster_id][location_id] = self.get_better_agent(agent,
+                                                                           self.pop_group[cluster_id][location_id],
+                                                                           self.problem.minmax)
         if self.mode in self.AVAILABLE_MODES:
             for idx in range(0, self.m_clusters):
                 pop_group[idx] = self.update_target_for_population(pop_group[idx])
-                pop_group[idx] = self.greedy_selection_population(self.pop_group[idx], pop_group[idx], self.problem.minmax)
+                pop_group[idx] = self.greedy_selection_population(self.pop_group[idx], pop_group[idx],
+                                                                  self.problem.minmax)
 
         # Needed to update the centers and population
         self.centers = self.find_cluster__(pop_group)
@@ -216,14 +222,17 @@ class OriginalBSO(ImprovedBSO):
                 if self.generator.uniform() < self.p3:  # p_6i
                     cluster_id = self.generator.integers(0, self.m_clusters)
                 if self.generator.uniform() < self.p3:
-                    pos_new = self.centers[cluster_id].solution + epsilon * self.generator.normal(0, 1, self.problem.n_dims)
+                    pos_new = self.centers[cluster_id].solution + epsilon * self.generator.normal(0, 1,
+                                                                                                  self.problem.n_dims)
                 else:
                     rand_idx = self.generator.integers(0, self.m_solution)
-                    pos_new = self.pop_group[cluster_id][rand_idx].solution + self.generator.normal(0, 1, self.problem.n_dims)
+                    pos_new = self.pop_group[cluster_id][rand_idx].solution + self.generator.normal(0, 1,
+                                                                                                    self.problem.n_dims)
             else:
                 id1, id2 = self.generator.choice(range(0, self.m_clusters), 2, replace=False)
                 if self.generator.uniform() < self.p4:
-                    pos_new = 0.5 * (self.centers[id1].solution + self.centers[id2].solution) + epsilon * self.generator.normal(0, 1, self.problem.n_dims)
+                    pos_new = 0.5 * (self.centers[id1].solution + self.centers[
+                        id2].solution) + epsilon * self.generator.normal(0, 1, self.problem.n_dims)
                 else:
                     rand_id1 = self.generator.integers(0, self.m_solution)
                     rand_id2 = self.generator.integers(0, self.m_solution)
@@ -234,11 +243,14 @@ class OriginalBSO(ImprovedBSO):
             pop_group[cluster_id][location_id] = agent
             if self.mode not in self.AVAILABLE_MODES:
                 agent.target = self.get_target(pos_new)
-                pop_group[cluster_id][location_id] = self.get_better_agent(agent, self.pop_group[cluster_id][location_id], self.problem.minmax)
+                pop_group[cluster_id][location_id] = self.get_better_agent(agent,
+                                                                           self.pop_group[cluster_id][location_id],
+                                                                           self.problem.minmax)
         if self.mode in self.AVAILABLE_MODES:
             for idx in range(0, self.m_clusters):
                 pop_group[idx] = self.update_target_for_population(pop_group[idx])
-                pop_group[idx] = self.greedy_selection_population(self.pop_group[idx], pop_group[idx], self.problem.minmax)
+                pop_group[idx] = self.greedy_selection_population(self.pop_group[idx], pop_group[idx],
+                                                                  self.problem.minmax)
         # Needed to update the centers and population
         self.centers = self.find_cluster__(pop_group)
         self.pop = []

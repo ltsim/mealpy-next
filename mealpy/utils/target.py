@@ -4,8 +4,9 @@
 #       Github: https://github.com/thieu1995        %                         
 # --------------------------------------------------%
 
-from typing import Union, List, Tuple
 import numbers
+from typing import Union, List, Tuple
+
 import numpy as np
 
 

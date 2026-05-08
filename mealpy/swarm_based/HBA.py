@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -54,8 +55,8 @@ class OriginalHBA(Optimizer):
         self.sort_flag = False
 
     def initialize_variables(self):
-        self.beta = 6       # the ability of HB to get the food  Eq.(4)
-        self.C = 2          # constant in Eq. (3)
+        self.beta = 6  # the ability of HB to get the food  Eq.(4)
+        self.C = 2  # constant in Eq. (3)
 
     def get_intensity__(self, best, pop):
         size = len(pop)
@@ -78,8 +79,8 @@ class OriginalHBA(Optimizer):
             epoch (int): The current iteration
         """
         tt = self.epoch
-        alpha= self.C * np.exp(-tt/self.epoch)   # density factor in Eq. (3)
-        I = self.get_intensity__(self.g_best, self.pop)        # intensity in Eq. (2)
+        alpha = self.C * np.exp(-tt / self.epoch)  # density factor in Eq. (3)
+        I = self.get_intensity__(self.g_best, self.pop)  # intensity in Eq. (2)
         pop_new = []
         for idx in range(0, self.pop_size):
             r = self.generator.random()
@@ -90,7 +91,8 @@ class OriginalHBA(Optimizer):
             r5 = self.generator.random(self.problem.n_dims)
             r6 = self.generator.random(self.problem.n_dims)
             r7 = self.generator.random(self.problem.n_dims)
-            temp1 = self.g_best.solution + F * self.beta * I[idx] * self.g_best.solution + F*r3*alpha*di*np.abs(np.cos(2*np.pi*r4) * (1 - np.cos(2*np.pi*r5)))
+            temp1 = self.g_best.solution + F * self.beta * I[idx] * self.g_best.solution + F * r3 * alpha * di * np.abs(
+                np.cos(2 * np.pi * r4) * (1 - np.cos(2 * np.pi * r5)))
             temp2 = self.g_best.solution + F * r7 * alpha * di
             pos_new = np.where(r6 < 0.5, temp1, temp2)
             pos_new = self.correct_solution(pos_new)

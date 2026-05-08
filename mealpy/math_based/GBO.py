@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -42,7 +43,8 @@ class OriginalGBO(Optimizer):
     A new metaheuristic optimization algorithm. Information Sciences, 540, pp.131-159.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, pr: float = 0.5, beta_min: float = 0.2, beta_max: float = 1.2, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, pr: float = 0.5, beta_min: float = 0.2,
+                 beta_max: float = 1.2, **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -91,7 +93,8 @@ class OriginalGBO(Optimizer):
                 self.pop[idx].solution / (self.g_worst.solution - self.g_best.solution + epsilon)
             y_p = self.generator.random() * ((z + self.pop[idx].solution) / 2 + self.generator.random() * delta_x)
             y_q = self.generator.random() * ((z + self.pop[idx].solution) / 2 - self.generator.random() * delta_x)
-            x2 = self.g_best.solution - self.generator.normal() * p1 * 2 * delta_x * self.pop[idx].solution / (y_p - y_q + epsilon) + \
+            x2 = self.g_best.solution - self.generator.normal() * p1 * 2 * delta_x * self.pop[idx].solution / (
+                    y_p - y_q + epsilon) + \
                  self.generator.random() * p2 * (self.pop[r1].solution - self.pop[r2].solution)
 
             x3 = self.pop[idx].solution - p1 * (x2 - x1)

@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -67,7 +68,7 @@ class OriginalIWO(Optimizer):
         self.epoch = self.validator.check_int("epoch", epoch, [1, 100000])
         self.pop_size = self.validator.check_int("pop_size", pop_size, [5, 10000])
         self.seed_min = self.validator.check_int("seed_min", seed_min, [1, 3])
-        self.seed_max = self.validator.check_int("seed_max", seed_max, [4, int(self.pop_size/2)])
+        self.seed_max = self.validator.check_int("seed_max", seed_max, [4, int(self.pop_size / 2)])
         self.exponent = self.validator.check_int("exponent", exponent, [2, 4])
         self.sigma_start = self.validator.check_float("sigma_start", sigma_start, [0.5, 5.0])
         self.sigma_end = self.validator.check_float("sigma_end", sigma_end, (0, 0.5))
@@ -82,7 +83,7 @@ class OriginalIWO(Optimizer):
             epoch (int): The current iteration
         """
         # Update Standard Deviation
-        sigma = (1. - epoch/self.epoch) ** self.exponent * (self.sigma_start - self.sigma_end) + self.sigma_end
+        sigma = (1. - epoch / self.epoch) ** self.exponent * (self.sigma_start - self.sigma_end) + self.sigma_end
         pop, list_best, list_worst = self.get_special_agents(self.pop, n_best=1, n_worst=1, minmax=self.problem.minmax)
         best, worst = list_best[0], list_worst[0]
         pop_new = []

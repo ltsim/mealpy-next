@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -45,7 +46,8 @@ class OriginalSFO(Optimizer):
     algorithm for solving constrained engineering optimization problems. Engineering Applications of Artificial Intelligence, 80, pp.20-34.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, pp: float = 0.1, AP: float = 4.0, epsilon: float = 0.0001, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, pp: float = 0.1, AP: float = 4.0,
+                 epsilon: float = 0.0001, **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -66,9 +68,9 @@ class OriginalSFO(Optimizer):
 
     def initialization(self):
         if self.pop is None:
-            self.pop = self.generate_population(self.pop_size)      # pop = sailfish
+            self.pop = self.generate_population(self.pop_size)  # pop = sailfish
         self.s_pop = self.generate_population(self.s_size)
-        self.s_gbest = self.get_best_agent(self.s_pop, self.problem.minmax)          # s_pop = sardines
+        self.s_gbest = self.get_best_agent(self.s_pop, self.problem.minmax)  # s_pop = sardines
 
     def evolve(self, epoch):
         """
@@ -84,7 +86,8 @@ class OriginalSFO(Optimizer):
         for idx in range(0, self.pop_size):
             lamda_i = 2 * self.generator.uniform() * PD - PD
             pos_new = self.s_gbest.solution - lamda_i * \
-                (self.generator.uniform() * (self.pop[idx].solution + self.s_gbest.solution) / 2 - self.pop[idx].solution)
+                      (self.generator.uniform() * (self.pop[idx].solution + self.s_gbest.solution) / 2 - self.pop[
+                          idx].solution)
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)
@@ -106,7 +109,8 @@ class OriginalSFO(Optimizer):
                     #### Random self.generator.choice number of dimensions in sardines updated, remove third loop by numpy vector computation
                     pos_new = self.s_pop[idx].solution.copy()
                     list2 = self.generator.choice(range(0, self.problem.n_dims), beta, replace=False)
-                    pos_new[list2] = (self.generator.uniform(0, 1, self.problem.n_dims) * (self.s_gbest.solution - self.s_pop[idx].solution + AP))[list2]
+                    pos_new[list2] = (self.generator.uniform(0, 1, self.problem.n_dims) * (
+                            self.s_gbest.solution - self.s_pop[idx].solution + AP))[list2]
                     pos_new = self.correct_solution(pos_new)
                     agent = self.generate_empty_agent(pos_new)
                     if self.mode not in self.AVAILABLE_MODES:
@@ -173,6 +177,7 @@ class ImprovedSFO(Optimizer):
     >>> print(f"Solution: {g_best.solution}, Fitness: {g_best.target.fitness}")
     >>> print(f"Solution: {model.g_best.solution}, Fitness: {model.g_best.target.fitness}")
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, pp: float = 0.1, **kwargs: object) -> None:
         """
         Args:
@@ -208,7 +213,8 @@ class ImprovedSFO(Optimizer):
             PD = 1 - len(self.pop) / (len(self.pop) + len(self.s_pop))
             lamda_i = 2 * self.generator.uniform() * PD - PD
             pos_new = self.s_gbest.solution - \
-                lamda_i * (self.generator.uniform() * (self.g_best.solution + self.s_gbest.solution) / 2 - self.pop[idx].solution)
+                      lamda_i * (self.generator.uniform() * (self.g_best.solution + self.s_gbest.solution) / 2 -
+                                 self.pop[idx].solution)
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)
@@ -224,7 +230,8 @@ class ImprovedSFO(Optimizer):
         if AP < 0.5:
             for idx in range(0, len(self.s_pop)):
                 temp = (self.g_best.solution + AP) / 2
-                pos_new = self.problem.lb + self.problem.ub - temp + self.generator.uniform() * (temp - self.s_pop[idx].solution)
+                pos_new = self.problem.lb + self.problem.ub - temp + self.generator.uniform() * (
+                        temp - self.s_pop[idx].solution)
                 pos_new = self.correct_solution(pos_new)
                 agent = self.generate_empty_agent(pos_new)
                 if self.mode not in self.AVAILABLE_MODES:

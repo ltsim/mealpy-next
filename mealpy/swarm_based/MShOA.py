@@ -17,6 +17,7 @@
 # not inter-iteration change. PTI update happens AFTER strategy application.
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -98,7 +99,7 @@ class OriginalMShOA(Optimizer):
         self.k_value = self.validator.check_float("k_value", k_value, (0.0, 1.0))
         self.set_parameters(["epoch", "pop_size", "polarization_rate", "strike_factor", "k_value"])
         self.sort_flag = False
-        
+
         # PTI (Polarization Type Indicator) vector: one value per agent ∈ {1, 2, 3}
         # Initialized randomly according to Algorithm 1 in the paper
         # PTI = 1: Foraging/Navigation (vertical linear polarized light)
@@ -136,10 +137,10 @@ class OriginalMShOA(Optimizer):
         # Step 1: Extract current positions X_i(t) before strategy application
         pop_pos = np.array([agent.solution for agent in self.pop])  # X_i(t)
         g_best_pos = self.g_best.solution  # Shape: (n_dims,)
-        
+
         # Initialize position update matrix (will become X'_i(t) after strategies)
         pos_new = pop_pos.copy()
-        
+
         # Generate random indices for Strategy 1 (Foraging) - ensure r ≠ i
         random_indices = self.generator.integers(0, self.pop_size, self.pop_size)
         # Ensure r ≠ i: if random_indices[i] == i, replace with another random index (excluding i)
@@ -149,19 +150,19 @@ class OriginalMShOA(Optimizer):
                 candidates = list(range(0, idx)) + list(range(idx + 1, self.pop_size))
                 if len(candidates) > 0:
                     random_indices[idx] = self.generator.choice(candidates)
-        
+
         # Create masks for each strategy based on current PTI values
         mask_strategy1 = (self.pti == 1)  # Foraging/Navigation
         mask_strategy2 = (self.pti == 2)  # Attack/Strike
         mask_strategy3 = (self.pti == 3)  # Defense/Burrow
-        
+
         # Expand masks to match dimensions: (pop_size,) -> (pop_size, n_dims)
         mask_s1_expanded = mask_strategy1[:, np.newaxis]
         mask_s2_expanded = mask_strategy2[:, np.newaxis]
         mask_s3_expanded = mask_strategy3[:, np.newaxis]
-        
+
         # Step 2: Apply strategies based on PTI to generate X'_i(t)
-        
+
         # Strategy 1: Foraging/Navigation (PTI = 1) - Equation 12 (Langevin/Brownian)
         # x_i(t+1) = x_best - (x_i(t) - x_best) + D_i(x_r(t) - x_i(t))
         # where D_i: scalar diffusion coefficient per agent, sampled from U(-1, 1) as in Eq. 12
@@ -172,14 +173,14 @@ class OriginalMShOA(Optimizer):
         D = self.generator.uniform(-1.0, 1.0, size=(self.pop_size, 1))  # scalar diffusion coefficient per agent
         foraging_pos = g_best_pos - v + D * R_t  # D broadcasts to all dimensions
         pos_new = np.where(mask_s1_expanded, foraging_pos, pos_new)
-        
+
         # Strategy 2: Attack/Strike (PTI = 2) - Equation 14 (circular motion)
         # x_i(t+1) = x_best * cos(θ)
         # where θ ~ U(π, 2π)
         theta = self.generator.uniform(np.pi, 2 * np.pi, size=self.pop_size)[:, np.newaxis]
         strike_pos = g_best_pos * np.cos(theta)  # element-wise multiplication
         pos_new = np.where(mask_s2_expanded, strike_pos, pos_new)
-        
+
         # Strategy 3: Defense/Burrow/Shelter (PTI = 3) - Equation 15
         # Defense: x_i(t+1) = x_best + k * x_best
         # Shelter: x_i(t+1) = x_best - k * x_best
@@ -196,7 +197,7 @@ class OriginalMShOA(Optimizer):
                                g_best_pos + k * g_best_pos,  # defense
                                g_best_pos - k * g_best_pos)  # shelter
         pos_new = np.where(mask_s3_expanded, defense_pos, pos_new)
-        
+
         # Step 3: Calculate LPA from intra-iteration change (X_i(t) vs X'_i(t))
         # LPA_i = arccos((X_i(t) · X'_i(t)) / (||X_i(t)|| ||X'_i(t)||))
         # Normalize vectors for dot product calculation
@@ -205,12 +206,12 @@ class OriginalMShOA(Optimizer):
         dot_product = np.sum(pop_pos_norm * pos_new_norm, axis=1)
         dot_product = np.clip(dot_product, -1.0, 1.0)  # Ensure valid range for arccos
         lpa = np.arccos(dot_product)  # Left Polarization Angle ∈ [0, π]
-        
+
         # Step 4: Calculate RPA, LPT, RPT, LAD, RAD (Algorithm 1)
-        
+
         # Calculate Right Polarization Angle (RPA): RPA_i = rand * π (Eq. 4)
         rpa = self.generator.random(self.pop_size) * np.pi  # RPA ∈ [0, π]
-        
+
         # Determine Left Polarization Type (LPT) and Right Polarization Type (RPT) based on Eq. 5
         # Eq. 5 defines three types with π/8 intervals:
         # Type 1: 3π/8 ≤ açı ≤ 5π/8
@@ -220,25 +221,27 @@ class OriginalMShOA(Optimizer):
         pi_38 = 3 * np.pi / 8
         pi_58 = 5 * np.pi / 8
         pi_78 = 7 * np.pi / 8
-        
+
         # LPT determination from LPA (Eq. 5)
         lpt = np.where(
             (lpa >= pi_38) & (lpa <= pi_58), 1,  # Type 1: 3π/8 ≤ LPA ≤ 5π/8
             np.where(
-                ((lpa >= 0) & (lpa <= pi_8)) | ((lpa >= pi_78) & (lpa <= np.pi)), 2,  # Type 2: 0 ≤ LPA ≤ π/8 or 7π/8 ≤ LPA ≤ π
+                ((lpa >= 0) & (lpa <= pi_8)) | ((lpa >= pi_78) & (lpa <= np.pi)), 2,
+                # Type 2: 0 ≤ LPA ≤ π/8 or 7π/8 ≤ LPA ≤ π
                 3  # Type 3: π/8 < LPA < 3π/8 or 5π/8 < LPA < 7π/8
             )
         )
-        
+
         # RPT determination from RPA (Eq. 5)
         rpt = np.where(
             (rpa >= pi_38) & (rpa <= pi_58), 1,  # Type 1: 3π/8 ≤ RPA ≤ 5π/8
             np.where(
-                ((rpa >= 0) & (rpa <= pi_8)) | ((rpa >= pi_78) & (rpa <= np.pi)), 2,  # Type 2: 0 ≤ RPA ≤ π/8 or 7π/8 ≤ RPA ≤ π
+                ((rpa >= 0) & (rpa <= pi_8)) | ((rpa >= pi_78) & (rpa <= np.pi)), 2,
+                # Type 2: 0 ≤ RPA ≤ π/8 or 7π/8 ≤ RPA ≤ π
                 3  # Type 3: π/8 < RPA < 3π/8 or 5π/8 < RPA < 7π/8
             )
         )
-        
+
         # Calculate Left Angular Difference (LAD) and Right Angular Difference (RAD) (Eq. 6)
         # Eq. 6 defines piecewise calculation:
         # 0 ≤ açı ≤ π/8 → LAD/RAD = açı
@@ -246,7 +249,7 @@ class OriginalMShOA(Optimizer):
         # 3π/8 ≤ açı ≤ 5π/8 → LAD/RAD = |π/2 − açı|
         # π/8 < açı < 3π/8 → LAD/RAD = |π/4 − açı|
         # 5π/8 < açı < 7π/8 → LAD/RAD = |3π/4 − açı|
-        
+
         # LAD calculation from LPA (Eq. 6)
         lad = np.where(
             (lpa >= 0) & (lpa <= pi_8), lpa,  # 0 ≤ LPA ≤ π/8 → LAD = LPA
@@ -261,7 +264,7 @@ class OriginalMShOA(Optimizer):
                 )
             )
         )
-        
+
         # RAD calculation from RPA (Eq. 6)
         rad = np.where(
             (rpa >= 0) & (rpa <= pi_8), rpa,  # 0 ≤ RPA ≤ π/8 → RAD = RPA
@@ -276,7 +279,7 @@ class OriginalMShOA(Optimizer):
                 )
             )
         )
-        
+
         # Step 5: Update PTI according to Algorithm 1 (Eq. 7)
         # PTI_i = LPT_i if LAD_i < RAD_i else RPT_i
         # In case of equality, choose RPT (else branch)

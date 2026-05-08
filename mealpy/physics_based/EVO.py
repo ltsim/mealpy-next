@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -45,6 +46,7 @@ class OriginalEVO(Optimizer):
     [1] Azizi, M., Aickelin, U., A. Khorshidi, H., & Baghalzadeh Shishehgarkhaneh, M. (2023). Energy valley optimizer: a novel
     metaheuristic algorithm for global and engineering optimization. Scientific Reports, 13(1), 226.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -68,14 +70,15 @@ class OriginalEVO(Optimizer):
         for idx in range(0, self.pop_size):
             pos_list = np.array([agent.solution for agent in self.pop])
             fit_list = np.array([agent.target.fitness for agent in self.pop])
-            dis = np.sqrt(np.sum((self.pop[idx].solution - pos_list)**2, axis=1))
+            dis = np.sqrt(np.sum((self.pop[idx].solution - pos_list) ** 2, axis=1))
             idx_dis_sort = np.argsort(dis)
             CnPtIdx = self.generator.choice(list(set(range(2, self.pop_size)) - {idx}))
             x_team = pos_list[idx_dis_sort[1:CnPtIdx], :]
             x_avg_team = np.mean(x_team, axis=0)
             x_avg_pop = np.mean(pos_list, axis=0)
             eb = np.mean(fit_list)
-            sl = (fit_list[idx] - self.g_best.target.fitness) / (self.g_worst.target.fitness - self.g_best.target.fitness + self.EPSILON)
+            sl = (fit_list[idx] - self.g_best.target.fitness) / (
+                    self.g_worst.target.fitness - self.g_best.target.fitness + self.EPSILON)
 
             pos_new1 = self.pop[idx].solution.copy()
             pos_new2 = self.pop[idx].solution.copy()
@@ -101,7 +104,9 @@ class OriginalEVO(Optimizer):
                 pop_new.append(agent1)
                 pop_new.append(agent2)
             else:
-                pos_new = pos_new1 + self.generator.random() * sl * self.generator.uniform(self.problem.lb, self.problem.ub, self.problem.n_dims)
+                pos_new = pos_new1 + self.generator.random() * sl * self.generator.uniform(self.problem.lb,
+                                                                                           self.problem.ub,
+                                                                                           self.problem.n_dims)
                 pos_new = self.correct_solution(pos_new)
                 agent = self.generate_empty_agent(pos_new)
                 pop_new.append(agent)

@@ -5,8 +5,9 @@
 # --------------------------------------------------%
 
 import numpy as np
-from mealpy.optimizer import Optimizer
 from scipy.stats import cauchy
+
+from mealpy.optimizer import Optimizer
 
 
 class OriginalSHADE(Optimizer):
@@ -45,7 +46,8 @@ class OriginalSHADE(Optimizer):
     differential evolution. In 2013 IEEE congress on evolutionary computation (pp. 71-78). IEEE.
     """
 
-    def __init__(self, epoch: int = 750, pop_size: int = 100, miu_f: float = 0.5, miu_cr: float = 0.5, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 750, pop_size: int = 100, miu_f: float = 0.5, miu_cr: float = 0.5,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -201,7 +203,8 @@ class L_SHADE(Optimizer):
     linear population size reduction. In 2014 IEEE congress on evolutionary computation (CEC) (pp. 1658-1665). IEEE.
     """
 
-    def __init__(self, epoch: int = 750, pop_size: int = 100, miu_f: float = 0.5, miu_cr: float = 0.5, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 750, pop_size: int = 100, miu_f: float = 0.5, miu_cr: float = 0.5,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000

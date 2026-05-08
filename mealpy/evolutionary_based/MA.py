@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -67,7 +68,7 @@ class OriginalMA(Optimizer):
         self.pc = self.validator.check_float("pc", pc, (0, 1.0))
         self.pm = self.validator.check_float("pm", pm, (0, 1.0))
         self.p_local = self.validator.check_float("p_local", p_local, (0, 1.0))
-        self.max_local_gens = self.validator.check_int("max_local_gens", max_local_gens, [2, int(pop_size/2)])
+        self.max_local_gens = self.validator.check_int("max_local_gens", max_local_gens, [2, int(pop_size / 2)])
         self.bits_per_param = self.validator.check_int("bits_per_param", bits_per_param, [2, 32])
         self.set_parameters(["epoch", "pop_size", "pc", "pm", "p_local", "max_local_gens", "bits_per_param"])
         self.sort_flag = True
@@ -94,7 +95,9 @@ class OriginalMA(Optimizer):
         vector = np.ones(self.problem.n_dims)
         for idx in range(0, self.problem.n_dims):
             param = bitstring[idx * self.bits_per_param: (idx + 1) * self.bits_per_param]  # Select 16 bit every time
-            vector[idx] = self.problem.lb[idx] + ((self.problem.ub[idx] - self.problem.lb[idx]) / ((2.0 ** self.bits_per_param) - 1)) * int(param, 2)
+            vector[idx] = self.problem.lb[idx] + (
+                    (self.problem.ub[idx] - self.problem.lb[idx]) / ((2.0 ** self.bits_per_param) - 1)) * int(param,
+                                                                                                              2)
         return vector
 
     def crossover__(self, dad=None, mom=None):

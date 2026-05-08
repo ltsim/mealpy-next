@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -39,6 +40,7 @@ class OriginalWOA(Optimizer):
     ~~~~~~~~~~
     [1] Mirjalili, S. and Lewis, A., 2016. The whale optimization algorithm. Advances in engineering software, 95, pp.51-67.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -78,7 +80,7 @@ class OriginalWOA(Optimizer):
                         pos_new[jdx] = self.pop[id_r].solution[jdx] - A * D_X_rand
                     else:
                         D_Leader = abs(C * self.g_best.solution[jdx] - self.pop[idx].solution[jdx])
-                        pos_new[jdx] = self.g_best.solution[jdx]- A * D_Leader
+                        pos_new[jdx] = self.g_best.solution[jdx] - A * D_Leader
                 else:
                     D1 = abs(self.g_best.solution[jdx] - self.pop[idx].solution[jdx])
                     pos_new[jdx] = D1 * np.exp(b * l) * np.cos(l * 2 * np.pi) + self.g_best.solution[jdx]
@@ -122,6 +124,7 @@ class DevWOA(Optimizer):
     ~~~~~~~~~~
     [1] Mirjalili, S. and Lewis, A., 2016. The whale optimization algorithm. Advances in engineering software, 95, pp.51-67.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -212,6 +215,7 @@ class HI_WOA(Optimizer):
     [1] Tang, C., Sun, W., Wu, W. and Xue, M., 2019, July. A hybrid improved whale optimization algorithm.
     In 2019 IEEE 15th International Conference on Control and Automation (ICCA) (pp. 362-367). IEEE.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, feedback_max: int = 10, **kwargs: object) -> None:
         """
         Args:
@@ -222,7 +226,7 @@ class HI_WOA(Optimizer):
         super().__init__(**kwargs)
         self.epoch = self.validator.check_int("epoch", epoch, [1, 100000])
         self.pop_size = self.validator.check_int("pop_size", pop_size, [5, 10000])
-        self.feedback_max = self.validator.check_int("feedback_max", feedback_max, [2, 2+int(self.epoch/2)])
+        self.feedback_max = self.validator.check_int("feedback_max", feedback_max, [2, 2 + int(self.epoch / 2)])
         # The maximum of times g_best doesn't change -> need to change half of population
         self.set_parameters(["epoch", "pop_size", "feedback_max"])
         self.sort_flag = True

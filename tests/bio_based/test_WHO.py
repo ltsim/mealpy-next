@@ -25,7 +25,8 @@ def problem():
 
 def test_BaseWHO_results(problem):
     model = WHO.OriginalWHO(epoch=10, pop_size=50, n_explore_step=3, n_exploit_step=3, eta=0.15, p_hi=0.9,
-                            local_alpha=0.9, local_beta=0.3, global_alpha=0.2, global_beta=0.8, delta_w=2.0, delta_c=2.0)
+                            local_alpha=0.9, local_beta=0.3, global_alpha=0.2, global_beta=0.8, delta_w=2.0,
+                            delta_c=2.0)
     g_best = model.solve(problem)
     assert isinstance(model, Optimizer)
     assert isinstance(g_best.solution, np.ndarray)

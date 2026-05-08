@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -65,8 +66,10 @@ class DevSCA(Optimizer):
             r2 = 2 * np.pi * self.generator.uniform(0, 1, self.problem.n_dims)
             r3 = 2 * self.generator.uniform(0, 1, self.problem.n_dims)
             # Eq. 3.3, 3.1 and 3.2
-            pos_new1 = self.pop[idx].solution + r1 * np.sin(r2) * np.abs(r3 * self.g_best.solution - self.pop[idx].solution)
-            pos_new2 = self.pop[idx].solution + r1 * np.cos(r2) * np.abs(r3 * self.g_best.solution - self.pop[idx].solution)
+            pos_new1 = self.pop[idx].solution + r1 * np.sin(r2) * np.abs(
+                r3 * self.g_best.solution - self.pop[idx].solution)
+            pos_new2 = self.pop[idx].solution + r1 * np.cos(r2) * np.abs(
+                r3 * self.g_best.solution - self.pop[idx].solution)
             pos_new = np.where(self.generator.random(self.problem.n_dims) < 0.5, pos_new1, pos_new2)
             # Check the bound
             pos_new = self.correct_solution(pos_new)
@@ -145,9 +148,11 @@ class OriginalSCA(DevSCA):
                 r4 = self.generator.uniform()
                 # Eq. 3.3, 3.1 and 3.2
                 if r4 < 0.5:
-                    pos_new[jdx] = pos_new[jdx] + r1 * np.sin(r2) * np.abs(r3 * self.g_best.solution[jdx] - pos_new[jdx])
+                    pos_new[jdx] = pos_new[jdx] + r1 * np.sin(r2) * np.abs(
+                        r3 * self.g_best.solution[jdx] - pos_new[jdx])
                 else:
-                    pos_new[jdx] = pos_new[jdx] + r1 * np.cos(r2) * np.abs(r3 * self.g_best.solution[jdx] - pos_new[jdx])
+                    pos_new[jdx] = pos_new[jdx] + r1 * np.cos(r2) * np.abs(
+                        r3 * self.g_best.solution[jdx] - pos_new[jdx])
             # Check the bound
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
@@ -234,7 +239,8 @@ class QleSCA(DevSCA):
     algorithm (QLESCA). Expert Systems with Applications, 193, 116417.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, alpha: float = 0.1, gama: float = 0.9, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, alpha: float = 0.1, gama: float = 0.9,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -299,9 +305,11 @@ class QleSCA(DevSCA):
             r2 = 2 * np.pi * self.generator.uniform()
             r4 = self.generator.uniform()
             if r4 < 0.5:
-                pos_new = self.pop[idx].solution + r1 * np.sin(r2) * (r3 * self.g_best.solution - self.pop[idx].solution)
+                pos_new = self.pop[idx].solution + r1 * np.sin(r2) * (
+                        r3 * self.g_best.solution - self.pop[idx].solution)
             else:
-                pos_new = self.pop[idx].solution + r1 * np.cos(r2) * (r3 * self.g_best.solution - self.pop[idx].solution)
+                pos_new = self.pop[idx].solution + r1 * np.cos(r2) * (
+                        r3 * self.g_best.solution - self.pop[idx].solution)
             # Check the bound
             pos_new = self.correct_solution(pos_new)
             agent.solution = pos_new

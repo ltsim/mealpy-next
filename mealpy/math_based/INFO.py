@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -61,7 +62,7 @@ class OriginalINFO(Optimizer):
         Args:
             epoch (int): The current iteration
         """
-        alpha = 2 * np.exp(-4 * (epoch / self.epoch))      # Eqs.(5.1) - Eq.(9.1)
+        alpha = 2 * np.exp(-4 * (epoch / self.epoch))  # Eqs.(5.1) - Eq.(9.1)
         idx_better = self.generator.integers(2, 6)
         better = self.pop[idx_better]
         g_worst = self.pop[-1]
@@ -69,8 +70,8 @@ class OriginalINFO(Optimizer):
         pop_new = []
         for idx in range(0, self.pop_size):
             ## Updating rule stage
-            delta = 2 * self.generator.random() * alpha - alpha            # Eq. (5)
-            sigma = 2 * self.generator.random() * alpha - alpha            # Eq. (9)
+            delta = 2 * self.generator.random() * alpha - alpha  # Eq. (5)
+            sigma = 2 * self.generator.random() * alpha - alpha  # Eq. (9)
             ## Select three random solution
             a, b, c = self.generator.choice(range(0, self.pop_size), 3, replace=False)
             e1 = 1e-25
@@ -81,30 +82,30 @@ class OriginalINFO(Optimizer):
             omg1 = np.max([fit_a, fit_b, fit_c])
             MM1 = np.array([fit_a - fit_b, fit_a - fit_c, fit_b - fit_c])
 
-            w1 = np.cos(MM1[0] + np.pi) * np.exp(-np.abs(MM1[0] / omg1))       # Eq. (4.2)
-            w2 = np.cos(MM1[1] + np.pi) * np.exp(-np.abs(MM1[1] / omg1))       # Eq. (4.3)
-            w3 = np.cos(MM1[2] + np.pi) * np.exp(-np.abs(MM1[2] / omg1))       # Eq. (4.4)
+            w1 = np.cos(MM1[0] + np.pi) * np.exp(-np.abs(MM1[0] / omg1))  # Eq. (4.2)
+            w2 = np.cos(MM1[1] + np.pi) * np.exp(-np.abs(MM1[1] / omg1))  # Eq. (4.3)
+            w3 = np.cos(MM1[2] + np.pi) * np.exp(-np.abs(MM1[2] / omg1))  # Eq. (4.4)
             Wt1 = np.sum([w1, w2, w3])
-            WM1 = delta * (w1 * (self.pop[a].solution - self.pop[b].solution) +         #  Eq.(4.1)
-                w2 * (self.pop[a].solution - self.pop[c].solution) +
-                w3 * (self.pop[b].solution - self.pop[c].solution)) / (Wt1 + 1) + epsilon
+            WM1 = delta * (w1 * (self.pop[a].solution - self.pop[b].solution) +  # Eq.(4.1)
+                           w2 * (self.pop[a].solution - self.pop[c].solution) +
+                           w3 * (self.pop[b].solution - self.pop[c].solution)) / (Wt1 + 1) + epsilon
 
             fit_1 = self.g_best.target.fitness
             fit_2 = better.target.fitness
             fit_3 = g_worst.target.fitness
             omg2 = np.max([fit_1, fit_2, fit_3])
             MM2 = np.array([fit_1 - fit_2, fit_1 - fit_3, fit_2 - fit_3])
-            w4 = np.cos(MM2[0] + np.pi) * np.exp(-np.abs(MM2[0] / omg2))        # Eq. (4.7)
-            w5 = np.cos(MM2[1] + np.pi) * np.exp(-np.abs(MM2[1] / omg2))        # Eq. (4.8)
-            w6 = np.cos(MM2[2] + np.pi) * np.exp(-np.abs(MM2[2] / omg2))        # Eq. (4.9)
+            w4 = np.cos(MM2[0] + np.pi) * np.exp(-np.abs(MM2[0] / omg2))  # Eq. (4.7)
+            w5 = np.cos(MM2[1] + np.pi) * np.exp(-np.abs(MM2[1] / omg2))  # Eq. (4.8)
+            w6 = np.cos(MM2[2] + np.pi) * np.exp(-np.abs(MM2[2] / omg2))  # Eq. (4.9)
             Wt2 = np.sum([w4, w5, w6])
-            WM2 = delta * (w4 * (self.g_best.solution - better.solution) +          # Eq. (4.6)
+            WM2 = delta * (w4 * (self.g_best.solution - better.solution) +  # Eq. (4.6)
                            w5 * (self.g_best.solution - g_worst.solution) +
-                            w6 * (better.solution - g_worst.solution)) / (Wt2 + 1) + epsilon
+                           w6 * (better.solution - g_worst.solution)) / (Wt2 + 1) + epsilon
             ## Determine MeanRule
             r = self.generator.uniform(0.1, 0.5)
-            mean_rule = r * WM1 + (1 - r) * WM2         # Eq. (4)
-            if self.generator.random() < 0.5:                # Eq. (8)
+            mean_rule = r * WM1 + (1 - r) * WM2  # Eq. (4)
+            if self.generator.random() < 0.5:  # Eq. (8)
                 z1 = self.pop[idx].solution + sigma * (self.generator.random() * mean_rule) + self.generator.random() * \
                      (self.g_best.solution - self.pop[a].solution) / (fit_1 - fit_a + 1)
                 z2 = self.g_best.solution + sigma * (self.generator.random() * mean_rule) + self.generator.random() * \
@@ -116,25 +117,28 @@ class OriginalINFO(Optimizer):
                      (self.pop[a].solution - self.pop[b].solution) / (fit_a - fit_b + 1)
             ## Vector combining stage
             mu = 0.05 * self.generator.random(self.problem.n_dims)
-            u1 = z1 + mu * np.abs(z1 - z2)      # Eq. (10.1)
-            u2 = z2 + mu * np.abs(z1 - z2)      # Eq. (10.2)
+            u1 = z1 + mu * np.abs(z1 - z2)  # Eq. (10.1)
+            u2 = z2 + mu * np.abs(z1 - z2)  # Eq. (10.2)
             cond1 = self.generator.random(self.problem.n_dims) < 0.05
             cond2 = self.generator.random(self.problem.n_dims) < 0.05
             x1 = np.where(cond1, u1, u2)
-            pos_new = np.where(cond2, x1, self.pop[idx].solution)       # Eq. (10.3)
+            pos_new = np.where(cond2, x1, self.pop[idx].solution)  # Eq. (10.3)
             ## Local search stage
             if self.generator.random() < 0.5:
-                L = int(self.generator.random() < 0.5)     # 0 or 1
-                v1 = (1 - L) * 2 * self.generator.random() + L     # Eqs. (11.5)
-                v2 = self.generator.random() * L + (1 - L)         # Eq. (11.6)
-                x_avg = (self.pop[a].solution + self.pop[b].solution + self.pop[c].solution) / 3            # Eq. (11.4)
+                L = int(self.generator.random() < 0.5)  # 0 or 1
+                v1 = (1 - L) * 2 * self.generator.random() + L  # Eqs. (11.5)
+                v2 = self.generator.random() * L + (1 - L)  # Eq. (11.6)
+                x_avg = (self.pop[a].solution + self.pop[b].solution + self.pop[c].solution) / 3  # Eq. (11.4)
                 phi = self.generator.random()
-                x_rand = phi * x_avg + (1 - phi) * (phi * better.solution + (1 - phi) * self.g_best.solution)   # Eq. (11.3)
+                x_rand = phi * x_avg + (1 - phi) * (
+                        phi * better.solution + (1 - phi) * self.g_best.solution)  # Eq. (11.3)
                 n_rand = L * self.generator.random(self.problem.n_dims) + (1 - L) * self.generator.random()
-                if self.generator.random() < 0.5:          # Eq. (11.1)
-                    pos_new = self.g_best.solution + n_rand * (mean_rule + self.generator.random() * (self.g_best.solution - self.pop[a].solution))
-                else:                               # Eq. (11.2)
-                    pos_new = x_rand + n_rand * (mean_rule + self.generator.random() * (v1 * self.g_best.solution - v2 * x_rand))
+                if self.generator.random() < 0.5:  # Eq. (11.1)
+                    pos_new = self.g_best.solution + n_rand * (
+                            mean_rule + self.generator.random() * (self.g_best.solution - self.pop[a].solution))
+                else:  # Eq. (11.2)
+                    pos_new = x_rand + n_rand * (
+                            mean_rule + self.generator.random() * (v1 * self.g_best.solution - v2 * x_rand))
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)

@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -58,20 +59,20 @@ class DevSOA(Optimizer):
         Args:
             epoch (int): The current iteration
         """
-        A = self.fc - epoch*self.fc / self.epoch    # Eq. 6
+        A = self.fc - epoch * self.fc / self.epoch  # Eq. 6
         uu = vv = 1
         pop_new = []
         for idx in range(0, self.pop_size):
-            B = 2 * A**2 * self.generator.random()                          # Eq. 8
-            M = B * (self.g_best.solution - self.pop[idx].solution)         # Eq. 7
-            C = A * self.pop[idx].solution                                  # Eq. 5
-            D = np.abs(C + M)                                               # Eq. 9
-            k = self.generator.uniform(0, 2*np.pi)
-            r = uu * np.exp(k*vv)
+            B = 2 * A ** 2 * self.generator.random()  # Eq. 8
+            M = B * (self.g_best.solution - self.pop[idx].solution)  # Eq. 7
+            C = A * self.pop[idx].solution  # Eq. 5
+            D = np.abs(C + M)  # Eq. 9
+            k = self.generator.uniform(0, 2 * np.pi)
+            r = uu * np.exp(k * vv)
             xx = r * np.cos(k)
             yy = r * np.sin(k)
             zz = r * k
-            pos_new = xx * yy * zz * D + self.generator.normal(0, 1) * self.g_best.solution                 # Eq. 14
+            pos_new = xx * yy * zz * D + self.generator.normal(0, 1) * self.g_best.solution  # Eq. 14
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)
@@ -133,20 +134,20 @@ class OriginalSOA(Optimizer):
         Args:
             epoch (int): The current iteration
         """
-        A = self.fc - epoch*self.fc / self.epoch    # Eq. 6
+        A = self.fc - epoch * self.fc / self.epoch  # Eq. 6
         uu = vv = 1
         pop_new = []
         for idx in range(0, self.pop_size):
-            B = 2 * A**2 * self.generator.random()                      # Eq. 8
-            M = B * (self.g_best.solution - self.pop[idx].solution)     # Eq. 7
-            C = A * self.pop[idx].solution                              # Eq. 5
-            D = np.abs(C + M)                                           # Eq. 9
-            k = self.generator.uniform(0, 2*np.pi)
-            r = uu * np.exp(k*vv)
+            B = 2 * A ** 2 * self.generator.random()  # Eq. 8
+            M = B * (self.g_best.solution - self.pop[idx].solution)  # Eq. 7
+            C = A * self.pop[idx].solution  # Eq. 5
+            D = np.abs(C + M)  # Eq. 9
+            k = self.generator.uniform(0, 2 * np.pi)
+            r = uu * np.exp(k * vv)
             xx = r * np.cos(k)
             yy = r * np.sin(k)
             zz = r * k
-            pos_new = xx * yy * zz * D + self.g_best.solution           # Eq. 14
+            pos_new = xx * yy * zz * D + self.g_best.solution  # Eq. 14
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)

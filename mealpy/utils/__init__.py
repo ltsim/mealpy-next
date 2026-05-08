@@ -4,12 +4,12 @@
 #       Github: https://github.com/thieu1995        %
 # --------------------------------------------------%
 
-from . import history
-from . import problem
-from . import termination
-from . import visualize
-from . import validator
-from . import io
-from . import logger
 from . import chaotic
 from . import fuzzy
+from . import history
+from . import io
+from . import logger
+from . import problem
+from . import termination
+from . import validator
+from . import visualize

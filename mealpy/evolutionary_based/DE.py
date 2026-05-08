@@ -5,8 +5,9 @@
 # --------------------------------------------------%
 
 import numpy as np
-from mealpy.optimizer import Optimizer
 from scipy.stats import cauchy
+
+from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
 
@@ -53,7 +54,8 @@ class OriginalDE(Optimizer):
     LSHADE algorithms for global numerical optimization. Swarm and Evolutionary Computation, 50, p.100455.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, wf: float = 0.1, cr: float = 0.9, strategy: int = 0, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, wf: float = 0.1, cr: float = 0.9, strategy: int = 0,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -88,7 +90,8 @@ class OriginalDE(Optimizer):
             # Choose 3 random element and different to i
             for idx in range(0, self.pop_size):
                 idx_list = self.generator.choice(list(set(range(0, self.pop_size)) - {idx}), 3, replace=False)
-                pos_new = self.pop[idx_list[0]].solution + self.wf * (self.pop[idx_list[1]].solution - self.pop[idx_list[2]].solution)
+                pos_new = self.pop[idx_list[0]].solution + self.wf * (
+                        self.pop[idx_list[1]].solution - self.pop[idx_list[2]].solution)
                 pos_new = self.mutation__(self.pop[idx].solution, pos_new)
                 agent = self.generate_empty_agent(pos_new)
                 pop.append(agent)
@@ -98,7 +101,8 @@ class OriginalDE(Optimizer):
         elif self.strategy == 1:
             for idx in range(0, self.pop_size):
                 idx_list = self.generator.choice(list(set(range(0, self.pop_size)) - {idx}), 2, replace=False)
-                pos_new = self.g_best.solution + self.wf * (self.pop[idx_list[0]].solution - self.pop[idx_list[1]].solution)
+                pos_new = self.g_best.solution + self.wf * (
+                        self.pop[idx_list[0]].solution - self.pop[idx_list[1]].solution)
                 pos_new = self.mutation__(self.pop[idx].solution, pos_new)
                 agent = self.generate_empty_agent(pos_new)
                 pop.append(agent)
@@ -108,7 +112,8 @@ class OriginalDE(Optimizer):
         elif self.strategy == 2:
             for idx in range(0, self.pop_size):
                 idx_list = self.generator.choice(list(set(range(0, self.pop_size)) - {idx}), 4, replace=False)
-                pos_new = self.g_best.solution + self.wf * (self.pop[idx_list[0]].solution - self.pop[idx_list[1]].solution) + \
+                pos_new = self.g_best.solution + self.wf * (
+                        self.pop[idx_list[0]].solution - self.pop[idx_list[1]].solution) + \
                           self.wf * (self.pop[idx_list[2]].solution - self.pop[idx_list[3]].solution)
                 pos_new = self.mutation__(self.pop[idx].solution, pos_new)
                 agent = self.generate_empty_agent(pos_new)
@@ -119,7 +124,8 @@ class OriginalDE(Optimizer):
         elif self.strategy == 3:
             for idx in range(0, self.pop_size):
                 idx_list = self.generator.choice(list(set(range(0, self.pop_size)) - {idx}), 5, replace=False)
-                pos_new = self.pop[idx_list[0]].solution + self.wf * (self.pop[idx_list[1]].solution - self.pop[idx_list[2]].solution) + \
+                pos_new = self.pop[idx_list[0]].solution + self.wf * (
+                        self.pop[idx_list[1]].solution - self.pop[idx_list[2]].solution) + \
                           self.wf * (self.pop[idx_list[3]].solution - self.pop[idx_list[4]].solution)
                 pos_new = self.mutation__(self.pop[idx].solution, pos_new)
                 agent = self.generate_empty_agent(pos_new)
@@ -408,7 +414,8 @@ class SADE(Optimizer):
             self.crm = np.mean(self.dyn_list_cr)
             self.dyn_list_cr = list()
         if epoch / self.loop_probability == 0:
-            self.p1 = self.ns1 * (self.ns2 + self.nf2) / (self.ns2 * (self.ns1 + self.nf1) + self.ns1 * (self.ns2 + self.nf2))
+            self.p1 = self.ns1 * (self.ns2 + self.nf2) / (
+                    self.ns2 * (self.ns1 + self.nf1) + self.ns1 * (self.ns2 + self.nf2))
             self.ns1 = self.ns2 = self.nf1 = self.nf2 = 0
 
 
@@ -495,13 +502,17 @@ class SAP_DE(Optimizer):
             self.F = self.generator.normal(0, 1)
             ## Crossover
             if self.generator.uniform(0, 1) < self.pop[idx].crossover or idx == j:
-                pos_new = self.pop[idxs[0]].solution + self.F * (self.pop[idxs[1]].solution - self.pop[idxs[2]].solution)
-                cr_new = self.pop[idxs[0]].crossover + self.F * (self.pop[idxs[1]].crossover - self.pop[idxs[2]].crossover)
+                pos_new = self.pop[idxs[0]].solution + self.F * (
+                        self.pop[idxs[1]].solution - self.pop[idxs[2]].solution)
+                cr_new = self.pop[idxs[0]].crossover + self.F * (
+                        self.pop[idxs[1]].crossover - self.pop[idxs[2]].crossover)
                 mr_new = self.pop[idxs[0]].mutation + self.F * (self.pop[idxs[1]].mutation - self.pop[idxs[2]].mutation)
                 if self.branch == "ABS":
-                    ps_new = self.pop[idxs[0]].pop_size + int(self.F * (self.pop[idxs[1]].pop_size - self.pop[idxs[2]].pop_size))
+                    ps_new = self.pop[idxs[0]].pop_size + int(
+                        self.F * (self.pop[idxs[1]].pop_size - self.pop[idxs[2]].pop_size))
                 else:  # elif self.branch == "REL":
-                    ps_new = self.pop[idxs[0]].pop_size + self.F * (self.pop[idxs[1]].pop_size - self.pop[idxs[2]].pop_size)
+                    ps_new = self.pop[idxs[0]].pop_size + self.F * (
+                            self.pop[idxs[1]].pop_size - self.pop[idxs[2]].pop_size)
                 pos_new = self.correct_solution(pos_new)
                 cr_new = self.edit_to_range__(cr_new, 0, 1, self.generator.random)
                 mr_new = self.edit_to_range__(mr_new, 0, 1, self.generator.random)

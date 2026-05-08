@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -86,8 +87,8 @@ class DevSMO(Optimizer):
         max_possible_groups = self.pop_size // 3
         self.num_groups = min(self.max_groups, max_possible_groups)
         self.group_size = -(-self.pop_size // self.num_groups)
-        self.LLL = self.epoch // 10        # local_leader_limit
-        self.GLL = self.epoch // 20      # global_leader_limit
+        self.LLL = self.epoch // 10  # local_leader_limit
+        self.GLL = self.epoch // 20  # global_leader_limit
 
         # Counters
         self.local_limit_counts = [0] * self.num_groups
@@ -99,19 +100,22 @@ class DevSMO(Optimizer):
         # Split groups
         self.groups = self.split_fill_by_group(self.pop, self.num_groups)
         # Get local leaders
-        self.local_leaders = [self.get_sorted_population(group, self.problem.minmax, return_index=False)[0] for group in self.groups]
+        self.local_leaders = [self.get_sorted_population(group, self.problem.minmax, return_index=False)[0] for group in
+                              self.groups]
 
     def local_leader_phase(self):
         """Local Leader Phase - all monkeys update based on local leader"""
         for group_idx, group in enumerate(self.groups):
             n_items = len(group)
             for idx in range(n_items):
-                list_rand = self.generator.choice(list(set(range(n_items)) - {idx}), size=self.problem.n_dims, replace=True)
+                list_rand = self.generator.choice(list(set(range(n_items)) - {idx}), size=self.problem.n_dims,
+                                                  replace=True)
                 vector = np.array([group[jdx].solution[kdx] for kdx, jdx in enumerate(list_rand)])
                 pos_new = group[idx].solution + self.generator.uniform(0, 1, self.problem.n_dims) * \
                           (self.local_leaders[group_idx].solution - group[idx].solution) + \
                           self.generator.uniform(-1, 1, self.problem.n_dims) * (vector - group[idx].solution)
-                pos_new = np.where(self.generator.uniform(0, 1, self.problem.n_dims) >= self.perturbation_rate, pos_new, group[idx].solution)
+                pos_new = np.where(self.generator.uniform(0, 1, self.problem.n_dims) >= self.perturbation_rate, pos_new,
+                                   group[idx].solution)
                 pos_new = self.correct_solution(pos_new)
                 agent = self.generate_agent(pos_new)
                 if self.compare_target(agent.target, group[idx].target, self.problem.minmax):
@@ -143,8 +147,9 @@ class DevSMO(Optimizer):
                         jdx = self.generator.choice(list(set(range(self.group_size)) - {idx}))
                         pos_new = agent.solution.copy()
                         # Update using equation (4)
-                        pos_new[k] = pos_new[k] + self.generator.uniform(0, 1) * (self.g_best.solution[k] - pos_new[k]) +\
-                                    self.generator.uniform(-1, 1) * (group[jdx].solution[k] - pos_new[k])
+                        pos_new[k] = pos_new[k] + self.generator.uniform(0, 1) * (
+                                self.g_best.solution[k] - pos_new[k]) + \
+                                     self.generator.uniform(-1, 1) * (group[jdx].solution[k] - pos_new[k])
                         # Apply bounds
                         pos_new = self.correct_solution(pos_new)
                         agent = self.generate_agent(pos_new)
@@ -154,10 +159,12 @@ class DevSMO(Optimizer):
 
     def local_leader_decision_phase(self):
         """Local Leader Decision Phase - handle stagnated local leaders"""
-        local_leaders_new = [self.get_sorted_population(group, self.problem.minmax, return_index=False)[0] for group in self.groups]
+        local_leaders_new = [self.get_sorted_population(group, self.problem.minmax, return_index=False)[0] for group in
+                             self.groups]
         for group_idx, group in enumerate(self.groups):
             # Update local limit count
-            if self.compare_target(self.local_leaders[group_idx].target, local_leaders_new[group_idx].target, self.problem.minmax):
+            if self.compare_target(self.local_leaders[group_idx].target, local_leaders_new[group_idx].target,
+                                   self.problem.minmax):
                 self.local_limit_counts[group_idx] += 1
             else:
                 self.local_limit_counts[group_idx] = 0
@@ -171,9 +178,12 @@ class DevSMO(Optimizer):
                     # Random initialization
                     pos_new_01 = self.generator.uniform(self.problem.lb, self.problem.ub, self.problem.n_dims)
                     # Update using equation (5)
-                    pos_new_02 = agent.solution + self.generator.uniform(0, 1, self.problem.n_dims) * (self.g_best.solution - agent.solution) + \
-                                  self.generator.uniform(0, 1, self.problem.n_dims) * (agent.solution - self.local_leaders[group_idx].solution)
-                    pos_new = np.where(self.generator.uniform(0, 1, self.problem.n_dims) >= self.perturbation_rate, pos_new_01, pos_new_02)
+                    pos_new_02 = agent.solution + self.generator.uniform(0, 1, self.problem.n_dims) * (
+                            self.g_best.solution - agent.solution) + \
+                                 self.generator.uniform(0, 1, self.problem.n_dims) * (
+                                         agent.solution - self.local_leaders[group_idx].solution)
+                    pos_new = np.where(self.generator.uniform(0, 1, self.problem.n_dims) >= self.perturbation_rate,
+                                       pos_new_01, pos_new_02)
                     # Apply bounds
                     pos_new = self.correct_solution(pos_new)
                     agent = self.generate_agent(pos_new)
@@ -194,7 +204,8 @@ class DevSMO(Optimizer):
                 self.pop = self.merge_groups(self.groups)
             # Update local leaders after fission/fusion
             self.local_limit_counts = [0] * self.num_groups
-            self.local_leaders = [self.get_sorted_population(group, self.problem.minmax, return_index=False)[0] for group in self.groups]
+            self.local_leaders = [self.get_sorted_population(group, self.problem.minmax, return_index=False)[0] for
+                                  group in self.groups]
 
     def update_leaders(self):
         self.pop = self.merge_groups(self.groups)
@@ -214,7 +225,6 @@ class DevSMO(Optimizer):
         Args:
             epoch (int): The current iteration
         """
-
 
         self.local_leader_phase()
         self.global_leader_phase()

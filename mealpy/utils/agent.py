@@ -5,7 +5,9 @@
 # --------------------------------------------------%
 
 from typing import Any
+
 import numpy as np
+
 from mealpy.utils.target import Target
 
 
@@ -96,7 +98,7 @@ class Agent:
         """
         return self._compare_fitness(other, minmax) == -1
 
-    def __repr__(self):     # represent
+    def __repr__(self):  # represent
         return f"id: {self.id}, target: {self.target}, solution: {self.solution}"
 
     def __eq__(self, other):

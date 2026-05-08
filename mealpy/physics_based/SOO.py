@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -81,7 +82,7 @@ class OriginalSOO(Optimizer):
         caf = 2 * np.pi / (self.initial_period + 0.001 * epoch)
 
         # Update scaling factor
-        scaler = 2 * (1.0 -  epoch / self.epoch)
+        scaler = 2 * (1.0 - epoch / self.epoch)
 
         # Update positions of star oscillators
         pop_new = []
@@ -91,9 +92,11 @@ class OriginalSOO(Optimizer):
             r3 = self.generator.random(size=self.problem.n_dims)
 
             # Calculate oscillation positions
-            osc1 = scaler * (caf * r1 - 1) *  (self.pop[idx].solution - np.abs(r1 * np.sin(r2) * np.abs(r3 * self.g_best.solution)))
+            osc1 = scaler * (caf * r1 - 1) * (
+                    self.pop[idx].solution - np.abs(r1 * np.sin(r2) * np.abs(r3 * self.g_best.solution)))
             osc1_pos = self.g_best.solution - r1 * r3 * osc1
-            osc2 = scaler * (caf * r1 - 1) * (self.pop[idx].solution - np.abs(r1 * np.cos(r2) * np.abs(r3 * self.g_best.solution)))
+            osc2 = scaler * (caf * r1 - 1) * (
+                    self.pop[idx].solution - np.abs(r1 * np.cos(r2) * np.abs(r3 * self.g_best.solution)))
             osc2_pos = self.g_best.solution - r2 * r3 * osc2
             pos_new = r3 * (osc1_pos + osc2_pos) / 2
             pos_new = self.correct_solution(pos_new)

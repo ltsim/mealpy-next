@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -118,7 +119,8 @@ class OriginalHCO(Optimizer):
         for idx in range(0, self.pop_size):
             a1 = self.pop_p[idx].solution - self.pop[idx].solution
             a2 = self.g_best.solution - self.pop[idx].solution
-            self.vec[idx] = self.wfv * (VV[idx] + self.vec[idx]) + self.c1 * a1*np.sin(2*np.pi*epoch/self.epoch) + self.c2*a2*np.sin(2*np.pi*epoch/self.epoch)
+            self.vec[idx] = self.wfv * (VV[idx] + self.vec[idx]) + self.c1 * a1 * np.sin(
+                2 * np.pi * epoch / self.epoch) + self.c2 * a2 * np.sin(2 * np.pi * epoch / self.epoch)
             pos_new = self.pop[idx].solution + self.vec[idx]
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)

@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -46,6 +47,7 @@ class OriginalZOA(Optimizer):
     [1] Trojovská, E., Dehghani, M., & Trojovský, P. (2022). Zebra optimization algorithm: A new bio-inspired
     optimization algorithm for solving optimization algorithm. IEEE Access, 10, 49445-49473.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -69,7 +71,8 @@ class OriginalZOA(Optimizer):
         pop_new = []
         for idx in range(0, self.pop_size):
             r1 = np.round(1 + self.generator.random())
-            pos_new = self.pop[idx].solution + self.generator.random(self.problem.n_dims) * (self.g_best.solution - r1 * self.pop[idx].solution)   # Eq. 3
+            pos_new = self.pop[idx].solution + self.generator.random(self.problem.n_dims) * (
+                    self.g_best.solution - r1 * self.pop[idx].solution)  # Eq. 3
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)
@@ -87,11 +90,13 @@ class OriginalZOA(Optimizer):
             if self.generator.random() < 0.5:
                 # S1: the lion attacks the zebra and thus the zebra chooses an escape strategy
                 r2 = 0.1
-                pos_new = self.pop[idx].solution + r2 * (2 + self.generator.random(self.problem.n_dims) - 1) * (1 - epoch/self.epoch)*self.pop[idx].solution
+                pos_new = self.pop[idx].solution + r2 * (2 + self.generator.random(self.problem.n_dims) - 1) * (
+                        1 - epoch / self.epoch) * self.pop[idx].solution
             else:
                 # S2: other predators attack the zebra and the zebra will choose the offensive strategy
                 r2 = self.generator.integers(1, 3)
-                pos_new = self.pop[idx].solution + self.generator.random(self.problem.n_dims) * (self.pop[kk].solution - r2 * self.pop[idx].solution)
+                pos_new = self.pop[idx].solution + self.generator.random(self.problem.n_dims) * (
+                        self.pop[kk].solution - r2 * self.pop[idx].solution)
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)

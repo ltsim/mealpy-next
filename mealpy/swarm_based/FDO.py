@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -43,6 +44,7 @@ class OriginalFDO(Optimizer):
     [1] Abdullah, J. M., & Ahmed, T. (2019).
     Fitness dependent optimizer: inspired by the bee swarming reproductive process. IEEe Access, 7, 43473-43486.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, weight_factor=0.1, **kwargs: object) -> None:
         """
         Args:

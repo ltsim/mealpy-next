@@ -44,6 +44,7 @@ class OriginalCoatiOA(Optimizer):
     [1] Dehghani, M., Montazeri, Z., Trojovská, E., & Trojovský, P. (2023). Coati Optimization Algorithm: A new
     bio-inspired metaheuristic algorithm for solving optimization problems. Knowledge-Based Systems, 259, 110011.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -65,9 +66,10 @@ class OriginalCoatiOA(Optimizer):
             epoch (int): The current iteration
         """
         # Phase1: Hunting and attacking strategy on iguana (Exploration Phase)
-        size2 = int(self.pop_size/2)
+        size2 = int(self.pop_size / 2)
         for idx in range(0, size2):
-            pos_new = self.pop[idx].solution + self.generator.random() * (self.g_best.solution - self.generator.integers(1, 3) * self.pop[idx].solution) # Eq. 4
+            pos_new = self.pop[idx].solution + self.generator.random() * (
+                    self.g_best.solution - self.generator.integers(1, 3) * self.pop[idx].solution)  # Eq. 4
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_agent(pos_new)
             if self.compare_target(agent.target, self.pop[idx].target, self.problem.minmax):
@@ -76,9 +78,11 @@ class OriginalCoatiOA(Optimizer):
         for idx in range(size2, self.pop_size):
             iguana = self.generate_agent()
             if self.compare_target(iguana.target, self.pop[idx].target, self.problem.minmax):
-                pos_new = self.pop[idx].solution + self.generator.random() * (iguana.solution - self.generator.integers(1, 3) * self.pop[idx].solution)  # Eq. 6
+                pos_new = self.pop[idx].solution + self.generator.random() * (
+                        iguana.solution - self.generator.integers(1, 3) * self.pop[idx].solution)  # Eq. 6
             else:
-                pos_new = self.pop[idx].solution + self.generator.random() * (self.pop[idx].solution - iguana.solution)  # Eq. 6
+                pos_new = self.pop[idx].solution + self.generator.random() * (
+                        self.pop[idx].solution - iguana.solution)  # Eq. 6
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_agent(pos_new)
             if self.compare_target(agent.target, self.pop[idx].target, self.problem.minmax):
@@ -87,7 +91,8 @@ class OriginalCoatiOA(Optimizer):
         # Phase2: The process of escaping from predators (Exploitation Phase)
         for idx in range(0, self.pop_size):
             LO, HI = self.problem.lb / epoch, self.problem.ub / epoch
-            pos_new = self.pop[idx].solution + (1 - 2 * self.generator.random()) * (LO + self.generator.random() * (HI - LO))     # Eq. 8
+            pos_new = self.pop[idx].solution + (1 - 2 * self.generator.random()) * (
+                    LO + self.generator.random() * (HI - LO))  # Eq. 8
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_agent(pos_new)
             if self.compare_target(agent.target, self.pop[idx].target, self.problem.minmax):

@@ -6,6 +6,7 @@
 
 import numpy as np
 from scipy.spatial.distance import cdist
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -105,7 +106,9 @@ class DevBRO(Optimizer):
                 ## Update Loser
                 if self.pop[jdx].damage < self.threshold:  ## If loser not dead yet, move it based on general
                     pos_new = self.generator.uniform() * (np.maximum(self.pop[jdx].solution, self.g_best.solution) -
-                            np.minimum(self.pop[jdx].solution, self.g_best.solution)) + np.maximum(self.pop[jdx].solution, self.g_best.solution)
+                                                          np.minimum(self.pop[jdx].solution,
+                                                                     self.g_best.solution)) + np.maximum(
+                        self.pop[jdx].solution, self.g_best.solution)
                     dam_new = self.pop[jdx].damage + 1
                     self.pop[jdx].target = self.get_target(self.pop[jdx].solution)
                 else:  ## Loser dead and respawn again
@@ -119,7 +122,8 @@ class DevBRO(Optimizer):
                 ## Update Loser by following position of Winner
                 self.pop[idx] = self.pop[jdx].copy()
                 ## Update Winner by following position of General to protect the King and General
-                pos_new = self.pop[jdx].solution + self.generator.uniform() * (self.g_best.solution - self.pop[jdx].solution)
+                pos_new = self.pop[jdx].solution + self.generator.uniform() * (
+                        self.g_best.solution - self.pop[jdx].solution)
                 pos_new = self.correct_solution(pos_new)
                 agent = self.generate_agent(pos_new)
                 agent.damage = 0
@@ -193,8 +197,10 @@ class OriginalBRO(DevBRO):
             if self.compare_target(self.pop[idx].target, self.pop[jdx].target, self.problem.minmax):
                 dam, vic = jdx, idx  ## The mistake also here in the paper.
             if self.pop[dam].damage < self.threshold:
-                pos_new = self.generator.uniform(0, 1, self.problem.n_dims) * (np.maximum(self.pop[dam].solution, self.g_best.solution) -
-                        np.minimum(self.pop[dam].solution, self.g_best.solution)) + np.maximum(self.pop[dam].solution, self.g_best.solution)
+                pos_new = self.generator.uniform(0, 1, self.problem.n_dims) * (
+                        np.maximum(self.pop[dam].solution, self.g_best.solution) -
+                        np.minimum(self.pop[dam].solution, self.g_best.solution)) + np.maximum(
+                    self.pop[dam].solution, self.g_best.solution)
                 pos_new = self.correct_solution(pos_new)
                 agent = self.generate_agent(pos_new)
                 agent.damage = self.pop[dam].damage + 1

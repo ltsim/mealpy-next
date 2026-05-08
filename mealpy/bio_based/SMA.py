@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -87,7 +88,8 @@ class DevSMA(Optimizer):
                 vc = self.generator.uniform(-b, b, self.problem.n_dims)
                 # two positions randomly selected from population, apply for the whole problem size instead of 1 variable
                 id_a, id_b = self.generator.choice(list(set(range(0, self.pop_size)) - {idx}), 2, replace=False)
-                pos_1 = self.g_best.solution + vb * (self.weights[idx] * self.pop[id_a].solution - self.pop[id_b].solution)
+                pos_1 = self.g_best.solution + vb * (
+                        self.weights[idx] * self.pop[id_a].solution - self.pop[id_b].solution)
                 pos_2 = vc * self.pop[idx].solution
                 condition = self.generator.random(self.problem.n_dims) < p
                 pos_new = np.where(condition, pos_1, pos_2)
@@ -162,10 +164,10 @@ class OriginalSMA(DevSMA):
             # Eq.(2.5)
             if idx <= int(self.pop_size / 2):
                 self.weights[idx] = 1 + self.generator.uniform(0, 1, self.problem.n_dims) * \
-                    np.log10((self.g_best.target.fitness - self.pop[idx].target.fitness) / ss + 1)
+                                    np.log10((self.g_best.target.fitness - self.pop[idx].target.fitness) / ss + 1)
             else:
                 self.weights[idx] = 1 - self.generator.uniform(0, 1, self.problem.n_dims) * \
-                    np.log10((self.g_best.target.fitness - self.pop[idx].target.fitness) / ss + 1)
+                                    np.log10((self.g_best.target.fitness - self.pop[idx].target.fitness) / ss + 1)
 
         aa = np.arctanh(-(epoch / self.epoch) + 1)  # Eq.(2.4)
         bb = 1 - epoch / self.epoch
@@ -183,7 +185,9 @@ class OriginalSMA(DevSMA):
                     # two positions randomly selected from population
                     id_a, id_b = self.generator.choice(list(set(range(0, self.pop_size)) - {idx}), 2, replace=False)
                     if self.generator.uniform() < p:  # Eq.(2.1)
-                        pos_new[jdx] = self.g_best.solution[jdx] + vb[jdx] * (self.weights[idx, jdx] * self.pop[id_a].solution[jdx] - self.pop[id_b].solution[jdx])
+                        pos_new[jdx] = self.g_best.solution[jdx] + vb[jdx] * (
+                                self.weights[idx, jdx] * self.pop[id_a].solution[jdx] - self.pop[id_b].solution[
+                            jdx])
                     else:
                         pos_new[jdx] = vc[jdx] * pos_new[jdx]
             pos_new = self.correct_solution(pos_new)

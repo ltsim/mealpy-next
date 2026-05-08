@@ -4,9 +4,10 @@
 #       Github: https://github.com/thieu1995        %                         
 # --------------------------------------------------%
 
-from mealpy import FloatVar, EFO, Optimizer
 import numpy as np
 import pytest
+
+from mealpy import FloatVar, EFO, Optimizer
 
 
 @pytest.fixture(scope="module")  # scope: Call only 1 time at the beginning

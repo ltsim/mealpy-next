@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -50,7 +51,8 @@ class OriginalBSA(Optimizer):
     """
 
     def __init__(self, epoch: int = 10000, pop_size: int = 100, ff: int = 10, pff: float = 0.8,
-                 c1: float = 1.5, c2: float = 1.5, a1: float = 1.0, a2: float = 1.0, fc: float = 0.5, **kwargs: object) -> None:
+                 c1: float = 1.5, c2: float = 1.5, a1: float = 1.0, a2: float = 1.0, fc: float = 0.5,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -66,7 +68,7 @@ class OriginalBSA(Optimizer):
         super().__init__(**kwargs)
         self.epoch = self.validator.check_int("epoch", epoch, [1, 100000])
         self.pop_size = self.validator.check_int("pop_size", pop_size, [5, 10000])
-        self.ff = self.validator.check_int("ff", ff, [2, int(self.pop_size/2)])
+        self.ff = self.validator.check_int("ff", ff, [2, int(self.pop_size / 2)])
         self.pff = self.validator.check_float("pff", pff, (0, 1.0))
         self.c1 = self.validator.check_float("c1", c1, (0, 5.0))
         self.c2 = self.validator.check_float("c2", c2, (0, 5.0))
@@ -110,11 +112,13 @@ class OriginalBSA(Optimizer):
                             self.generator.uniform() * (self.pop[idx].local_solution - self.pop[idx].solution) + \
                             self.c2 * self.generator.uniform() * (self.g_best.solution - self.pop[idx].solution)
                 else:  # Birds keep vigilance. Eq. 2
-                    A1 = self.a1 * np.exp(-self.pop_size * self.pop[idx].local_target.fitness / (self.EPSILON + fit_sum))
+                    A1 = self.a1 * np.exp(
+                        -self.pop_size * self.pop[idx].local_target.fitness / (self.EPSILON + fit_sum))
                     k = self.generator.choice(list(set(range(0, self.pop_size)) - {idx}))
                     t1 = (fit_list[idx] - fit_list[k]) / (abs(fit_list[idx] - fit_list[k]) + self.EPSILON)
                     A2 = self.a2 * np.exp(t1 * self.pop_size * fit_list[k] / (fit_sum + self.EPSILON))
-                    x_new = self.pop[idx].solution + A1 * self.generator.uniform(0, 1) * (pos_mean - self.pop[idx].solution) + \
+                    x_new = self.pop[idx].solution + A1 * self.generator.uniform(0, 1) * (
+                            pos_mean - self.pop[idx].solution) + \
                             A2 * self.generator.uniform(-1, 1) * (self.g_best.solution - self.pop[idx].solution)
                 agent.solution = self.correct_solution(x_new)
                 pop_new.append(agent)
@@ -142,11 +146,13 @@ class OriginalBSA(Optimizer):
             if choose < 3:  # Producing (Equation 5)
                 for idx in range(int(self.pop_size / 2 + 1), self.pop_size):
                     agent = self.pop[idx].copy()
-                    x_new = self.pop[idx].solution + self.generator.uniform(self.problem.lb, self.problem.ub) * self.pop[idx].solution
+                    x_new = self.pop[idx].solution + self.generator.uniform(self.problem.lb, self.problem.ub) * \
+                            self.pop[idx].solution
                     agent.solution = self.correct_solution(x_new)
                     pop_new[idx] = agent
                 if choose == 1:
-                    x_new = self.pop[min_idx].solution + self.generator.uniform(self.problem.lb, self.problem.ub) * self.pop[min_idx].solution
+                    x_new = self.pop[min_idx].solution + self.generator.uniform(self.problem.lb, self.problem.ub) * \
+                            self.pop[min_idx].solution
                     agent = self.pop[min_idx].copy()
                     agent.solution = self.correct_solution(x_new)
                     pop_new[min_idx] = agent
@@ -161,12 +167,14 @@ class OriginalBSA(Optimizer):
             else:  # Scrounging (Equation 6)
                 for i in range(0, int(0.5 * self.pop_size)):
                     agent = self.pop[i].copy()
-                    x_new = self.pop[i].solution + self.generator.uniform(self.problem.lb, self.problem.ub) * self.pop[i].solution
+                    x_new = self.pop[i].solution + self.generator.uniform(self.problem.lb, self.problem.ub) * self.pop[
+                        i].solution
                     agent.solution = self.correct_solution(x_new)
                     pop_new[i] = agent
                 if choose == 4:
                     agent = self.pop[min_idx].copy()
-                    x_new = self.pop[min_idx].solution + self.generator.uniform(self.problem.lb, self.problem.ub) * self.pop[min_idx].solution
+                    x_new = self.pop[min_idx].solution + self.generator.uniform(self.problem.lb, self.problem.ub) * \
+                            self.pop[min_idx].solution
                     agent.solution = self.correct_solution(x_new)
                 for i in range(int(self.pop_size / 2 + 1), self.pop_size):
                     if choose == 3 or min_idx != i:

@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -44,7 +45,8 @@ class DevSBO(Optimizer):
     >>> print(f"Solution: {model.g_best.solution}, Fitness: {model.g_best.target.fitness}")
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, alpha: float = 0.94, p_m: float = 0.05, psw: float = 0.02, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, alpha: float = 0.94, p_m: float = 0.05,
+                 psw: float = 0.02, **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -80,7 +82,8 @@ class DevSBO(Optimizer):
             rdx = self.get_index_roulette_wheel_selection(fit_list)
             ### Calculating Step Size
             lamda = self.alpha * self.generator.uniform()
-            pos_new = self.pop[idx].solution + lamda * ((self.pop[rdx].solution + self.g_best.solution) / 2 - self.pop[idx].solution)
+            pos_new = self.pop[idx].solution + lamda * (
+                    (self.pop[rdx].solution + self.g_best.solution) / 2 - self.pop[idx].solution)
             ### Mutation
             temp = self.pop[idx].solution + self.generator.normal(0, 1, self.problem.n_dims) * self.sigma
             pos_new = np.where(self.generator.random(self.problem.n_dims) < self.p_m, temp, pos_new)
@@ -134,7 +137,8 @@ class OriginalSBO(DevSBO):
     to optimize ANFIS for software development effort estimation. Engineering Applications of Artificial Intelligence, 60, pp.1-15.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, alpha: float = 0.94, p_m: float = 0.05, psw: float = 0.02, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, alpha: float = 0.94, p_m: float = 0.05,
+                 psw: float = 0.02, **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -189,7 +193,8 @@ class OriginalSBO(DevSBO):
                 ### Calculating Step Size
                 lamda = self.alpha / (1 + prob_list[rdx])
                 pos_new[jdx] = self.pop[idx].solution[jdx] + lamda * \
-                             ((self.pop[rdx].solution[jdx] + self.g_best.solution[jdx]) / 2 - self.pop[idx].solution[jdx])
+                               ((self.pop[rdx].solution[jdx] + self.g_best.solution[jdx]) / 2 - self.pop[idx].solution[
+                                   jdx])
                 ### Mutation
                 if self.generator.uniform() < self.p_m:
                     pos_new[jdx] = self.pop[idx].solution[jdx] + self.generator.normal(0, 1) * self.sigma[jdx]

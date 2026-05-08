@@ -5,11 +5,13 @@
 # --------------------------------------------------%
 
 import numbers
-import numpy as np
 from typing import Union, List, Tuple, Dict
+
+import numpy as np
+
+from mealpy.utils.logger import Logger
 from mealpy.utils.space import (BaseVar, IntegerVar, FloatVar, StringVar, BinaryVar, BoolVar,
                                 PermutationVar, CategoricalVar, SequenceVar, TransferBinaryVar, TransferBoolVar)
-from mealpy.utils.logger import Logger
 from mealpy.utils.target import Target
 
 
@@ -28,7 +30,7 @@ class Problem:
         self.__set_keyword_arguments(kwargs)
         self.set_bounds(bounds)
         self.logger = Logger(self.log_to, log_file=self.log_file).create_logger(name=f"{__name__}.{__class__.__name__}",
-                                    format_str='%(asctime)s, %(levelname)s, %(name)s [line: %(lineno)d]: %(message)s')
+                                                                                format_str='%(asctime)s, %(levelname)s, %(name)s [line: %(lineno)d]: %(message)s')
 
     @property
     def bounds(self):
@@ -53,7 +55,8 @@ class Problem:
                     )
                 self.obj_weights = np.ones(self._n_objs)
             elif len(np.array(self.obj_weights).ravel()) != self._n_objs:
-                raise ValueError(f"`obj_weights` length {len(self.obj_weights)} does not match number of objectives {self._n_objs}.")
+                raise ValueError(
+                    f"`obj_weights` length {len(self.obj_weights)} does not match number of objectives {self._n_objs}.")
         return self._n_objs
 
     def __set_keyword_arguments(self, kwargs):
@@ -70,10 +73,12 @@ class Problem:
                 if isinstance(bound, BaseVar):
                     bound.seed = self.seed
                 else:
-                    raise ValueError(f"Invalid bounds. All variables in bounds should be an instance of {self.SUPPORTED_VARS}")
+                    raise ValueError(
+                        f"Invalid bounds. All variables in bounds should be an instance of {self.SUPPORTED_VARS}")
                 self._bounds.append(bound)
         else:
-            raise TypeError(f"Invalid bounds. It should be type of {self.SUPPORTED_ARRAYS} or an instance of {self.SUPPORTED_VARS}")
+            raise TypeError(
+                f"Invalid bounds. It should be type of {self.SUPPORTED_ARRAYS} or an instance of {self.SUPPORTED_VARS}")
         self.lb = np.concatenate([bound.lb for bound in self._bounds])
         self.ub = np.concatenate([bound.ub for bound in self._bounds])
         self.n_dims = len(self.lb)
@@ -128,12 +133,13 @@ class Problem:
     def correct_solution_with_bounds(x: Union[List, Tuple, np.ndarray], bounds: List) -> np.ndarray:
         x_new, n_vars = [], 0
         for idx, var in enumerate(bounds):
-            x_new += list(var.correct(x[n_vars:n_vars+var.n_vars]))
+            x_new += list(var.correct(x[n_vars:n_vars + var.n_vars]))
             n_vars += var.n_vars
         return np.array(x_new)
 
     @staticmethod
-    def generate_solution_with_bounds(bounds: Union[List, Tuple, np.ndarray], encoded: bool = True) -> Union[List, np.ndarray]:
+    def generate_solution_with_bounds(bounds: Union[List, Tuple, np.ndarray], encoded: bool = True) -> Union[
+        List, np.ndarray]:
         x = [var.generate() for var in bounds]
         if encoded:
             return Problem.encode_solution_with_bounds(x, bounds)

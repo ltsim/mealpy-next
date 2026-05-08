@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -89,13 +90,13 @@ class OriginalESOA(Optimizer):
             # Individual Direction
             p_d = self.pop[idx].local_solution - self.pop[idx].solution
             p_d = p_d * (self.pop[idx].local_target.fitness - self.pop[idx].target.fitness)
-            p_d = p_d / (np.sum(p_d) **2 + self.EPSILON)
+            p_d = p_d / (np.sum(p_d) ** 2 + self.EPSILON)
             d_p = p_d + self.pop[idx].g
 
             # Group Direction
             c_d = self.g_best.solution - self.pop[idx].solution
             c_d = c_d * (self.g_best.target.fitness - self.pop[idx].target.fitness)
-            c_d = c_d / (np.sum(c_d)**2 + self.EPSILON)
+            c_d = c_d / (np.sum(c_d) ** 2 + self.EPSILON)
             d_g = c_d + self.g_best.g
 
             # Gradient Estimation
@@ -105,7 +106,7 @@ class OriginalESOA(Optimizer):
             g = g / (np.sum(g) + self.EPSILON)
 
             self.pop[idx].m = self.beta1 * self.pop[idx].m + (1 - self.beta1) * g
-            self.pop[idx].v = self.beta2 * self.pop[idx].v + (1 - self.beta2) * g**2
+            self.pop[idx].v = self.beta2 * self.pop[idx].v + (1 - self.beta2) * g ** 2
             self.pop[idx].weights -= self.pop[idx].m / (np.sqrt(self.pop[idx].v) + self.EPSILON)
 
             # Advice Forward
@@ -114,7 +115,7 @@ class OriginalESOA(Optimizer):
             y_0 = self.get_target(x_0)
 
             # Random Search
-            r3 = self.generator.uniform(-np.pi/2, np.pi/2, self.problem.n_dims)
+            r3 = self.generator.uniform(-np.pi / 2, np.pi / 2, self.problem.n_dims)
             x_n = self.pop[idx].solution + np.tan(r3) * hop / epoch * 0.5
             x_n = self.correct_solution(x_n)
             y_n = self.get_target(x_n)
@@ -147,7 +148,8 @@ class OriginalESOA(Optimizer):
                 if self.compare_target(y_best, self.pop[idx].local_target, self.problem.minmax):
                     self.pop[idx].local_solution = x_best
                     self.pop[idx].local_target = y_best
-                    self.pop[idx].g = (np.sum(self.pop[idx].weights * self.pop[idx].solution) - self.pop[idx].target.fitness) * self.pop[idx].solution
+                    self.pop[idx].g = (np.sum(self.pop[idx].weights * self.pop[idx].solution) - self.pop[
+                        idx].target.fitness) * self.pop[idx].solution
             else:
                 if self.generator.random() < 0.3:
                     self.pop[idx].solution = x_best

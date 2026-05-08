@@ -13,7 +13,8 @@ class Logger:
         self.log_to = log_to
         self.log_file = None
         self.__set_keyword_arguments(kwargs)
-        self.default_formatter = logging.Formatter('%(asctime)s, %(levelname)s, %(name)s: %(message)s', datefmt="%Y/%m/%d %I:%M:%S %p")
+        self.default_formatter = logging.Formatter('%(asctime)s, %(levelname)s, %(name)s: %(message)s',
+                                                   datefmt="%Y/%m/%d %I:%M:%S %p")
         self.default_logfile = "mealpy.log"
 
     def __set_keyword_arguments(self, kwargs):
@@ -25,7 +26,8 @@ class Logger:
         if self.log_to == "console":
             logger.setLevel(logging.INFO)
             if format_str is None:
-                formatter = logging.Formatter('%(asctime)s, %(levelname)s, %(name)s: %(message)s', datefmt="%Y/%m/%d %I:%M:%S %p")
+                formatter = logging.Formatter('%(asctime)s, %(levelname)s, %(name)s: %(message)s',
+                                              datefmt="%Y/%m/%d %I:%M:%S %p")
             else:
                 formatter = logging.Formatter(format_str, datefmt="%Y/%m/%d %I:%M:%S %p")
             handler = logging.StreamHandler()
@@ -33,7 +35,8 @@ class Logger:
         elif self.log_to == "file":
             logger.setLevel(logging.DEBUG)
             if format_str is None:
-                formatter = logging.Formatter('%(asctime)s, %(levelname)s, %(name)s: %(message)s', datefmt="%Y/%m/%d %I:%M:%S %p")
+                formatter = logging.Formatter('%(asctime)s, %(levelname)s, %(name)s: %(message)s',
+                                              datefmt="%Y/%m/%d %I:%M:%S %p")
             else:
                 formatter = logging.Formatter(format_str, datefmt="%Y/%m/%d %I:%M:%S %p")
             if self.log_file is None:
@@ -43,7 +46,8 @@ class Logger:
         else:
             logger.setLevel(logging.ERROR)
             if format_str is None:
-                formatter = logging.Formatter('%(asctime)s, %(levelname)s, %(name)s [line: %(lineno)d]: %(message)s', datefmt="%Y/%m/%d %I:%M:%S %p")
+                formatter = logging.Formatter('%(asctime)s, %(levelname)s, %(name)s [line: %(lineno)d]: %(message)s',
+                                              datefmt="%Y/%m/%d %I:%M:%S %p")
             else:
                 formatter = logging.Formatter(format_str, datefmt="%Y/%m/%d %I:%M:%S %p")
             handler = logging.StreamHandler()

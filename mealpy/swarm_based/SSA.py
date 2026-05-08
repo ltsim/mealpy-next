@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -45,7 +46,9 @@ class DevSSA(Optimizer):
     [1] Xue, J. and Shen, B., 2020. A novel swarm intelligence optimization approach:
     sparrow search algorithm. Systems Science & Control Engineering, 8(1), pp.22-34.
     """
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, ST: float = 0.8, PD: float = 0.2, SD: float = 0.1, **kwargs: object) -> None:
+
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, ST: float = 0.8, PD: float = 0.2, SD: float = 0.1,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -91,9 +94,11 @@ class DevSSA(Optimizer):
                     x_new = self.pop[idx].solution + self.generator.normal() * np.ones(self.problem.n_dims)
             else:
                 # Using equation (4) update the sparrow’s location;
-                _, (g_best, ), (g_worst, ) = self.get_special_agents(self.pop, n_best=1, n_worst=1, minmax=self.problem.minmax)
+                _, (g_best,), (g_worst,) = self.get_special_agents(self.pop, n_best=1, n_worst=1,
+                                                                   minmax=self.problem.minmax)
                 if idx > int(self.pop_size / 2):
-                    x_new = self.generator.normal() * np.exp((g_worst.solution - self.pop[idx].solution) / (idx + 1) ** 2)
+                    x_new = self.generator.normal() * np.exp(
+                        (g_worst.solution - self.pop[idx].solution) / (idx + 1) ** 2)
                 else:
                     x_new = g_best.solution + np.abs(self.pop[idx].solution - g_best.solution) * self.generator.normal()
             pos_new = self.correct_solution(x_new)
@@ -112,7 +117,8 @@ class DevSSA(Optimizer):
         for idx in range(0, len(pop2)):
             #  Using equation (5) update the sparrow’s location;
             if self.compare_target(self.pop[idx].target, g_best.target, self.problem.minmax):
-                x_new = pop2[idx].solution + self.generator.uniform(-1, 1) * (np.abs(pop2[idx].solution - g_worst.solution) /
+                x_new = pop2[idx].solution + self.generator.uniform(-1, 1) * (
+                        np.abs(pop2[idx].solution - g_worst.solution) /
                         (pop2[idx].target.fitness - g_worst.target.fitness + self.EPSILON))
             else:
                 x_new = g_best.solution + self.generator.normal() * np.abs(pop2[idx].solution - g_best.solution)
@@ -165,7 +171,9 @@ class OriginalSSA(DevSSA):
     [1] Xue, J. and Shen, B., 2020. A novel swarm intelligence optimization approach:
     sparrow search algorithm. Systems Science & Control Engineering, 8(1), pp.22-34.
     """
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, ST: float = 0.8, PD: float = 0.2, SD: float = 0.1, **kwargs: object) -> None:
+
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, ST: float = 0.8, PD: float = 0.2, SD: float = 0.1,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -200,7 +208,8 @@ class OriginalSSA(DevSSA):
                 _, x_p, worst = self.get_special_agents(self.pop, n_best=1, n_worst=1, minmax=self.problem.minmax)
                 g_best, g_worst = x_p[0], worst[0]
                 if idx > int(self.pop_size / 2):
-                    x_new = self.generator.normal() * np.exp((g_worst.solution - self.pop[idx].solution) / (idx + 1) ** 2)
+                    x_new = self.generator.normal() * np.exp(
+                        (g_worst.solution - self.pop[idx].solution) / (idx + 1) ** 2)
                 else:
                     L = np.ones((1, self.problem.n_dims))
                     A = np.sign(self.generator.uniform(-1, 1, (1, self.problem.n_dims)))
@@ -222,8 +231,9 @@ class OriginalSSA(DevSSA):
         for idx in range(0, len(pop2)):
             #  Using equation (5) update the sparrow’s location;
             if self.compare_target(self.pop[idx].target, g_best.target, self.problem.minmax):
-                x_new = pop2[idx].solution + self.generator.uniform(-1, 1) * (np.abs(pop2[idx].solution - g_worst.solution) /
-                    (pop2[idx].target.fitness - g_worst.target.fitness + self.EPSILON))
+                x_new = pop2[idx].solution + self.generator.uniform(-1, 1) * (
+                        np.abs(pop2[idx].solution - g_worst.solution) /
+                        (pop2[idx].target.fitness - g_worst.target.fitness + self.EPSILON))
             else:
                 x_new = g_best.solution + self.generator.normal() * np.abs(pop2[idx].solution - g_best.solution)
             pos_new = self.correct_solution(x_new)

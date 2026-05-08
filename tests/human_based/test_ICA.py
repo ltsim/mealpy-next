@@ -4,9 +4,10 @@
 #       Github: https://github.com/thieu1995        %                         
 # --------------------------------------------------%
 
-from mealpy import FloatVar, ICA, Optimizer
 import numpy as np
 import pytest
+
+from mealpy import FloatVar, ICA, Optimizer
 
 
 @pytest.fixture(scope="module")  # scope: Call only 1 time at the beginning
@@ -25,7 +26,8 @@ def problem():
 
 def test_ICA_results(problem):
     models = [
-        ICA.OriginalICA(epoch=10, pop_size=50, empire_count=5, assimilation_coeff=1.5, revolution_prob=0.05, revolution_rate=0.1, revolution_step_size=0.1, zeta=0.1)
+        ICA.OriginalICA(epoch=10, pop_size=50, empire_count=5, assimilation_coeff=1.5, revolution_prob=0.05,
+                        revolution_rate=0.1, revolution_step_size=0.1, zeta=0.1)
     ]
     for model in models:
         g_best = model.solve(problem)

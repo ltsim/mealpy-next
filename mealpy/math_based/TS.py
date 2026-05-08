@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -79,7 +80,8 @@ class OriginalTS(Optimizer):
             epoch (int): The current iteration
         """
         # Generate candidate solutions by perturbing the current solution
-        candidates = self.generator.normal(loc=self.x, scale=self.perturbation_scale, size=(self.neighbour_size, self.problem.n_dims))
+        candidates = self.generator.normal(loc=self.x, scale=self.perturbation_scale,
+                                           size=(self.neighbour_size, self.problem.n_dims))
         # Evaluate candidate solutions and select best move
         list_candidates = []
         for candidate in candidates:

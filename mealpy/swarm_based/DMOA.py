@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -46,7 +47,8 @@ class OriginalDMOA(Optimizer):
     Computer methods in applied mechanics and engineering, 391, 114570.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, n_baby_sitter: int = 3, peep: float = 2, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, n_baby_sitter: int = 3, peep: float = 2,
+                 **kwargs: object) -> None:
         super().__init__(**kwargs)
         self.epoch = self.validator.check_int("epoch", epoch, [1, 100000])
         self.pop_size = self.validator.check_int("pop_size", pop_size, [10, 10000])
@@ -70,7 +72,7 @@ class OriginalDMOA(Optimizer):
             epoch (int): The current iteration
         """
         ## Abandonment Counter
-        CF = (1. - epoch/self.epoch)**(2.*epoch/self.epoch)
+        CF = (1. - epoch / self.epoch) ** (2. * epoch / self.epoch)
         fit_list = np.array([agent.target.fitness for agent in self.pop])
         mean_cost = np.mean(fit_list)
         fi = np.exp(-fit_list / mean_cost)
@@ -95,7 +97,8 @@ class OriginalDMOA(Optimizer):
             new_pos = self.correct_solution(new_pos)
             agent = self.generate_agent(new_pos)
             ## Sleeping mould
-            SM[idx] = (agent.target.fitness - self.pop[idx].target.fitness)/np.max([agent.target.fitness, self.pop[idx].target.fitness])
+            SM[idx] = (agent.target.fitness - self.pop[idx].target.fitness) / np.max(
+                [agent.target.fitness, self.pop[idx].target.fitness])
             if self.compare_target(agent.target, self.pop[idx].target, self.problem.minmax):
                 self.pop[idx] = agent
             else:
@@ -198,7 +201,8 @@ class DevDMOA(Optimizer):
             new_pos = self.correct_solution(new_pos)
             agent = self.generate_agent(new_pos)
             ## Sleeping mould
-            SM[idx] = (agent.target.fitness - self.pop[idx].target.fitness) / (np.max([agent.target.fitness, self.pop[idx].target.fitness]) + self.EPSILON)
+            SM[idx] = (agent.target.fitness - self.pop[idx].target.fitness) / (
+                    np.max([agent.target.fitness, self.pop[idx].target.fitness]) + self.EPSILON)
             if self.compare_target(agent.target, self.pop[idx].target, self.problem.minmax):
                 self.pop[idx] = agent
             else:

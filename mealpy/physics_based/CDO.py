@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -61,17 +62,17 @@ class OriginalCDO(Optimizer):
             epoch (int): The current iteration
         """
         _, (b1, b2, b3), _ = self.get_special_agents(self.pop, n_best=3, n_worst=1, minmax=self.problem.minmax)
-        a = 3. - 3.*epoch/self.epoch
-        a1 = np.log10((16000-1) * self.generator.random() + 16000)
-        a2 = np.log10((270000-1) * self.generator.random() + 270000)
-        a3 = np.log10((300000-1) * self.generator.random() + 300000)
+        a = 3. - 3. * epoch / self.epoch
+        a1 = np.log10((16000 - 1) * self.generator.random() + 16000)
+        a2 = np.log10((270000 - 1) * self.generator.random() + 270000)
+        a3 = np.log10((300000 - 1) * self.generator.random() + 300000)
         pop_new = []
         for idx in range(0, self.pop_size):
             r1 = self.generator.random(self.problem.n_dims)
             r2 = self.generator.random(self.problem.n_dims)
-            pa = np.pi * r1*r1 / (0.25 * a1) - a * self.generator.random(self.problem.n_dims)
+            pa = np.pi * r1 * r1 / (0.25 * a1) - a * self.generator.random(self.problem.n_dims)
             c1 = r2 * r2 * np.pi
-            alpha = np.abs(c1*b1.solution - self.pop[idx].solution)
+            alpha = np.abs(c1 * b1.solution - self.pop[idx].solution)
             pos_a = 0.25 * (b1.solution - pa * alpha)
 
             r3 = self.generator.random(self.problem.n_dims)

@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -48,7 +49,8 @@ class OriginalFFA(Optimizer):
     """
 
     def __init__(self, epoch: int = 10000, pop_size: int = 100, gamma: float = 0.001, beta_base: float = 2,
-                 alpha: float = 0.2, alpha_damp: float = 0.99, delta: float = 0.05, exponent: int = 2, **kwargs: object) -> None:
+                 alpha: float = 0.2, alpha_damp: float = 0.99, delta: float = 0.05, exponent: int = 2,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -96,7 +98,8 @@ class OriginalFFA(Optimizer):
                     beta = self.beta_base * np.exp(-self.gamma * rij ** self.exponent)
                     # Mutation Vector
                     mutation_vector = self.delta * self.generator.uniform(0, 1, self.problem.n_dims)
-                    temp = np.matmul((self.pop[j].solution - agent.solution), self.generator.uniform(0, 1, (self.problem.n_dims, self.problem.n_dims)))
+                    temp = np.matmul((self.pop[j].solution - agent.solution),
+                                     self.generator.uniform(0, 1, (self.problem.n_dims, self.problem.n_dims)))
                     pos_new = agent.solution + self.dyn_alpha * mutation_vector + beta * temp
                     pos_new = self.correct_solution(pos_new)
                     agent = self.generate_agent(pos_new)
