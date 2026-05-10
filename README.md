@@ -1,4 +1,4 @@
-# MEALPY (Next)
+# mealpy (next)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3711948.svg)](https://doi.org/10.1016/j.sysarc.2023.102871)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -12,9 +12,6 @@ For detailed information about the updates in each new version, see the [ChangeL
 * **Free software:** MIT license
 * **Total algorithms**: 233 (206 official (original, hybrid, variants), 27 developed)
 * **Documentation:** https://mealpy.readthedocs.io/en/latest/
-* **Python versions:** >=3.10x
-* **Dependencies:** numpy, scipy, pandas, matplotlib, tqdm
-
 
 ## Goals
 
@@ -256,4 +253,7 @@ print(model.problem.ub)
 
 We provide many examples for complicated applications that can use Mealpy to solve.
 
-Developed by: [Thieu](mailto:nguyenthieu2102@gmail.com?Subject=MEALPY_QUESTIONS) @ 2022
+---
+
+* Maintained by: [LTSIM](mailto:tsim@cucei.udg.mx) @ 2026
+* Developed by: [Thieu](mailto:nguyenthieu2102@gmail.com?Subject=Opfunu_QUESTIONS) @ 2023
