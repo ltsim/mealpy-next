@@ -121,5 +121,11 @@ pretty = true
 error_summary = true
 
 [[tool.mypy.overrides]]
-module = ["matplotlib.*", "tqdm.*"]
+module = [
+    "matplotlib.*",
+    "PIL.*",
+    "numpy",
+    "numpy.*",
+    "tqdm.*"
+]
 ignore_missing_imports = true
