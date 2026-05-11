@@ -11,16 +11,18 @@ MEALPY is designed to handle optimization problems with a high number of dimensi
 Here's an example demonstrating how to set up and run an optimization for a large-scale problem.
 """
 
-
-from mealpy import FloatVar, SHADE
 import numpy as np
 
+from mealpy import FloatVar, SHADE
+
+
 def objective_function(solution):
-    return np.sum(solution**2)
+    return np.sum(solution ** 2)
+
 
 problem = {
     "obj_func": objective_function,
-    "bounds": FloatVar(lb=(-1000., )*10000, ub=(1000.,)*10000),     # 10000 dimensions
+    "bounds": FloatVar(lb=(-1000.,) * 10000, ub=(1000.,) * 10000),  # 10000 dimensions
     "minmax": "min",
     "log_to": "console",
 }

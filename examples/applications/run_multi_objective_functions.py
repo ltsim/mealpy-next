@@ -5,20 +5,20 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy import FloatVar, SMA
 
 
 ## Link: https://en.wikipedia.org/wiki/Test_functions_for_optimization
 def objective_function(solution):
-
     def booth(x, y):
-        return (x + 2*y - 7)**2 + (2*x + y - 5)**2
+        return (x + 2 * y - 7) ** 2 + (2 * x + y - 5) ** 2
 
     def bukin(x, y):
-        return 100 * np.sqrt(np.abs(y - 0.01 * x**2)) + 0.01 * np.abs(x + 10)
+        return 100 * np.sqrt(np.abs(y - 0.01 * x ** 2)) + 0.01 * np.abs(x + 10)
 
     def matyas(x, y):
-        return 0.26 * (x**2 + y**2) - 0.48 * x * y
+        return 0.26 * (x ** 2 + y ** 2) - 0.48 * x * y
 
     return [booth(solution[0], solution[1]), bukin(solution[0], solution[1]), matyas(solution[0], solution[1])]
 
@@ -28,7 +28,7 @@ problem = {
     "bounds": FloatVar(lb=(-10, -10), ub=(10, 10)),
     "minmax": "min",
     "log_to": "console",
-    "obj_weights": [0.4, 0.1, 0.5]               # Define it or default value will be [1, 1, 1]
+    "obj_weights": [0.4, 0.1, 0.5]  # Define it or default value will be [1, 1, 1]
 }
 
 ## Run the algorithm

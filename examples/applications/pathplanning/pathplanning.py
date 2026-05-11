@@ -1,10 +1,8 @@
-
-from mealpy.swarm_based.WOA import OriginalWOA
-from mealpy.swarm_based.PSO import OriginalPSO
-from mealpy.swarm_based.GWO import OriginalGWO
-from scipy.interpolate import interp1d
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+from scipy.interpolate import interp1d
+
+from mealpy.swarm_based.GWO import OriginalGWO
 
 
 class PathPlanning():

@@ -11,14 +11,12 @@ In this example, we'll use the SMA optimizer to find the optimal hyperparameters
 This demonstrates how to integrate MEALPY with a machine learning workflow.
 """
 
-
-from sklearn.svm import SVC
+from sklearn import datasets, metrics
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn import datasets, metrics
+from sklearn.svm import SVC
 
 from mealpy import FloatVar, StringVar, IntegerVar, BoolVar, CategoricalVar, SMA, Problem
-
 
 # Load the data set; In this example, the breast cancer dataset is loaded.
 X, y = datasets.load_breast_cancer(return_X_y=True)
@@ -56,6 +54,7 @@ class SvmOptimizedProblem(Problem):
         y_predict = svc.predict(self.data["X_test"])
         # Measure the performance
         return metrics.accuracy_score(self.data["y_test"], y_predict)
+
 
 my_bounds = [
     FloatVar(lb=0.01, ub=1000., name="C_paras"),

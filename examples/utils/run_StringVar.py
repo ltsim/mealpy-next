@@ -5,8 +5,8 @@
 # --------------------------------------------------%
 
 import numpy as np
-from mealpy import StringVar, Problem
 
+from mealpy import StringVar, Problem
 
 ## 1. One variable
 bounds = [
@@ -29,7 +29,7 @@ bounds = [
                           ("random", "damn", "roulette", "huhu")), name="delta")
 ]
 
-problem = Problem(bounds, obj_func=lambda sol: np.sum(sol**2))
+problem = Problem(bounds, obj_func=lambda sol: np.sum(sol ** 2))
 print(f"Problem: {problem}")
 print(f"Bounds: {problem.bounds}")
 
@@ -37,10 +37,10 @@ print(f"Bounds: {problem.bounds}")
 x = problem.generate_solution()
 print(x)
 
-x = problem.generate_solution(encoded=False)    # Real world (actual solution - decoded solution) for the problem
-x1 = problem.encode_solution(x)                 # Optimizer solution (encoded solution) for the problem
-x2 = problem.correct_solution(x1)               # Correct the solution (encoded and bounded solution) for the problem
-x3 = problem.decode_solution(x1)                # Real world (actual solution - decoded solution) for the problem
+x = problem.generate_solution(encoded=False)  # Real world (actual solution - decoded solution) for the problem
+x1 = problem.encode_solution(x)  # Optimizer solution (encoded solution) for the problem
+x2 = problem.correct_solution(x1)  # Correct the solution (encoded and bounded solution) for the problem
+x3 = problem.decode_solution(x1)  # Real world (actual solution - decoded solution) for the problem
 print(f"Real value solution: {x}")
 print(f"Encoded solution: {x1}")
 print(f"Bounded solution: {x2}")

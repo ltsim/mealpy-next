@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy import FloatVar, BBO
 from mealpy.utils.visualize import *
 
@@ -13,9 +14,9 @@ from mealpy.utils.visualize import *
 # Multi-objective but single fitness/target value. By using weighting method to convert from multiple objectives to single target
 
 def fitness_function(solution):
-    f1 = (np.sum(solution**2) - np.mean(solution)) / len(solution)
+    f1 = (np.sum(solution ** 2) - np.mean(solution)) / len(solution)
     f2 = np.sum(np.sqrt(np.abs(solution)))
-    f3 = np.sum(np.mean(solution**2) - solution)
+    f3 = np.sum(np.mean(solution ** 2) - solution)
     return [f1, f2, f3]
 
 
@@ -31,9 +32,9 @@ model = BBO.OriginalBBO(epoch=100, pop_size=50)
 g_best = model.solve(problem)
 print(f"Best solution: {g_best.solution}, Best fitness: {g_best.fitness}")
 
-
 ## Draw convergence chart for globest solution found so far in each previous generation
-export_convergence_chart(model.history.list_global_best_fit, title='Global Best Fitness', filename="Global-best-convergence-chart")
+export_convergence_chart(model.history.list_global_best_fit, title='Global Best Fitness',
+                         filename="Global-best-convergence-chart")
 
 # Parameter for this function
 # data: optimizer.history_list_g_best_fit -> List of global best fitness found so far in each previous generation
@@ -47,7 +48,9 @@ export_convergence_chart(model.history.list_global_best_fit, title='Global Best 
 # verbose: show the figure on Python IDE, default = True
 
 ## Draw convergence chart for current best solution in each generation
-export_convergence_chart(model.history.list_current_best_fit, title='Local Best Fitness', filename='Current-best-convergence-chart')
+export_convergence_chart(model.history.list_current_best_fit, title='Local Best Fitness',
+                         filename='Current-best-convergence-chart')
 
 ## Draw runtime for each generation
-export_convergence_chart(model.history.list_epoch_time, title='Runtime chart', y_label="Second", filename='Runtime-per-epoch-chart')
+export_convergence_chart(model.history.list_epoch_time, title='Runtime chart', y_label="Second",
+                         filename='Runtime-per-epoch-chart')

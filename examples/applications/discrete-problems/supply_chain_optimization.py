@@ -92,6 +92,7 @@
 
 
 import numpy as np
+
 from mealpy import BinaryVar, WOA, Problem
 
 # Define the problem parameters
@@ -105,8 +106,8 @@ data = {
     "num_products": num_products,
     "num_distribution_centers": num_distribution_centers,
     "transportation_cost": transportation_cost,
-    "max_capacity": 4,      # Maximum capacity of each distribution center
-    "penalty": 1e10         # Define a penalty value for maximum capacity of each distribution center
+    "max_capacity": 4,  # Maximum capacity of each distribution center
+    "penalty": 1e10  # Define a penalty value for maximum capacity of each distribution center
 }
 
 
@@ -119,7 +120,8 @@ class SupplyChainProblem(Problem):
         x_decoded = self.decode_solution(x)
         x = x_decoded["placement_var"].reshape((self.data["num_products"], self.data["num_distribution_centers"]))
 
-        if np.any(np.all(x==0, axis=1)):    # If any row has all 0 value, it indicates that this product is not allocated to any distribution center.
+        if np.any(np.all(x == 0,
+                         axis=1)):  # If any row has all 0 value, it indicates that this product is not allocated to any distribution center.
             return 0
 
         total_cost = np.sum(self.data["transportation_cost"] * x)
@@ -137,7 +139,8 @@ problem = SupplyChainProblem(bounds=bounds, minmax="max", data=data)
 model = WOA.OriginalWOA(epoch=50, pop_size=20)
 model.solve(problem)
 
-print(f"Best agent: {model.g_best}")                    # Encoded solution
-print(f"Best solution: {model.g_best.solution}")        # Encoded solution
+print(f"Best agent: {model.g_best}")  # Encoded solution
+print(f"Best solution: {model.g_best.solution}")  # Encoded solution
 print(f"Best fitness: {model.g_best.target.fitness}")
-print(f"Best real scheduling: {model.problem.decode_solution(model.g_best.solution)['placement_var'].reshape((num_products, num_distribution_centers))}")
+print(
+    f"Best real scheduling: {model.problem.decode_solution(model.g_best.solution)['placement_var'].reshape((num_products, num_distribution_centers))}")

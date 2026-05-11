@@ -5,17 +5,18 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy import FloatVar, BBO
 from mealpy.utils import io
 
 
 def objective_function(solution):
-    return np.sum(solution**2)
+    return np.sum(solution ** 2)
 
 
 problem = {
     "obj_func": objective_function,
-    "bounds": FloatVar(lb=(-100.,)*20, ub=(100.,)*20, name="delta"),
+    "bounds": FloatVar(lb=(-100.,) * 20, ub=(100.,) * 20, name="delta"),
     "minmax": "min",
 }
 

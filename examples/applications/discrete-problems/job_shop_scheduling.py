@@ -10,8 +10,8 @@
 #       specific requirements and constraints of your Job Shop Scheduling problem.
 
 import numpy as np
-from mealpy import PermutationVar, WOA, Problem
 
+from mealpy import PermutationVar, WOA, Problem
 
 job_times = [[2, 1, 3], [4, 2, 1], [3, 3, 2]]
 machine_times = [[3, 2, 1], [1, 4, 2], [2, 3, 2]]
@@ -25,6 +25,7 @@ data = {
     "n_jobs": n_jobs,
     "n_machines": n_machines
 }
+
 
 class JobShopProblem(Problem):
     def __init__(self, bounds=None, minmax="min", data=None, **kwargs):
@@ -45,17 +46,19 @@ class JobShopProblem(Problem):
             elif machine_idx == 0:
                 makespan[job_idx][machine_idx] = makespan[job_idx - 1][machine_idx] + job_times[job_idx][machine_idx]
             else:
-                makespan[job_idx][machine_idx] = max(makespan[job_idx][machine_idx - 1], makespan[job_idx - 1][machine_idx]) + job_times[job_idx][machine_idx]
+                makespan[job_idx][machine_idx] = max(makespan[job_idx][machine_idx - 1],
+                                                     makespan[job_idx - 1][machine_idx]) + job_times[job_idx][
+                                                     machine_idx]
         return np.max(makespan)
 
 
-bounds = PermutationVar(valid_set=list(range(0, n_jobs*n_machines)), name="per_var")
+bounds = PermutationVar(valid_set=list(range(0, n_jobs * n_machines)), name="per_var")
 problem = JobShopProblem(bounds=bounds, minmax="min", data=data)
 
 model = WOA.OriginalWOA(epoch=100, pop_size=20)
 model.solve(problem)
 
-print(f"Best agent: {model.g_best}")                    # Encoded solution
-print(f"Best solution: {model.g_best.solution}")        # Encoded solution
+print(f"Best agent: {model.g_best}")  # Encoded solution
+print(f"Best solution: {model.g_best.solution}")  # Encoded solution
 print(f"Best fitness: {model.g_best.target.fitness}")
-print(f"Best real scheduling: {model.problem.decode_solution(model.g_best.solution)}")      # Decoded (Real) solution
+print(f"Best real scheduling: {model.problem.decode_solution(model.g_best.solution)}")  # Decoded (Real) solution

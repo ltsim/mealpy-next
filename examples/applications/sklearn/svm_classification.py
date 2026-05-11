@@ -146,14 +146,14 @@
 # print(f"Best parameters: {model.problem.decode_solution(model.g_best.solution)}")
 
 
-##################################### Mealpy 3.0.2
-from sklearn.svm import SVC
+from sklearn import datasets, metrics
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn import datasets, metrics
-from mealpy import FloatVar, StringVar, SHADE, Problem
-from mealpy import BBO
+##################################### Mealpy 3.0.2
+from sklearn.svm import SVC
 
+from mealpy import BBO
+from mealpy import FloatVar, StringVar, SHADE, Problem
 
 # Load the data set; In this example, the breast cancer dataset is loaded.
 bc = datasets.load_breast_cancer()

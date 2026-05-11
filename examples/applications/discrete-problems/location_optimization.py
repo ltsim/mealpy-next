@@ -45,6 +45,7 @@
 # mathematical modeling, and optimization techniques to determine the optimal locations for facilities.
 
 import numpy as np
+
 from mealpy import BinaryVar, WOA, Problem
 
 # Define the coordinates of potential store locations
@@ -88,9 +89,9 @@ class LocationOptProblem(Problem):
         x = x_decoded["placement_var"]
         total_coverage = np.sum(x)
         total_dist = np.sum(x[:, np.newaxis] * distance_matrix)
-        if total_dist == 0:                 # Penalize solutions with fewer stores
+        if total_dist == 0:  # Penalize solutions with fewer stores
             return self.eps
-        if total_coverage < self.data["num_stores"]:    # Penalize solutions with fewer stores
+        if total_coverage < self.data["num_stores"]:  # Penalize solutions with fewer stores
             return self.eps
         return total_dist
 
@@ -101,7 +102,7 @@ problem = LocationOptProblem(bounds=bounds, minmax="min", data=data)
 model = WOA.OriginalWOA(epoch=50, pop_size=20)
 model.solve(problem)
 
-print(f"Best agent: {model.g_best}")                    # Encoded solution
-print(f"Best solution: {model.g_best.solution}")        # Encoded solution
+print(f"Best agent: {model.g_best}")  # Encoded solution
+print(f"Best solution: {model.g_best.solution}")  # Encoded solution
 print(f"Best fitness: {model.g_best.target.fitness}")
-print(f"Best real scheduling: {model.problem.decode_solution(model.g_best.solution)}")      # Decoded (Real) solution
+print(f"Best real scheduling: {model.problem.decode_solution(model.g_best.solution)}")  # Decoded (Real) solution

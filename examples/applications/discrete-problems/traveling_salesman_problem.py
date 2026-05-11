@@ -14,6 +14,7 @@
 
 
 import numpy as np
+
 from mealpy import PermutationVar, WOA, Problem
 
 # Define the positions of the cities
@@ -26,6 +27,7 @@ data = {
     "city_positions": city_positions,
     "num_cities": num_cities,
 }
+
 
 class TspProblem(Problem):
     def __init__(self, bounds=None, minmax="min", data=None, **kwargs):
@@ -61,7 +63,7 @@ problem = TspProblem(bounds=bounds, minmax="min", data=data)
 model = WOA.OriginalWOA(epoch=100, pop_size=20)
 model.solve(problem)
 
-print(f"Best agent: {model.g_best}")                    # Encoded solution
-print(f"Best solution: {model.g_best.solution}")        # Encoded solution
+print(f"Best agent: {model.g_best}")  # Encoded solution
+print(f"Best solution: {model.g_best.solution}")  # Encoded solution
 print(f"Best fitness: {model.g_best.target.fitness}")
-print(f"Best real scheduling: {model.problem.decode_solution(model.g_best.solution)}")      # Decoded (Real) solution
+print(f"Best real scheduling: {model.problem.decode_solution(model.g_best.solution)}")  # Decoded (Real) solution

@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 from opfunu.cec_based.cec2017 import F52017
+
 from mealpy import FloatVar, BBO
 
 ## Define your own problems
@@ -20,7 +21,7 @@ p1 = {
 }
 
 optimizer = BBO.OriginalBBO(epoch=100, pop_size=30)
-optimizer.solve(p1, seed=10)        # Set seed for each solved problem
+optimizer.solve(p1, seed=10)  # Set seed for each solved problem
 
 optimizer.history.save_diversity_chart()
 optimizer.history.save_runtime_chart()
@@ -30,4 +31,3 @@ optimizer.history.save_global_best_fitness_chart()
 optimizer.history.save_local_best_fitness_chart()
 optimizer.history.save_global_objectives_chart()
 optimizer.history.save_local_objectives_chart()
-

@@ -1,7 +1,6 @@
-
-from tkinter import W
-from mealpy import FloatVar, WOA, GOA, GWO
 import numpy as np
+
+from mealpy import FloatVar, WOA
 
 """
 refenrence article:
@@ -65,7 +64,8 @@ def gear_box(x):
         return 0 if value <= 0 else value
 
     fx = (np.pi / 4) * (rho / 1000) * (
-                b * pow(m, 2) * pow(Z1, 2) * (pow(i, 2) + 1) - (pow(D_i, 2) - pow(d_0, 2)) * (l - b_w) - (n * pow(d_p, 2) * b_w) - (d_1 - d_2) * b)
+            b * pow(m, 2) * pow(Z1, 2) * (pow(i, 2) + 1) - (pow(D_i, 2) - pow(d_0, 2)) * (l - b_w) - (
+                n * pow(d_p, 2) * b_w) - (d_1 - d_2) * b)
 
     fx += violate(g1(x)) + violate(g2(x)) + violate(g3(x))
     return fx

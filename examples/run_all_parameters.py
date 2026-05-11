@@ -5,17 +5,19 @@
 # --------------------------------------------------%
 
 from opfunu.cec_based.cec2017 import F292017
+
 from mealpy import FloatVar
-from mealpy.bio_based import BBO, EOA, IWO, SBO, SMA, TPO, VCS, WHO
+from mealpy.bio_based import BBO, EOA, IWO, SBO, SMA, VCS, WHO
 from mealpy.evolutionary_based import CRO, DE, EP, ES, FPA, GA, MA, SHADE
 from mealpy.human_based import BRO, BSO, CA, CHIO, FBIO, GSKA, ICA, LCO, QSA, SARO, SSDO, TLO
 from mealpy.math_based import AOA, CEM, CGO, GBO, HC, PSS, SCA
 from mealpy.music_based import HS
 from mealpy.physics_based import ArchOA, ASO, EFO, EO, HGSO, MVO, NRO, SA, TWO, WDO
+from mealpy.swarm_based import ABC, ACOR, ALO, AO, BA, BeesA, BES, BFO, BSA, COA, CSA, CSO, DO, EHO, FA, FFA, FOA, GOA, \
+    GWO, HGS
+from mealpy.swarm_based import HHO, JA, MFO, MRFO, MSA, NMRA, PFA, PSO, SFO, SHO, SLO, SRSR, SSA, SSO, SSpiderA, \
+    SSpiderO, WOA
 from mealpy.system_based import AEO, GCO, WCA
-from mealpy.swarm_based import ABC, ACOR, ALO, AO, BA, BeesA, BES, BFO, BSA, COA, CSA, CSO, DO, EHO, FA, FFA, FOA, GOA, GWO, HGS
-from mealpy.swarm_based import HHO, JA, MFO, MRFO, MSA, NMRA, PFA, PSO, SFO, SHO, SLO, SRSR, SSA, SSO, SSpiderA, SSpiderO, WOA
-
 
 f18 = F292017(ndim=30, f_bias=0)
 P1 = {
@@ -725,7 +727,6 @@ paras_hi_woa = {
     "pop_size": 50,
     "feedback_max": 10
 }
-
 
 model = BBO.DevBBO(**paras_bbo)
 model = BBO.OriginalBBO(**paras_bbo)

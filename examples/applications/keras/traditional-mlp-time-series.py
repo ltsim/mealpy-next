@@ -8,8 +8,9 @@
 
 # univariate mlp example
 import numpy as np
-from keras.models import Sequential
 from keras.layers import Dense
+from keras.models import Sequential
+
 
 # split a univariate sequence into samples
 def split_sequence(sequence, n_steps):
@@ -54,4 +55,3 @@ x_input = np.array([70, 80, 90])
 x_input = x_input.reshape((1, n_steps))
 yhat = model.predict(x_input, verbose=0)
 print(yhat)
-

@@ -5,18 +5,20 @@
 # --------------------------------------------------%
 
 import time
+
 import numpy as np
+
 from mealpy import FloatVar, BBO, GA, PSO
 
 
 def fitness(solution):
     """Example objective function (e.g., sphere function)"""
-    return np.sum(solution**2)
+    return np.sum(solution ** 2)
 
 
 problem_dict1 = {
     "obj_func": fitness,
-    "bounds": FloatVar(lb=(-100.,)*30, ub=(100.,)*30),
+    "bounds": FloatVar(lb=(-100.,) * 30, ub=(100.,) * 30),
     "minmax": "min",
 }
 

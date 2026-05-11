@@ -18,8 +18,8 @@
 
 
 import numpy as np
-from mealpy import IntegerVar, WOA, Problem
 
+from mealpy import IntegerVar, WOA, Problem
 
 shift_requirements = np.array([[2, 1, 3], [4, 2, 1], [3, 3, 2]])
 shift_costs = np.array([10, 8, 12])
@@ -33,6 +33,7 @@ data = {
     "num_employees": num_employees,
     "num_shifts": num_shifts
 }
+
 
 class EmployeeRosteringProblem(Problem):
     def __init__(self, bounds=None, minmax="min", data=None, **kwargs):
@@ -54,13 +55,13 @@ class EmployeeRosteringProblem(Problem):
         return total_cost + coverage_penalty
 
 
-bounds = IntegerVar(lb=[0, ]*num_employees, ub=[num_shifts-1, ]*num_employees, name="shift_var")
+bounds = IntegerVar(lb=[0, ] * num_employees, ub=[num_shifts - 1, ] * num_employees, name="shift_var")
 problem = EmployeeRosteringProblem(bounds=bounds, minmax="min", data=data)
 
 model = WOA.OriginalWOA(epoch=50, pop_size=20)
 model.solve(problem)
 
-print(f"Best agent: {model.g_best}")                    # Encoded solution
-print(f"Best solution: {model.g_best.solution}")        # Encoded solution
+print(f"Best agent: {model.g_best}")  # Encoded solution
+print(f"Best solution: {model.g_best.solution}")  # Encoded solution
 print(f"Best fitness: {model.g_best.target.fitness}")
-print(f"Best real scheduling: {model.problem.decode_solution(model.g_best.solution)}")      # Decoded (Real) solution
+print(f"Best real scheduling: {model.problem.decode_solution(model.g_best.solution)}")  # Decoded (Real) solution

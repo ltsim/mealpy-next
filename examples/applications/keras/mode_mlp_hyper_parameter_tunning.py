@@ -4,13 +4,16 @@
 #       Github: https://github.com/thieu1995        %                         
 # --------------------------------------------------%
 
+import time
 from pathlib import Path
+
+import numpy as np
 from pandas import DataFrame
+from sklearn.preprocessing import LabelEncoder
+
 from mealpy.swarm_based import WOA
 from timeseries_util import decode_solution, generate_loss_value, generate_data
-from sklearn.preprocessing import LabelEncoder
-import time
-import numpy as np
+
 np.random.seed(12345)
 
 
@@ -27,7 +30,8 @@ if __name__ == "__main__":
     OPT_ENCODER.fit(['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam'])  # domain range ==> 7 values
 
     WOI_ENCODER = LabelEncoder()
-    WOI_ENCODER.fit(['uniform', 'lecun_uniform', 'normal', 'zero', 'glorot_normal', 'glorot_uniform', 'he_normal', 'he_uniform'])
+    WOI_ENCODER.fit(
+        ['uniform', 'lecun_uniform', 'normal', 'zero', 'glorot_normal', 'glorot_uniform', 'he_normal', 'he_uniform'])
 
     ACT_ENCODER = LabelEncoder()
     ACT_ENCODER.fit(['softmax', 'softplus', 'softsign', 'relu', 'tanh', 'sigmoid', 'hard_sigmoid', 'linear'])
@@ -84,7 +88,8 @@ if __name__ == "__main__":
 
         df = DataFrame(error_full, columns=error_columns)
 
-        df.to_csv(f"{PATH_ERROR}{len(LB)}D_{model_name}_{mode_name}_mlp_paras_tuning_error.csv", header=True, index=False)
+        df.to_csv(f"{PATH_ERROR}{len(LB)}D_{model_name}_{mode_name}_mlp_paras_tuning_error.csv", header=True,
+                  index=False)
         best_fit_full[mode_name] = best_fit_list
         best_fit_columns.append(mode_name)
 

@@ -6,11 +6,11 @@
 
 # https://machinelearningmastery.com/display-deep-learning-model-training-history-in-keras/
 
-# Visualize training history
-from keras.models import Sequential
-from keras.layers import Dense
 import matplotlib.pyplot as plt
 import numpy
+from keras.layers import Dense
+# Visualize training history
+from keras.models import Sequential
 
 # load pima indians dataset
 dataset = numpy.loadtxt("pima-indians-diabetes.csv", delimiter=",")

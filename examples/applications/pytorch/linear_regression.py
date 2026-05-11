@@ -8,6 +8,7 @@
 import numpy as np
 import torch
 from torch.autograd import Variable
+
 from mealpy import StringVar, FloatVar, IntegerVar, BBO, Problem
 
 

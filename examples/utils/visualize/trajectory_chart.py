@@ -5,8 +5,10 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy import FloatVar, BBO
 from mealpy.utils.visualize import *
+
 
 ## Define your own fitness function
 # Multi-objective but single fitness/target value. By using weighting method to convert from multiple objectives to single target
