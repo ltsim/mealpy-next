@@ -4,22 +4,24 @@
 #       Github: https://github.com/thieu1995        %
 # --------------------------------------------------%
 
-from typing import List, Union, Tuple, Dict
+import concurrent.futures as parallel
+import os
 import random
+import time
+from functools import partial
+from math import gamma
+from typing import List, Union, Tuple, Dict
+
 import numpy as np
 from tqdm import tqdm
+
 from mealpy.utils.agent import Agent
-from mealpy.utils.problem import Problem
-from math import gamma
 from mealpy.utils.history import History
+from mealpy.utils.logger import Logger
+from mealpy.utils.problem import Problem
 from mealpy.utils.target import Target
 from mealpy.utils.termination import Termination
-from mealpy.utils.logger import Logger
 from mealpy.utils.validator import Validator
-import concurrent.futures as parallel
-from functools import partial
-import os
-import time
 
 
 class Optimizer:
@@ -57,7 +59,7 @@ class Optimizer:
         self.nfe_counter = 1  # The first one is tested in Problem class
         self.parameters, self.params_name_ordered = {}, None
         self.is_parallelizable = True
-        self.generator, self.rng = None, None     # random module for numpy and random (python)
+        self.generator, self.rng = None, None  # random module for numpy and random (python)
 
     def __set_keyword_arguments(self, kwargs):
         for key, value in kwargs.items():
@@ -126,16 +128,19 @@ class Optimizer:
         if starting_solutions is None:
             pass
         elif type(starting_solutions) in self.SUPPORTED_ARRAYS and len(starting_solutions) == self.pop_size:
-            if type(starting_solutions[0]) in self.SUPPORTED_ARRAYS and len(starting_solutions[0]) == self.problem.n_dims:
+            if type(starting_solutions[0]) in self.SUPPORTED_ARRAYS and len(
+                    starting_solutions[0]) == self.problem.n_dims:
                 if self.mode in self.AVAILABLE_MODES:
                     self.pop = [self.generate_empty_agent(solution) for solution in starting_solutions]
                     self.pop = self.update_target_for_population(self.pop)
                 else:
                     self.pop = [self.generate_agent(solution) for solution in starting_solutions]
             else:
-                raise ValueError("Invalid starting_solutions. It should be a list of positions or 2D matrix of positions only.")
+                raise ValueError(
+                    "Invalid starting_solutions. It should be a list of positions or 2D matrix of positions only.")
         else:
-            raise ValueError("Invalid starting_solutions. It should be a list/2D matrix of positions with same length as pop_size.")
+            raise ValueError(
+                "Invalid starting_solutions. It should be a list/2D matrix of positions with same length as pop_size.")
 
     def initialization(self) -> None:
         if self.pop is None:
@@ -166,7 +171,8 @@ class Optimizer:
             raise ValueError("problem needs to be a dict or an instance of Problem class.")
         self.generator = np.random.default_rng(seed)
         self.rng = random.Random(seed)  # local RNG for random module
-        self.logger = Logger(self.problem.log_to, log_file=self.problem.log_file).create_logger(name=f"{self.__module__}.{self.__class__.__name__}")
+        self.logger = Logger(self.problem.log_to, log_file=self.problem.log_file).create_logger(
+            name=f"{self.__module__}.{self.__class__.__name__}")
         self.logger.info(self)
         self.history = History(log_to=self.problem.log_to, log_file=self.problem.log_file)
         self.pop, self.g_best, self.g_worst = None, None, None
@@ -175,7 +181,8 @@ class Optimizer:
         self.mode = self.validator.check_str("mode", mode, self.SUPPORTED_MODES)
         if self.mode in self.PARALLEL_MODES:
             if not self.is_parallelizable:
-                self.logger.warning(f"{self.get_name()} doesn't support parallelization. The default mode 'single' is activated.")
+                self.logger.warning(
+                    f"{self.get_name()} doesn't support parallelization. The default mode 'single' is activated.")
                 self.mode = "single"
             elif n_workers is not None:
                 if self.mode == "process":
@@ -184,7 +191,8 @@ class Optimizer:
                     self.n_workers = self.validator.check_int("n_workers", n_workers, [2, min(32, os.cpu_count() + 4)])
                 self.logger.info(f"The parallel mode '{self.mode}' is selected with {self.n_workers} workers.")
             else:
-                self.logger.warning(f"The parallel mode: {self.mode} is selected. But n_workers is not set. The default n_workers = 4 is used.")
+                self.logger.warning(
+                    f"The parallel mode: {self.mode} is selected. But n_workers is not set. The default n_workers = 4 is used.")
                 self.n_workers = 4
 
     def check_termination(self, mode="start", termination=None, epoch=None):
@@ -194,7 +202,8 @@ class Optimizer:
                 if isinstance(termination, Termination):
                     self.termination = termination
                 elif type(termination) == dict:
-                    self.termination = Termination(log_to=self.problem.log_to, log_file=self.problem.log_file, **termination)
+                    self.termination = Termination(log_to=self.problem.log_to, log_file=self.problem.log_file,
+                                                   **termination)
                 else:
                     raise ValueError("Termination needs to be a dict or an instance of Termination class.")
                 self.nfe_counter = 0
@@ -292,8 +301,9 @@ class Optimizer:
         div = np.mean(np.abs(np.median(pos_matrix, axis=0) - pos_matrix), axis=0)
         self.history.list_diversity.append(np.mean(div, axis=0))
         ## Print epoch
-        self.logger.info(f">>>Problem: {self.problem.name}, Epoch: {epoch}, Current best: {self.history.list_current_best[-1].target.fitness}, "
-                         f"Global best: {self.history.list_global_best[-1].target.fitness}, Runtime: {runtime:.5f} seconds")
+        self.logger.info(
+            f">>>Problem: {self.problem.name}, Epoch: {epoch}, Current best: {self.history.list_current_best[-1].target.fitness}, "
+            f"Global best: {self.history.list_global_best[-1].target.fitness}, Runtime: {runtime:.5f} seconds")
 
     def track_optimize_process(self) -> None:
         """
@@ -509,7 +519,8 @@ class Optimizer:
 
     @staticmethod
     def get_special_agents(pop: List[Agent] = None, n_best: int = 3, n_worst: int = 3,
-                           minmax: str = "min") -> Tuple[List[Agent], Union[List[Agent], None], Union[List[Agent], None]]:
+                           minmax: str = "min") -> Tuple[
+        List[Agent], Union[List[Agent], None], Union[List[Agent], None]]:
         """
         Get special agents include sorted population, n1 best agents, n2 worst agents
 
@@ -535,7 +546,8 @@ class Optimizer:
                 return pop, [agent.copy() for agent in pop[:n_best]], [agent.copy() for agent in pop[::-1][:n_worst]]
 
     @staticmethod
-    def get_special_fitness(pop: List[Agent] = None, minmax: str = "min") -> Tuple[Union[float, np.ndarray], float, float]:
+    def get_special_fitness(pop: List[Agent] = None, minmax: str = "min") -> Tuple[
+        Union[float, np.ndarray], float, float]:
         """
         Get special target include the total fitness, the best fitness, and the worst fitness
 
@@ -573,7 +585,8 @@ class Optimizer:
 
     ### Survivor Selection
     @staticmethod
-    def greedy_selection_population(pop_old: List[Agent] = None, pop_new: List[Agent] = None, minmax: str = "min") -> List[Agent]:
+    def greedy_selection_population(pop_old: List[Agent] = None, pop_new: List[Agent] = None, minmax: str = "min") -> \
+            List[Agent]:
         """
         Args:
             pop_old: The current population
@@ -587,12 +600,15 @@ class Optimizer:
         if len_old != len_new:
             raise ValueError("Greedy selection of two population with different length.")
         if minmax == "min":
-            return [pop_new[idx] if pop_new[idx].target.fitness < pop_old[idx].target.fitness else pop_old[idx] for idx in range(len_old)]
+            return [pop_new[idx] if pop_new[idx].target.fitness < pop_old[idx].target.fitness else pop_old[idx] for idx
+                    in range(len_old)]
         else:
-            return [pop_new[idx] if pop_new[idx].target.fitness > pop_old[idx].target.fitness else pop_old[idx] for idx in range(len_old)]
+            return [pop_new[idx] if pop_new[idx].target.fitness > pop_old[idx].target.fitness else pop_old[idx] for idx
+                    in range(len_old)]
 
     @staticmethod
-    def get_sorted_and_trimmed_population(pop: List[Agent] = None, pop_size: int = None, minmax: str = "min") -> List[Agent]:
+    def get_sorted_and_trimmed_population(pop: List[Agent] = None, pop_size: int = None, minmax: str = "min") -> List[
+        Agent]:
         """
         Args:
             pop: The population
@@ -626,7 +642,8 @@ class Optimizer:
             self.history.list_global_best.append(better)
             ## Save current worst
             self.history.list_current_worst.append(c_worst)
-            worse = self.get_better_agent(c_worst, self.history.list_global_worst[-1], self.problem.minmax, reverse=True)
+            worse = self.get_better_agent(c_worst, self.history.list_global_worst[-1], self.problem.minmax,
+                                          reverse=True)
             self.history.list_global_worst.append(worse)
             return sorted_pop, better
         else:
@@ -636,9 +653,11 @@ class Optimizer:
             global_better = self.get_better_agent(c_best, self.history.list_global_best[-1], self.problem.minmax)
             self.history.list_global_best[-1] = global_better
             ## Handle current worst
-            local_worst = self.get_better_agent(c_worst, self.history.list_current_worst[-1], self.problem.minmax, reverse=True)
+            local_worst = self.get_better_agent(c_worst, self.history.list_current_worst[-1], self.problem.minmax,
+                                                reverse=True)
             self.history.list_current_worst[-1] = local_worst
-            global_worst = self.get_better_agent(c_worst, self.history.list_global_worst[-1], self.problem.minmax, reverse=True)
+            global_worst = self.get_better_agent(c_worst, self.history.list_global_worst[-1], self.problem.minmax,
+                                                 reverse=True)
             self.history.list_global_worst[-1] = global_worst
             return sorted_pop, global_better
 
@@ -665,7 +684,8 @@ class Optimizer:
         prob = final_fitness / np.sum(final_fitness)
         return int(self.generator.choice(range(0, len(list_fitness)), p=prob))
 
-    def get_index_kway_tournament_selection(self, pop: List = None, k_way: float = 0.2, output: int = 2, reverse: bool = False) -> List:
+    def get_index_kway_tournament_selection(self, pop: List = None, k_way: float = 0.2, output: int = 2,
+                                            reverse: bool = False) -> List:
         """
         Args:
             pop: The population
@@ -688,8 +708,9 @@ class Optimizer:
             return [parent[0] for parent in list_parents[-output:]]
         return [parent[0] for parent in list_parents[:output]]
 
-    def get_levy_flight_step(self, beta: float = 1.0, multiplier: float = 0.001, 
-                             size: Union[List, Tuple, np.ndarray] = None, case: int = 0) -> Union[float, List, np.ndarray]:
+    def get_levy_flight_step(self, beta: float = 1.0, multiplier: float = 0.001,
+                             size: Union[List, Tuple, np.ndarray] = None, case: int = 0) -> Union[
+        float, List, np.ndarray]:
         """
         Get the Levy-flight step size
 
@@ -712,7 +733,8 @@ class Optimizer:
         """
         # u and v are two random variables which follow self.generator.normal distribution
         # sigma_u : standard deviation of u
-        sigma_u = np.power(gamma(1. + beta) * np.sin(np.pi * beta / 2) / (gamma((1 + beta) / 2.) * beta * np.power(2., (beta - 1) / 2)), 1. / beta)
+        sigma_u = np.power(gamma(1. + beta) * np.sin(np.pi * beta / 2) / (
+                gamma((1 + beta) / 2.) * beta * np.power(2., (beta - 1) / 2)), 1. / beta)
         # sigma_v : standard deviation of v
         sigma_v = 1
         size = 1 if size is None else size
@@ -736,7 +758,8 @@ class Optimizer:
         Returns:
             The opposite solution
         """
-        pos_new = self.problem.lb + self.problem.ub - g_best.solution + self.generator.uniform() * (g_best.solution - agent.solution)
+        pos_new = self.problem.lb + self.problem.ub - g_best.solution + self.generator.uniform() * (
+                g_best.solution - agent.solution)
         return self.correct_solution(pos_new)
 
     def generate_group_population(self, pop: List[Agent], n_groups: int, m_agents: int) -> List:
@@ -793,7 +816,8 @@ class Optimizer:
             agent.solution = self.correct_solution(pos_new)
             pop_new.append(agent)
         pop_new = self.update_target_for_population(pop_new)
-        pop_s1 = self.greedy_selection_population(pop_s1, pop_new, self.problem.minmax)  ## Greedy method --> improved exploitation
+        pop_s1 = self.greedy_selection_population(pop_s1, pop_new,
+                                                  self.problem.minmax)  ## Greedy method --> improved exploitation
 
         ## Search Mechanism
         pos_s1_list = [agent.solution for agent in pop_s1]

@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -40,6 +41,7 @@ class OriginalSRSR(Optimizer):
     [1] Bakhshipour, M., Ghadi, M.J. and Namdari, F., 2017. Swarm robotics search & rescue: A novel
     artificial intelligence-inspired optimization approach. Applied Soft Computing, 57, pp.708-726.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -107,7 +109,8 @@ class OriginalSRSR(Optimizer):
                 self.SIF = 6
             self.sigma_temp[idx] = self.SIF * self.generator.uniform()
             self.pop[idx].sigma = self.sigma_temp[idx] * np.abs(self.pop[0].solution - self.pop[idx].solution) + \
-                                         self.generator.uniform() ** 2 * ((self.pop[0].solution - self.pop[idx].solution) < 0.05)
+                                  self.generator.uniform() ** 2 * (
+                                          (self.pop[0].solution - self.pop[idx].solution) < 0.05)
             # ----- Generating New Positions Using New Obtained Mu And Sigma Values --------------
             pos_new = self.generator.normal(self.pop[idx].mu, self.pop[idx].sigma, self.problem.n_dims)
             pos_new = self.correct_solution(pos_new)
@@ -146,8 +149,9 @@ class OriginalSRSR(Optimizer):
             gb = self.generator.uniform(-1, 1, self.problem.n_dims)
             gb[gb >= 0] = 1
             gb[gb < 0] = -1
-            pos_new = self.pop[idx].solution * self.generator.uniform() + gb * (self.pop[0].solution - self.pop[idx].solution) + \
-                   self.movement_factor * self.generator.uniform(self.problem.lb, self.problem.ub)
+            pos_new = self.pop[idx].solution * self.generator.uniform() + gb * (
+                    self.pop[0].solution - self.pop[idx].solution) + \
+                      self.movement_factor * self.generator.uniform(self.problem.lb, self.problem.ub)
             pos_new = self.correct_solution(pos_new)
             agent.solution = pos_new
             pop_new.append(agent)
@@ -176,18 +180,23 @@ class OriginalSRSR(Optimizer):
             master_robot = {"original": np.reshape(self.pop[0].solution, (self.problem.n_dims, 1)),
                             "sign": np.reshape(np.sign(self.pop[0].solution), (self.problem.n_dims, 1)),
                             "abs": np.reshape(abs(self.pop[0].solution), (self.problem.n_dims, 1)),
-                            "int": np.reshape(np.floor(abs(self.pop[0].solution)), (self.problem.n_dims, 1)),  # INTEGER PART
-                            "frac": np.reshape(abs(self.pop[0].solution) - np.floor(abs(self.pop[0].solution)), (self.problem.n_dims, 1))
+                            "int": np.reshape(np.floor(abs(self.pop[0].solution)), (self.problem.n_dims, 1)),
+                            # INTEGER PART
+                            "frac": np.reshape(abs(self.pop[0].solution) - np.floor(abs(self.pop[0].solution)),
+                                               (self.problem.n_dims, 1))
                             }  # FRACTIONAL PART
 
             # ------- Applying Nth-root And Nth-exponent Operators To Create Position Of New Worker Robots -------
-            worker_robot1 = (master_robot["int"] + np.power(master_robot["frac"], 1 / (1 + self.generator.integers(1, 4)))) * master_robot["sign"]
+            worker_robot1 = (master_robot["int"] + np.power(master_robot["frac"],
+                                                            1 / (1 + self.generator.integers(1, 4)))) * master_robot[
+                                "sign"]
             id_changed1 = np.argwhere(np.round(self.generator.uniform(self.problem.lb, self.problem.ub)))
             id_changed1 = np.reshape(id_changed1, (len(id_changed1)))
             worker_robot1 = np.reshape(worker_robot1, (self.problem.n_dims, 1))
             worker_robot1[id_changed1] = master_robot["original"][id_changed1]
 
-            worker_robot2 = (master_robot["int"] + np.power(master_robot["frac"], (1 + self.generator.integers(1, 4)))) * master_robot["sign"]
+            worker_robot2 = (master_robot["int"] + np.power(master_robot["frac"],
+                                                            (1 + self.generator.integers(1, 4)))) * master_robot["sign"]
             id_changed2 = np.argwhere(np.round(self.generator.uniform(self.problem.lb, self.problem.ub)))
             id_changed2 = np.reshape(id_changed2, (len(id_changed2)))
             worker_robot2 = np.reshape(worker_robot2, (self.problem.n_dims, 1))
@@ -199,7 +208,8 @@ class OriginalSRSR(Optimizer):
             sec2 = random_per_mutation[int(self.problem.n_dims / 2):]
             worker_robot3 = np.zeros((self.problem.n_dims, 1))
             worker_robot3[sec1] = (master_robot["int"][sec1] + np.power(master_robot["frac"][sec1],
-                                                                        1 / (1 + self.generator.integers(1, 4)))) * master_robot["sign"][sec1]
+                                                                        1 / (1 + self.generator.integers(1, 4)))) * \
+                                  master_robot["sign"][sec1]
             worker_robot3[sec2] = (master_robot["int"][sec2] + master_robot["frac"][sec2] **
                                    (1 + self.generator.integers(1, 4))) * master_robot["sign"][sec2]
             id_changed3 = np.argwhere(np.round(self.generator.uniform(self.problem.lb, self.problem.ub)))
@@ -218,7 +228,8 @@ class OriginalSRSR(Optimizer):
             worker_robot5[id_changed5] = master_robot["original"][id_changed5]
 
             # --------- Progress Assessment: Replacing More Quality Solutions With Previous Ones ---------------
-            workers = np.concatenate((worker_robot1.T, worker_robot2.T, worker_robot3.T, worker_robot4.T, worker_robot5.T), axis=0)
+            workers = np.concatenate(
+                (worker_robot1.T, worker_robot2.T, worker_robot3.T, worker_robot4.T, worker_robot5.T), axis=0)
             pop_workers = []
             for idx in range(0, 5):
                 pos_new = self.correct_solution(workers[idx])

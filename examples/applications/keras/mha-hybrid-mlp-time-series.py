@@ -16,10 +16,11 @@
 
 # univariate mlp example
 import numpy as np
-from keras.models import Sequential
 from keras.layers import Dense
-from mealpy import FloatVar, FPA
+from keras.models import Sequential
 from permetrics.regression import RegressionMetric
+
+from mealpy import FloatVar, FPA
 
 
 # split a univariate sequence into samples
@@ -61,7 +62,7 @@ class HybridMlp:
         self.n_dims = (self.n_inputs * self.n_hidden_nodes) + self.n_hidden_nodes + (self.n_hidden_nodes * 1) + 1
         self.problem = {
             "obj_func": self.fitness_function,
-            "bounds": FloatVar(lb=(-1.,)*self.n_dims, ub=(1.0,)*self.n_dims),
+            "bounds": FloatVar(lb=(-1.,) * self.n_dims, ub=(1.0,) * self.n_dims),
             "minmax": "min",
             "obj_weights": [0.3, 0.2, 0.5],  # [mae, mse, rmse]
         }

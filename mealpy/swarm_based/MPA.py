@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -69,7 +70,7 @@ class OriginalMPA(Optimizer):
         Args:
             epoch (int): The current iteration
         """
-        CF = (1 - epoch/self.epoch)**(2 * epoch/self.epoch)
+        CF = (1 - epoch / self.epoch) ** (2 * epoch / self.epoch)
         RL = self.get_levy_flight_step(beta=1.5, multiplier=0.05, size=(self.pop_size, self.problem.n_dims), case=-1)
         RB = self.generator.standard_normal((self.pop_size, self.problem.n_dims))
         per1 = self.generator.permutation(self.pop_size)
@@ -77,23 +78,24 @@ class OriginalMPA(Optimizer):
         pop_new = []
         for idx in range(0, self.pop_size):
             R = self.generator.random(self.problem.n_dims)
-            if epoch < self.epoch / 3:     # Phase 1 (Eq.12)
+            if epoch < self.epoch / 3:  # Phase 1 (Eq.12)
                 step_size = RB[idx] * (self.g_best.solution - RB[idx] * self.pop[idx].solution)
                 pos_new = self.pop[idx].solution + self.P * R * step_size
-            elif self.epoch / 3 < epoch < 2*self.epoch / 3:     # Phase 2 (Eqs. 13 & 14)
+            elif self.epoch / 3 < epoch < 2 * self.epoch / 3:  # Phase 2 (Eqs. 13 & 14)
                 if idx > self.pop_size / 2:
                     step_size = RB[idx] * (RB[idx] * self.g_best.solution - self.pop[idx].solution)
                     pos_new = self.g_best.solution + self.P * CF * step_size
                 else:
                     step_size = RL[idx] * (self.g_best.solution - RL[idx] * self.pop[idx].solution)
                     pos_new = self.pop[idx].solution + self.P * R * step_size
-            else:       # Phase 3 (Eq. 15)
+            else:  # Phase 3 (Eq. 15)
                 step_size = RL[idx] * (RL[idx] * self.g_best.solution - self.pop[idx].solution)
                 pos_new = self.g_best.solution + self.P * CF * step_size
             pos_new = self.correct_solution(pos_new)
             if self.generator.random() < self.FADS:
                 u = np.where(self.generator.random(self.problem.n_dims) < self.FADS, 1, 0)
-                pos_new = pos_new + CF * (self.problem.lb + self.generator.random(self.problem.n_dims) * (self.problem.ub - self.problem.lb)) * u
+                pos_new = pos_new + CF * (self.problem.lb + self.generator.random(self.problem.n_dims) * (
+                        self.problem.ub - self.problem.lb)) * u
             else:
                 r = self.generator.random()
                 step_size = (self.FADS * (1 - r) + r) * (self.pop[per1[idx]].solution - self.pop[per2[idx]].solution)

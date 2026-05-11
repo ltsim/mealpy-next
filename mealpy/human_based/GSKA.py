@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -43,7 +44,8 @@ class DevGSKA(Optimizer):
     >>> print(f"Solution: {model.g_best.solution}, Fitness: {model.g_best.target.fitness}")
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, pb: float = 0.1, kr: float = 0.7, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, pb: float = 0.1, kr: float = 0.7,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -83,7 +85,8 @@ class DevGSKA(Optimizer):
                     rand_idx = self.generator.choice(list(set(range(0, self.pop_size)) - {previ, idx, nexti}))
                     if self.compare_target(self.pop[rand_idx].target, self.pop[idx].target, self.problem.minmax):
                         pos_new = self.pop[idx].solution + self.generator.uniform(0, 1, self.problem.n_dims) * \
-                                  (self.pop[previ].solution - self.pop[nexti].solution + self.pop[rand_idx].solution - self.pop[idx].solution)
+                                  (self.pop[previ].solution - self.pop[nexti].solution + self.pop[rand_idx].solution -
+                                   self.pop[idx].solution)
                     else:
                         pos_new = self.g_best.solution + self.generator.uniform(0, 1, self.problem.n_dims) * \
                                   (self.pop[rand_idx].solution - self.pop[idx].solution)
@@ -98,7 +101,8 @@ class DevGSKA(Optimizer):
                     rand_mid = self.generator.choice(list(set(range(id1, id2)) - {idx}))
                     if self.compare_target(self.pop[rand_mid].target, self.pop[idx].target, self.problem.minmax):
                         pos_new = self.pop[idx].solution + self.generator.uniform(0, 1, self.problem.n_dims) * \
-                                  (self.pop[rand_best].solution - self.pop[rand_worst].solution + self.pop[rand_mid].solution - self.pop[idx].solution)
+                                  (self.pop[rand_best].solution - self.pop[rand_worst].solution + self.pop[
+                                      rand_mid].solution - self.pop[idx].solution)
                     else:
                         pos_new = self.g_best.solution + self.generator.uniform(0, 1, self.problem.n_dims) * \
                                   (self.pop[rand_mid].solution - self.pop[idx].solution)
@@ -153,7 +157,8 @@ class OriginalGSKA(Optimizer):
     optimization problems: a novel nature-inspired algorithm. International Journal of Machine Learning and Cybernetics, 11(7), pp.1501-1529.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, pb: float = 0.1, kf: float = 0.5, kr: float = 0.9, kg: int = 5, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, pb: float = 0.1, kf: float = 0.5, kr: float = 0.9,
+                 kg: int = 5, **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000

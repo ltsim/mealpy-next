@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -80,7 +81,7 @@ class OriginalTWO(Optimizer):
         if maxx == minn:
             list_fits = self.generator.uniform(0.0, 1.0, self.pop_size)
         list_weights = np.exp(-(list_fits - maxx) / (maxx - minn))
-        list_weights = list_weights/np.sum(list_weights) + 0.1
+        list_weights = list_weights / np.sum(list_weights) + 0.1
         for idx in range(self.pop_size):
             teams[idx].weight = list_weights[idx]
         return teams
@@ -110,7 +111,8 @@ class OriginalTWO(Optimizer):
             for jdx in range(self.problem.n_dims):
                 if pos_new[jdx] < self.problem.lb[jdx] or pos_new[jdx] > self.problem.ub[jdx]:
                     if self.generator.random() <= 0.5:
-                        pos_new[jdx] = self.g_best.solution[jdx] + self.generator.standard_normal() / epoch * (self.g_best.solution[jdx] - pos_new[jdx])
+                        pos_new[jdx] = self.g_best.solution[jdx] + self.generator.standard_normal() / epoch * (
+                                self.g_best.solution[jdx] - pos_new[jdx])
                         if pos_new[jdx] < self.problem.lb[jdx] or pos_new[jdx] > self.problem.ub[jdx]:
                             pos_new[jdx] = self.pop[idx].solution[jdx]
                     else:
@@ -164,8 +166,8 @@ class OppoTWO(OriginalTWO):
     def initialization(self):
         if self.pop is None:
             self.pop = self.generate_population(self.pop_size)
-        list_idx = self.generator.choice(range(0, self.pop_size), int(self.pop_size/2), replace=False)
-        pop_temp = [self.pop[list_idx[idx]] for idx in range(0, int(self.pop_size/2))]
+        list_idx = self.generator.choice(range(0, self.pop_size), int(self.pop_size / 2), replace=False)
+        pop_temp = [self.pop[list_idx[idx]] for idx in range(0, int(self.pop_size / 2))]
         pop_oppo = []
         for idx in range(len(pop_temp)):
             pos_opposite = self.problem.ub + self.problem.lb - pop_temp[idx].solution
@@ -201,7 +203,8 @@ class OppoTWO(OriginalTWO):
             self.pop[idx].solution = pos_new
         ## Amend solution and update fitness value
         for idx in range(self.pop_size):
-            pos_new = self.g_best.solution + self.generator.normal(0, 1, self.problem.n_dims) / (epoch) * (self.g_best.solution - pop_new[idx].solution)
+            pos_new = self.g_best.solution + self.generator.normal(0, 1, self.problem.n_dims) / (epoch) * (
+                    self.g_best.solution - pop_new[idx].solution)
             conditions = np.logical_or(pop_new[idx].solution < self.problem.lb, pop_new[idx].solution > self.problem.ub)
             conditions = np.logical_and(conditions, self.generator.random(self.problem.n_dims) < 0.5)
             pos_new = np.where(conditions, pos_new, self.pop[idx].solution)
@@ -278,14 +281,15 @@ class LevyTWO(OriginalTWO):
                     acceleration = resultant_force * g / (self.pop[idx].weight * self.muy_k)
                     delta_x = 1 / 2 * acceleration + np.power(self.alpha, epoch) * self.beta * \
                               (self.problem.ub - self.problem.lb) * self.generator.normal(0, 1, self.problem.n_dims)
-                    pos_new +=delta_x
+                    pos_new += delta_x
             pop_new[idx].solution = pos_new
         for idx in range(self.pop_size):
             pos_new = self.pop[idx].solution.copy().astype(float)
             for jdx in range(self.problem.n_dims):
                 if pos_new[jdx] < self.problem.lb[jdx] or pos_new[jdx] > self.problem.ub[jdx]:
                     if self.generator.random() <= 0.5:
-                        pos_new[jdx] = self.g_best.solution[jdx] + self.generator.standard_normal() / epoch * (self.g_best.solution[jdx] - pos_new[jdx])
+                        pos_new[jdx] = self.g_best.solution[jdx] + self.generator.standard_normal() / epoch * (
+                                self.g_best.solution[jdx] - pos_new[jdx])
                         if pos_new[jdx] < self.problem.lb[jdx] or pos_new[jdx] > self.problem.ub[jdx]:
                             pos_new[jdx] = self.pop[idx].solution[jdx]
                     else:
@@ -392,7 +396,8 @@ class EnhancedTWO(OppoTWO, LevyTWO):
             for jdx in range(self.problem.n_dims):
                 if pos_new[jdx] < self.problem.lb[jdx] or pos_new[jdx] > self.problem.ub[jdx]:
                     if self.generator.random() <= 0.5:
-                        pos_new[jdx] = self.g_best.solution[jdx] + self.generator.standard_normal() / epoch * (self.g_best.solution[jdx] - pos_new[jdx])
+                        pos_new[jdx] = self.g_best.solution[jdx] + self.generator.standard_normal() / epoch * (
+                                self.g_best.solution[jdx] - pos_new[jdx])
                         if pos_new[jdx] < self.problem.lb[jdx] or pos_new[jdx] > self.problem.ub[jdx]:
                             pos_new[jdx] = self.pop[idx].solution[jdx]
                     else:

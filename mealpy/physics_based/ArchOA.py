@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -77,9 +78,10 @@ class OriginalArchOA(Optimizer):
     def generate_empty_agent(self, solution: np.ndarray = None) -> Agent:
         if solution is None:
             solution = self.problem.generate_solution(encoded=True)
-        den = self.generator.uniform(self.problem.lb, self.problem.ub)          # Density
-        vol = self.generator.uniform(self.problem.lb, self.problem.ub)          # Volume
-        acc = self.problem.lb + self.generator.uniform(self.problem.lb, self.problem.ub) * (self.problem.ub - self.problem.lb)  # Acceleration
+        den = self.generator.uniform(self.problem.lb, self.problem.ub)  # Density
+        vol = self.generator.uniform(self.problem.lb, self.problem.ub)  # Volume
+        acc = self.problem.lb + self.generator.uniform(self.problem.lb, self.problem.ub) * (
+                self.problem.ub - self.problem.lb)  # Acceleration
         return Agent(solution=solution, den=den, vol=vol, acc=acc)
 
     def evolve(self, epoch):
@@ -113,7 +115,8 @@ class OriginalArchOA(Optimizer):
         max_acc = np.max(list_acc)
         ## Normalize acceleration using Eq. 12
         for idx in range(0, self.pop_size):
-            self.pop[idx].acc = self.acc_max * (list_acc[idx] - min_acc) / (max_acc - min_acc + self.EPSILON) + self.acc_min
+            self.pop[idx].acc = self.acc_max * (list_acc[idx] - min_acc) / (
+                    max_acc - min_acc + self.EPSILON) + self.acc_min
         pop_new = []
         for idx in range(0, self.pop_size):
             agent = self.pop[idx].copy()

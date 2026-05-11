@@ -4,8 +4,10 @@
 #       Github: https://github.com/thieu1995        %
 # --------------------------------------------------%
 
-import numpy as np
 from math import gamma
+
+import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -47,7 +49,8 @@ class OriginalMSA(Optimizer):
     global optimization problems. Memetic Computing, 10(2), pp.151-164.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, n_best: int = 5, partition: float = 0.5, max_step_size: float = 1.0, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, n_best: int = 5, partition: float = 0.5,
+                 max_step_size: float = 1.0, **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -59,7 +62,7 @@ class OriginalMSA(Optimizer):
         super().__init__(**kwargs)
         self.epoch = self.validator.check_int("epoch", epoch, [1, 100000])
         self.pop_size = self.validator.check_int("pop_size", pop_size, [10, 10000])
-        self.n_best = self.validator.check_int("n_best", n_best, [2, int(self.pop_size/2)])
+        self.n_best = self.validator.check_int("n_best", n_best, [2, int(self.pop_size / 2)])
         self.partition = self.validator.check_float("partition", partition, (0, 1.0))
         self.max_step_size = self.validator.check_float("max_step_size", max_step_size, (0, 5.0))
         self.set_parameters(["epoch", "pop_size", "n_best", "partition", "max_step_size"])
@@ -73,7 +76,8 @@ class OriginalMSA(Optimizer):
 
     def _levy_walk(self, iteration):
         beta = 1.5  # Eq. 2.23
-        sigma = (gamma(1 + beta) * np.sin(np.pi * (beta - 1) / 2) / (gamma(beta / 2) * (beta - 1) * 2 ** ((beta - 2) / 2))) ** (1 / (beta - 1))
+        sigma = (gamma(1 + beta) * np.sin(np.pi * (beta - 1) / 2) / (
+                gamma(beta / 2) * (beta - 1) * 2 ** ((beta - 2) / 2))) ** (1 / (beta - 1))
         u = self.generator.uniform(self.problem.lb, self.problem.ub) * sigma
         v = self.generator.uniform(self.problem.lb, self.problem.ub)
         step = u / np.abs(v) ** (1.0 / (beta - 1))  # Eq. 2.21

@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -69,9 +70,12 @@ class OriginalSHIO(Optimizer):
         pop_new = []
         for idx in range(0, self.pop_size):
             a = a - 0.04
-            x1 = b1.solution + (a*2*self.generator.random(self.problem.n_dims) - a)*np.abs(self.generator.random(self.problem.n_dims) * b1.solution - self.pop[idx].solution)
-            x2 = b2.solution + (a*2*self.generator.random(self.problem.n_dims) - a)*np.abs(self.generator.random(self.problem.n_dims) * b2.solution - self.pop[idx].solution)
-            x3 = b3.solution + (a*2*self.generator.random(self.problem.n_dims) - a)*np.abs(self.generator.random(self.problem.n_dims) * b3.solution - self.pop[idx].solution)
+            x1 = b1.solution + (a * 2 * self.generator.random(self.problem.n_dims) - a) * np.abs(
+                self.generator.random(self.problem.n_dims) * b1.solution - self.pop[idx].solution)
+            x2 = b2.solution + (a * 2 * self.generator.random(self.problem.n_dims) - a) * np.abs(
+                self.generator.random(self.problem.n_dims) * b2.solution - self.pop[idx].solution)
+            x3 = b3.solution + (a * 2 * self.generator.random(self.problem.n_dims) - a) * np.abs(
+                self.generator.random(self.problem.n_dims) * b3.solution - self.pop[idx].solution)
             pos_new = (x1 + x2 + x3) / 3
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)

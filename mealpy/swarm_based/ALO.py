@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -109,7 +110,7 @@ class OriginalALO(Optimizer):
             RA = self.random_walk_antlion__(self.pop[rolette_index].solution, epoch)
             # RE is the random walk around the elite (the best antlion so far)
             RE = self.random_walk_antlion__(self.g_best.solution, epoch)
-            temp = (RA[:, epoch-1] + RE[:, epoch-1]) / 2  # Equation(2.13) in the paper
+            temp = (RA[:, epoch - 1] + RE[:, epoch - 1]) / 2  # Equation(2.13) in the paper
             # Bound checking (bring back the antlions of ants inside search space if they go beyonds the boundaries
             pos_new = self.correct_solution(temp)
             agent = self.generate_empty_agent(pos_new)
@@ -179,7 +180,8 @@ class DevALO(OriginalALO):
         ub = ub + solution if self.generator.random() < 0.5 else -ub + solution
         # This function creates n random walks and normalize according to lb and ub vectors,
         ## Using matrix and vector for better performance
-        X = np.array([np.cumsum(2 * (self.generator.random(self.pop_size) > 0.5) - 1) for _ in range(0, self.problem.n_dims)])
+        X = np.array(
+            [np.cumsum(2 * (self.generator.random(self.pop_size) > 0.5) - 1) for _ in range(0, self.problem.n_dims)])
         a = np.min(X, axis=1)
         b = np.max(X, axis=1)
         temp1 = np.reshape((ub - lb) / (b - a), (self.problem.n_dims, 1))

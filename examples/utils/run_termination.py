@@ -5,8 +5,9 @@
 # --------------------------------------------------%
 
 import numpy as np
-from mealpy import FloatVar, BBO, Termination
 from opfunu.cec_based.cec2017 import F292017
+
+from mealpy import FloatVar, BBO, Termination
 
 ## 1) Single termination
 f18 = F292017(ndim=30)
@@ -24,16 +25,13 @@ model = BBO.OriginalBBO(epoch=200, pop_size=50)
 g_best = model.solve(problem_dict1, termination={"max_epoch": 100})
 print(f"Solution: {g_best.solution}, Fitness: {g_best.target.fitness}")
 
-
 ## 2. Number of Function Evaluation
 g_best = model.solve(problem_dict1, termination={"max_fe": 10000})
 print(f"Solution: {g_best.solution}, Fitness: {g_best.target.fitness}")
 
-
 ## 3. Time bound
 g_best = model.solve(problem_dict1, termination={"max_time": 5.5})
 print(f"Solution: {g_best.solution}, Fitness: {g_best.target.fitness}")
-
 
 ## 4. Early Stopping
 g_best = model.solve(problem_dict1, termination={"max_early_stop": 5})
@@ -43,14 +41,14 @@ print(f"Solution: {g_best.solution}, Fitness: {g_best.target.fitness}")
 ## 2) Combine all of them
 # Define an example objective function (e.g., sphere function)
 def fitness(solution):
-    return np.sum(solution**2)
+    return np.sum(solution ** 2)
 
 
 term_dict = {
     "max_epoch": 100,
     "max_fe": 2000,  # 2000 number of function evaluation
-    "max_time": 1.5,     # 1.5 seconds to run the program
-    "max_early_stop": 15    # 15 epochs if the best fitness is not getting better we stop the program
+    "max_time": 1.5,  # 1.5 seconds to run the program
+    "max_early_stop": 15  # 15 epochs if the best fitness is not getting better we stop the program
 }
 
 # Define the problem dimension and search space (e.g., for a 30-D problem with [-10, 10] bounds for each variable)

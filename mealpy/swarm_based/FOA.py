@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -40,6 +41,7 @@ class OriginalFOA(Optimizer):
     [1] Pan, W.T., 2012. A new fruit fly optimization algorithm: taking the financial distress model
     as an example. Knowledge-Based Systems, 26, pp.69-74.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -71,7 +73,8 @@ class OriginalFOA(Optimizer):
         """
         pop_new = []
         for idx in range(0, self.pop_size):
-            pos_new = self.pop[idx].solution + self.generator.random() * self.generator.normal(self.problem.lb, self.problem.ub)
+            pos_new = self.pop[idx].solution + self.generator.random() * self.generator.normal(self.problem.lb,
+                                                                                               self.problem.ub)
             pos_new = self.norm_consecutive_adjacent__(pos_new)
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)

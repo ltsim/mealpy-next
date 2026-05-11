@@ -4,8 +4,9 @@
 #       Github: https://github.com/thieu1995        %                         
 # --------------------------------------------------%
 
-from scipy.stats import cauchy, norm
 import numpy as np
+from scipy.stats import cauchy, norm
+
 from mealpy.optimizer import Optimizer
 
 
@@ -74,7 +75,7 @@ class OriginalLSHADEcnEpSin(Optimizer):
     def initialize_variables(self):
         self.NP_init = self.pop_size if self.pop_size else 18 * self.problem.n_dims
         self.NP_min = self.pop_size_min  # Minimum population size
-        self.NP = self.NP_init      # population size will be updated in each iteration
+        self.NP = self.NP_init  # population size will be updated in each iteration
 
         # Memory settings
         self.H = self.memory_size  # Memory size
@@ -153,7 +154,7 @@ class OriginalLSHADEcnEpSin(Optimizer):
 
         # Mutation
         pos_new = self.pop[idx].solution + F * (pop_sorted[pbest_idx].solution - self.pop[idx].solution) + \
-                    F * (self.pop[r1].solution - pop_combined[r2].solution)
+                  F * (self.pop[r1].solution - pop_combined[r2].solution)
         # Ensure the new position is within bounds
         pos_new = self.correct_solution(pos_new)
         return pos_new
@@ -203,7 +204,8 @@ class OriginalLSHADEcnEpSin(Optimizer):
                 CR = np.clip(CR, 0, 1)
 
                 # Binomial crossover in eigen space
-                trial_prime = np.where(self.generator.uniform(0, 1, self.problem.n_dims) <= CR, mutant_prime, target_prime)
+                trial_prime = np.where(self.generator.uniform(0, 1, self.problem.n_dims) <= CR, mutant_prime,
+                                       target_prime)
                 j_rand = self.generator.integers(0, self.problem.n_dims)
                 trial_prime[j_rand] = mutant_prime[j_rand]  # Ensure at least one gene from mutant
                 # Transform back to original coordinate system
@@ -298,7 +300,7 @@ class OriginalLSHADEcnEpSin(Optimizer):
             agent = self.generate_agent(pos_new)
 
             # Selection
-            if self.compare_target(agent.target, self.pop[idx].target, self.problem.minmax): # Success
+            if self.compare_target(agent.target, self.pop[idx].target, self.problem.minmax):  # Success
                 delta = abs(self.pop[idx].target.fitness - agent.target.fitness)
                 S_F.append(F)
                 S_CR.append(CR)
@@ -313,7 +315,7 @@ class OriginalLSHADEcnEpSin(Optimizer):
                 self.archive = self.archive + [self.pop[idx].copy()]
                 # Replace with trial
                 self.pop[idx] = agent
-            else:                           # Failure
+            else:  # Failure
                 if epoch <= self.epoch // 2:
                     if config_used == 1:
                         nf1_current += 1

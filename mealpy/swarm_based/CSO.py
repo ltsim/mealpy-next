@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -82,7 +83,8 @@ class OriginalCSO(Optimizer):
         self.w_min = self.validator.check_float("w_min", w_min, [0.1, 0.5])
         self.w_max = self.validator.check_float("w_max", w_max, [0.5, 2.0])
         self.selected_strategy = self.validator.check_int("selected_strategy", selected_strategy, [0, 4])
-        self.set_parameters(["epoch", "pop_size", "mixture_ratio", "smp", "spc", "cdc", "srd", "c1", "w_min", "w_max", "selected_strategy"])
+        self.set_parameters(["epoch", "pop_size", "mixture_ratio", "smp", "spc", "cdc", "srd", "c1", "w_min", "w_max",
+                             "selected_strategy"])
         self.sort_flag = False
 
     def generate_empty_agent(self, solution: np.ndarray = None) -> Agent:
@@ -104,7 +106,8 @@ class OriginalCSO(Optimizer):
             candidate_cats.append(cat.copy())
             clone_cats = [cat.copy() for _ in range(self.smp - 1)]
         for clone in clone_cats:
-            idx = self.generator.choice(range(0, self.problem.n_dims), int(self.cdc * self.problem.n_dims), replace=False)
+            idx = self.generator.choice(range(0, self.problem.n_dims), int(self.cdc * self.problem.n_dims),
+                                        replace=False)
             pos_new1 = clone.solution * (1 + self.srd)
             pos_new2 = clone.solution * (1 - self.srd)
             pos_new = np.where(self.generator.random(self.problem.n_dims) < 0.5, pos_new1, pos_new2)

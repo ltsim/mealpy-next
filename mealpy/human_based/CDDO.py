@@ -48,6 +48,7 @@ class OriginalCDDO(Optimizer):
     [1] Abdulhameed, S., Rashid, T.A. Child Drawing Development Optimization Algorithm Based on
     Child’s Cognitive Development. Arab J Sci Eng 47, 1337–1351 (2022). https://doi.org/10.1007/s13369-021-05928-6
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, pattern_size=10,
                  creativity_rate=0.1, **kwargs: object) -> None:
         """
@@ -77,7 +78,8 @@ class OriginalCDDO(Optimizer):
             if self.pop[idx].solution[p1] == 0:
                 self.list_gr.append(self.pop[idx].solution[p2])
             else:
-                self.list_gr.append(self.pop[idx].solution[p1] + self.pop[idx].solution[p2] / self.pop[idx].solution[p1])
+                self.list_gr.append(
+                    self.pop[idx].solution[p1] + self.pop[idx].solution[p2] / self.pop[idx].solution[p1])
 
     def evolve(self, epoch):
         """
@@ -102,7 +104,8 @@ class OriginalCDDO(Optimizer):
                 self.SR = self.generator.integers(6, 11) / 10
             elif 1.5 < self.list_gr[idx] < 2:
                 # Consider the learnt patterns
-                pos_new = pattern[self.generator.integers(0, self.pattern_size)].solution - self.creativity_rate * self.pop_local[idx].solution
+                pos_new = pattern[self.generator.integers(0, self.pattern_size)].solution - self.creativity_rate * \
+                          self.pop_local[idx].solution
                 self.LR = self.generator.integers(0, 6) / 10
                 self.SR = self.generator.integers(0, 6) / 10
             pos_new = self.correct_solution(pos_new)

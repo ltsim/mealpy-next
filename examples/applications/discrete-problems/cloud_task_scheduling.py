@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy import PermutationVar, ACOR, Problem
 
 
@@ -19,15 +20,16 @@ class MyProblem(Problem):
         t = np.zeros((self.data["n_jobs"], self.data["n_machines"]))
         for job in range(self.data["n_jobs"]):
             for machine in range(self.data["n_machines"]):
-                if machine==0 and job ==0:
-                    t[job,machine] = self.data["p"][int(order[job]),machine]
-                elif machine==0:
-                    t[job,machine]=t[job-1, machine]+self.data["p"][int(order[job]),machine]
-                elif job==0:
-                    t[job,machine]=t[job, machine-1]+self.data["p"][int(order[job]),machine]
+                if machine == 0 and job == 0:
+                    t[job, machine] = self.data["p"][int(order[job]), machine]
+                elif machine == 0:
+                    t[job, machine] = t[job - 1, machine] + self.data["p"][int(order[job]), machine]
+                elif job == 0:
+                    t[job, machine] = t[job, machine - 1] + self.data["p"][int(order[job]), machine]
                 else:
-                    t[job,machine]=max(t[job-1, machine],t[job, machine-1])+self.data["p"][int(order[job]),machine]
-        makespan=t[-1,-1]
+                    t[job, machine] = max(t[job - 1, machine], t[job, machine - 1]) + self.data["p"][
+                        int(order[job]), machine]
+        makespan = t[-1, -1]
         return makespan
 
 
@@ -45,7 +47,7 @@ data = {
 problem = MyProblem(bounds=PermutationVar(valid_set=(0, 1, 2, 3, 4), name="delta"), name="Wow",
                     minmax="min", data=data, log_to="console")
 
-model = ACOR.OriginalACOR(epoch=50, pop_size=20, sample_count = 25, intent_factor = 0.5, zeta = 1.0)
+model = ACOR.OriginalACOR(epoch=50, pop_size=20, sample_count=25, intent_factor=0.5, zeta=1.0)
 g_best = model.solve(problem)
 print(f"Solution: {g_best.solution}, Fitness: {g_best.target.fitness}")
 print(f"Solution: {model.g_best.solution}, Fitness: {model.g_best.target.fitness}")

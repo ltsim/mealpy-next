@@ -5,7 +5,9 @@
 # --------------------------------------------------%
 
 from typing import Tuple, List
+
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -93,7 +95,8 @@ class OriginalIMODE(Optimizer):
         # Regenerate negative F values
         negative_mask = f <= 0
         while np.any(negative_mask):
-            f[negative_mask] = mu_f[negative_mask] + 0.1 * np.tan(np.pi * (self.generator.random(np.sum(negative_mask)) - 0.5))
+            f[negative_mask] = mu_f[negative_mask] + 0.1 * np.tan(
+                np.pi * (self.generator.random(np.sum(negative_mask)) - 0.5))
             negative_mask = f <= 0
         f = np.clip(f, 0, 1)
         return f, cr
@@ -115,7 +118,8 @@ class OriginalIMODE(Optimizer):
         total_size = len(combined_pop)
 
         # Generate unique random indices and Ensure indices are different
-        r1, r2, r3 = np.zeros(self.pop_size, dtype=int), np.zeros(self.pop_size, dtype=int), np.zeros(self.pop_size, dtype=int)
+        r1, r2, r3 = np.zeros(self.pop_size, dtype=int), np.zeros(self.pop_size, dtype=int), np.zeros(self.pop_size,
+                                                                                                      dtype=int)
         for idx in range(0, self.pop_size):
             x1, x3 = self.generator.choice(list(set(range(self.pop_size)) - {idx}), size=2, replace=False)
             x2 = self.generator.choice(list(set(range(total_size)) - {idx, x1, x3}))
@@ -142,7 +146,7 @@ class OriginalIMODE(Optimizer):
             matrix_pbest = matrix_pos[pbest_indices]
             matrix_mutant[op1_mask] = (matrix_pos[op1_mask] + f[op1_mask, np.newaxis] *
                                        (matrix_pbest[op1_mask] - matrix_pos[op1_mask] +
-                                    matrix_pos[r1[op1_mask]] - matrix_combined[r2[op1_mask]]))
+                                        matrix_pos[r1[op1_mask]] - matrix_combined[r2[op1_mask]]))
         # Operator 2: DE/current-to-pbest/1/bin
         if np.any(op2_mask):
             p_best_size = max(int(0.25 * self.pop_size), 1)
@@ -150,14 +154,14 @@ class OriginalIMODE(Optimizer):
             matrix_pbest = matrix_pos[pbest_indices]
             matrix_mutant[op2_mask] = (matrix_pos[op2_mask] + f[op2_mask, np.newaxis] *
                                        (matrix_pbest[op2_mask] - matrix_pos[op2_mask] +
-                                    matrix_pos[r1[op2_mask]] - matrix_pos[r3[op2_mask]]))
+                                        matrix_pos[r1[op2_mask]] - matrix_pos[r3[op2_mask]]))
         # Operator 3: DE/rand-to-pbest/1
         if np.any(op3_mask):
             p_best_size = max(int(0.5 * self.pop_size), 2)
             pbest_indices = self.generator.integers(0, p_best_size, self.pop_size)
             matrix_pbest = matrix_pos[pbest_indices]
             matrix_mutant[op3_mask] = (f[op3_mask, np.newaxis] * matrix_pos[r1[op3_mask]] +
-                                f[op3_mask, np.newaxis] * (matrix_pbest[op3_mask] - matrix_pos[r3[op3_mask]]))
+                                       f[op3_mask, np.newaxis] * (matrix_pbest[op3_mask] - matrix_pos[r3[op3_mask]]))
         return matrix_mutant
 
     def _handle_boundaries(self, vectors: np.ndarray) -> np.ndarray:
@@ -165,16 +169,16 @@ class OriginalIMODE(Optimizer):
         strategy = self.generator.integers(1, 4)
         result = []
 
-        if strategy == 1:   # Strategy 1: Midpoint repair
+        if strategy == 1:  # Strategy 1: Midpoint repair
             for idx in range(0, len(vectors)):
                 res = np.select([vectors[idx] < self.problem.lb, vectors[idx] > self.problem.ub],
                                 [(vectors[idx] + self.problem.ub) / 2, (vectors[idx] + self.problem.lb) / 2],
                                 default=vectors[idx])
                 result.append(res)
-        elif strategy == 2:     # Strategy 2: Reflection
+        elif strategy == 2:  # Strategy 2: Reflection
             for idx in range(0, len(vectors)):
                 res = vectors[idx]
-                flag1 =  res < self.problem.lb
+                flag1 = res < self.problem.lb
                 res[flag1] = np.clip(
                     2 * self.problem.lb[flag1] - res[flag1], self.problem.lb[flag1], self.problem.ub[flag1]
                 )
@@ -183,7 +187,7 @@ class OriginalIMODE(Optimizer):
                     2 * self.problem.ub[flag2] - res[flag2], self.problem.lb[flag2], self.problem.ub[flag2]
                 )
                 result.append(res)
-        else:   # Strategy 3: Random reinitialization
+        else:  # Strategy 3: Random reinitialization
             for idx in range(0, len(vectors)):
                 res = vectors[idx]
                 mask_lower = res < self.problem.lb
@@ -217,7 +221,7 @@ class OriginalIMODE(Optimizer):
                     jdx += 1
         return trial
 
-    def _update_archive(self, improved_pop = None):
+    def _update_archive(self, improved_pop=None):
         """Update solution archive"""
         if len(improved_pop) == 0:
             return
@@ -300,7 +304,8 @@ class OriginalIMODE(Optimizer):
                 if np.max(successful_cr) == 0:
                     self.memory_cr[self.memory_pos] = -1
                 else:
-                    self.memory_cr[self.memory_pos] = np.sum(weights * successful_cr ** 2) / np.sum(weights * successful_cr)
+                    self.memory_cr[self.memory_pos] = np.sum(weights * successful_cr ** 2) / np.sum(
+                        weights * successful_cr)
                 # Update memory position
                 self.memory_pos = (self.memory_pos + 1) % self.memory_size
             else:

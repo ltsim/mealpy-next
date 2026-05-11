@@ -5,10 +5,11 @@
 # --------------------------------------------------%
 
 from pathlib import Path
+
 from opfunu.cec_basic import cec2014_nobias
 from pandas import DataFrame
-from mealpy.evolutionary_based.DE import OriginalDE
 
+from mealpy.evolutionary_based.DE import OriginalDE
 
 PATH_RESULTS = "history/results/"
 Path(PATH_RESULTS).mkdir(parents=True, exist_ok=True)
@@ -22,8 +23,8 @@ pop_size = 50
 wf = 0.8
 cr = 0.9
 
-func_names = ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "F13", "F14", "F15", "F16", "F17", "F18", "F19"]
-
+func_names = ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "F13", "F14", "F15", "F16",
+              "F17", "F18", "F19"]
 
 ## Run model
 best_fit_full = {}

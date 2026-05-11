@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -86,7 +87,7 @@ class OriginalAEO(Optimizer):
             else:
                 r2 = self.generator.uniform()
                 x_t1 = self.pop[idx].solution + c * (r2 * (self.pop[idx].solution - self.pop[0].solution)
-                                                         + (1 - r2) * (self.pop[idx].solution - self.pop[jdx].solution))
+                                                     + (1 - r2) * (self.pop[idx].solution - self.pop[jdx].solution))
             pos_new = self.correct_solution(x_t1)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)
@@ -212,7 +213,7 @@ class ImprovedAEO(OriginalAEO):
             e = r3 * self.generator.integers(1, 3) - 1
             h = 2 * r3 - 1
             if self.generator.random() < 0.5:
-                beta = 1 - (1 - 0) * (epoch/ self.epoch)  # Eq. 21
+                beta = 1 - (1 - 0) * (epoch / self.epoch)  # Eq. 21
                 x_r = self.pop[self.generator.integers(0, self.pop_size - 1)].solution
                 if self.generator.random() < 0.5:
                     x_new = beta * x_r + (1 - beta) * self.pop[idx].solution
@@ -317,11 +318,13 @@ class EnhancedAEO(Optimizer):
             else:  # Eq. 17
                 r5 = self.generator.random()
                 if r4 <= 0.5:
-                    x_t1 = self.pop[idx].solution + np.sin(r5) * c * (r5 * (self.pop[idx].solution - self.pop[0].solution) +
-                                                                          (1 - r5) * (self.pop[idx].solution - self.pop[j].solution))
+                    x_t1 = self.pop[idx].solution + np.sin(r5) * c * (
+                            r5 * (self.pop[idx].solution - self.pop[0].solution) +
+                            (1 - r5) * (self.pop[idx].solution - self.pop[j].solution))
                 else:
-                    x_t1 = self.pop[idx].solution + np.cos(r5) * c * (r5 * (self.pop[idx].solution - self.pop[0].solution) +
-                                                                          (1 - r5) * (self.pop[idx].solution - self.pop[j].solution))
+                    x_t1 = self.pop[idx].solution + np.cos(r5) * c * (
+                            r5 * (self.pop[idx].solution - self.pop[0].solution) +
+                            (1 - r5) * (self.pop[idx].solution - self.pop[j].solution))
             pos_new = self.correct_solution(x_t1)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)
@@ -441,7 +444,7 @@ class ModifiedAEO(Optimizer):
             else:  # Eq. 25
                 r5 = self.generator.random()
                 pos_new = self.pop[idx].solution + H * c * (r5 * (self.pop[idx].solution - self.pop[0].solution) +
-                                                                (1 - r5) * (self.pop[idx].solution - self.pop[j].solution))
+                                                            (1 - r5) * (self.pop[idx].solution - self.pop[j].solution))
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)
@@ -560,10 +563,12 @@ class AugmentedAEO(Optimizer):
                 else:
                     r2 = self.generator.uniform()
                     pos_new = self.pop[idx].solution + wf * c * (r2 * (self.pop[idx].solution - self.pop[0].solution) +
-                                                                     (1 - r2) * (self.pop[idx].solution - self.pop[j].solution))
+                                                                 (1 - r2) * (self.pop[idx].solution - self.pop[
+                                j].solution))
             else:
                 pos_new = self.pop[idx].solution + self.get_levy_flight_step(1., 0.001, case=-1) * \
-                          (1.0 / np.sqrt(epoch)) * np.sign(self.generator.random() - 0.5) * (self.pop[idx].solution - self.g_best.solution)
+                          (1.0 / np.sqrt(epoch)) * np.sign(self.generator.random() - 0.5) * (
+                                  self.pop[idx].solution - self.g_best.solution)
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)
@@ -580,10 +585,13 @@ class AugmentedAEO(Optimizer):
         pop_child = []
         for idx in range(0, self.pop_size):
             if self.generator.random() < 0.5:
-                pos_new = best.solution + self.generator.normal(0, 1, self.problem.n_dims) * (best.solution - self.pop[idx].solution)
+                pos_new = best.solution + self.generator.normal(0, 1, self.problem.n_dims) * (
+                        best.solution - self.pop[idx].solution)
             else:
                 beta = self.generator.uniform(0.01, 1.)
-                pos_new = best.solution + self.get_levy_flight_step(beta=beta, multiplier=0.01, size=self.problem.n_dims, case=0) * (best.solution - self.pop[idx].solution)
+                pos_new = best.solution + self.get_levy_flight_step(beta=beta, multiplier=0.01,
+                                                                    size=self.problem.n_dims, case=0) * (
+                                  best.solution - self.pop[idx].solution)
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_child.append(agent)

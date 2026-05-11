@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -45,7 +46,8 @@ class OriginalSSpiderO(Optimizer):
     optimization algorithm: modifications, applications, and perspectives. Mathematical Problems in Engineering, 2018.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, fp_min: float = 0.65, fp_max: float = 0.9, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, fp_min: float = 0.65, fp_max: float = 0.9,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -104,7 +106,8 @@ class OriginalSSpiderO(Optimizer):
             x_s = np.zeros(self.problem.n_dims)
             vibs = 0
             if id_min is not None:
-                vibs = 2 * (pop[id_min].weight * np.exp(-(self.generator.uniform() * dist_min ** 2)))  # Vib for the shortest
+                vibs = 2 * (pop[id_min].weight * np.exp(
+                    -(self.generator.uniform() * dist_min ** 2)))  # Vib for the shortest
                 x_s = pop[id_min].solution
 
             ## Find the position b
@@ -114,8 +117,8 @@ class OriginalSSpiderO(Optimizer):
             ## Do attraction or repulsion
             beta = self.generator.uniform(0, 1, self.problem.n_dims)
             gamma = self.generator.uniform(0, 1, self.problem.n_dims)
-            rd_pos = 2 * self.p_m[epoch-1] * (self.generator.uniform(0, 1, self.problem.n_dims) - 0.5)
-            if self.generator.uniform() >= self.p_m[epoch-1]:  # Do an attraction
+            rd_pos = 2 * self.p_m[epoch - 1] * (self.generator.uniform(0, 1, self.problem.n_dims) - 0.5)
+            if self.generator.uniform() >= self.p_m[epoch - 1]:  # Do an attraction
                 pos_new = self.pop_females[idx].solution + vibs * (x_s - self.pop_females[idx].solution) * beta + \
                           vibb * (self.g_best.solution - self.pop_females[idx].solution) * gamma + rd_pos
             else:  # Do a repulsion
@@ -140,7 +143,7 @@ class OriginalSSpiderO(Optimizer):
             mean = np.sum(all_wei * all_pos, axis=0) / total_wei
         for idx in range(0, self.n_m):
             delta = 2 * self.generator.uniform(0, 1, self.problem.n_dims) - 0.5
-            rd_pos = 2 * self.p_m[epoch-1] * (self.generator.random(self.problem.n_dims) - 0.5)
+            rd_pos = 2 * self.p_m[epoch - 1] * (self.generator.random(self.problem.n_dims) - 0.5)
 
             if self.pop_males[idx].weight >= my_median:  # Spider above the median
                 # Start looking for a female with stronger vibration
@@ -148,7 +151,8 @@ class OriginalSSpiderO(Optimizer):
                 dist_min = 99999999
                 for jdx in range(0, self.n_f):
                     if self.pop_females[jdx].weight > self.pop_males[idx].weight:
-                        dt = np.linalg.norm(self.pop_females[jdx].solution - self.pop_males[idx].solution) / scale_distance
+                        dt = np.linalg.norm(
+                            self.pop_females[jdx].solution - self.pop_males[idx].solution) / scale_distance
                         if dt < dist_min and dt != 0:
                             dist_min = dt
                             id_min = jdx

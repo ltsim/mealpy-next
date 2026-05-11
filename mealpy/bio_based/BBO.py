@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -43,7 +44,8 @@ class OriginalBBO(Optimizer):
     [1] Simon, D., 2008. Biogeography-based optimization. IEEE transactions on evolutionary computation, 12(6), pp.702-713.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, p_m: float = 0.01, n_elites: int = 2, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, p_m: float = 0.01, n_elites: int = 2,
+                 **kwargs: object) -> None:
         """
         Initialize the algorithm components.
 
@@ -130,7 +132,8 @@ class DevBBO(OriginalBBO):
     >>> print(f"Solution: {model.g_best.solution}, Fitness: {model.g_best.target.fitness}")
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, p_m: float = 0.01, n_elites: int = 2, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, p_m: float = 0.01, n_elites: int = 2,
+                 **kwargs: object) -> None:
         """
         Initialize the algorithm components.
 

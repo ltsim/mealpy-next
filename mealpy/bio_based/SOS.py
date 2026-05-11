@@ -71,7 +71,8 @@ class OriginalSOS(Optimizer):
                 self.pop[jdx].update(solution=xj_new, target=xj_target)
             ## Commensalism phase
             jdx = self.generator.choice(list(set(range(0, self.pop_size)) - {idx}))
-            xi_new = self.pop[idx].solution + self.generator.uniform(-1, 1) * (self.g_best.solution - self.pop[jdx].solution)
+            xi_new = self.pop[idx].solution + self.generator.uniform(-1, 1) * (
+                    self.g_best.solution - self.pop[jdx].solution)
             xi_new = self.correct_solution(xi_new)
             xi_target = self.get_target(xi_new)
             if self.compare_target(xi_target, self.pop[idx].target, self.problem.minmax):

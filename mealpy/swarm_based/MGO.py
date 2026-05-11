@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -40,6 +41,7 @@ class OriginalMGO(Optimizer):
     [1] Abdollahzadeh, B., Gharehchopogh, F. S., Khodadadi, N., & Mirjalili, S. (2022). Mountain gazelle optimizer: a new
     nature-inspired metaheuristic algorithm for global optimization problems. Advances in Engineering Software, 174, 103282.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -72,20 +74,27 @@ class OriginalMGO(Optimizer):
         """
         pop_new = []
         for idx in range(0, self.pop_size):
-            idxs_rand = self.generator.permutation(self.pop_size)[:int(np.ceil(self.pop_size/3))]
-            pos_list = np.array([ self.pop[mm].solution for mm in idxs_rand ])
+            idxs_rand = self.generator.permutation(self.pop_size)[:int(np.ceil(self.pop_size / 3))]
+            pos_list = np.array([self.pop[mm].solution for mm in idxs_rand])
             idx_rand = self.generator.integers(int(np.ceil(self.pop_size / 3)), self.pop_size)
-            M = self.pop[idx_rand].solution * np.floor(self.generator.normal()) + np.mean(pos_list, axis=0) * np.ceil(self.generator.normal())
+            M = self.pop[idx_rand].solution * np.floor(self.generator.normal()) + np.mean(pos_list, axis=0) * np.ceil(
+                self.generator.normal())
 
             # Calculate the vector of coefficients
             cofi = self.coefficient_vector__(self.problem.n_dims, epoch, self.epoch)
             A = self.generator.standard_normal(self.problem.n_dims) * np.exp(2 - epoch * (2. / self.epoch))
-            D = (np.abs(self.pop[idx].solution) + np.abs(self.g_best.solution))*(2 * self.generator.random() - 1)
+            D = (np.abs(self.pop[idx].solution) + np.abs(self.g_best.solution)) * (2 * self.generator.random() - 1)
 
             # Update the location
-            x2 = self.g_best.solution - np.abs((self.generator.integers(1, 3)*M - self.generator.integers(1, 3)*self.pop[idx].solution) * A) * cofi[self.generator.integers(0, 4), :]
-            x3 = M + cofi[self.generator.integers(0, 4), :] + (self.generator.integers(1, 3)*self.g_best.solution - self.generator.integers(1, 3)*self.pop[self.generator.integers(self.pop_size)].solution)*cofi[self.generator.integers(0, 4), :]
-            x4 = self.pop[idx].solution - D + (self.generator.integers(1, 3)*self.g_best.solution - self.generator.integers(1, 3)*M) * cofi[self.generator.integers(0, 4), :]
+            x2 = self.g_best.solution - np.abs(
+                (self.generator.integers(1, 3) * M - self.generator.integers(1, 3) * self.pop[idx].solution) * A) * \
+                 cofi[self.generator.integers(0, 4), :]
+            x3 = M + cofi[self.generator.integers(0, 4), :] + (
+                    self.generator.integers(1, 3) * self.g_best.solution - self.generator.integers(1, 3) * self.pop[
+                self.generator.integers(self.pop_size)].solution) * cofi[self.generator.integers(0, 4), :]
+            x4 = self.pop[idx].solution - D + (
+                    self.generator.integers(1, 3) * self.g_best.solution - self.generator.integers(1, 3) * M) * \
+                 cofi[self.generator.integers(0, 4), :]
 
             x1 = self.problem.generate_solution()
             x1 = self.correct_solution(x1)

@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -136,7 +137,8 @@ class OriginalBES(Optimizer):
         pos_mean = np.mean(pos_list, axis=0)
         pop_new = []
         for idx in range(0, self.pop_size):
-            pos_new = self.generator.uniform() * self.g_best.solution + x1_list[idx] * (self.pop[idx].solution - self.c1 * pos_mean) \
+            pos_new = self.generator.uniform() * self.g_best.solution + x1_list[idx] * (
+                    self.pop[idx].solution - self.c1 * pos_mean) \
                       + y1_list[idx] * (self.pop[idx].solution - self.c2 * self.g_best.solution)
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)

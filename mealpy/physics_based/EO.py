@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -82,7 +83,8 @@ class OriginalEO(Optimizer):
         for idx in range(0, self.pop_size):
             lamda = self.generator.uniform(0, 1, self.problem.n_dims)  # lambda in Eq. 11
             r = self.generator.uniform(0, 1, self.problem.n_dims)  # r in Eq. 11
-            c_eq = c_pool[self.generator.integers(0, len(c_pool))].solution  # random selection 1 of candidate from the pool
+            c_eq = c_pool[
+                self.generator.integers(0, len(c_pool))].solution  # random selection 1 of candidate from the pool
             f = self.a1 * np.sign(r - 0.5) * (np.exp(-lamda * t) - 1.0)  # Eq. 11
             r1 = self.generator.uniform()
             r2 = self.generator.uniform()  # r1, r2 in Eq. 15
@@ -159,7 +161,8 @@ class ModifiedEO(OriginalEO):
         for idx in range(0, self.pop_size):
             lamda = self.generator.uniform(0, 1, self.problem.n_dims)  # lambda in Eq. 11
             r = self.generator.uniform(0, 1, self.problem.n_dims)  # r in Eq. 11
-            c_eq = c_pool[self.generator.integers(0, len(c_pool))].solution  # random selection 1 of candidate from the pool
+            c_eq = c_pool[
+                self.generator.integers(0, len(c_pool))].solution  # random selection 1 of candidate from the pool
             f = self.a1 * np.sign(r - 0.5) * (np.exp(-lamda * t) - 1.0)  # Eq. 11
             r1 = self.generator.uniform()
             r2 = self.generator.uniform()  # r1, r2 in Eq. 15
@@ -275,7 +278,8 @@ class AdaptiveEO(OriginalEO):
         for idx in range(0, self.pop_size):
             lamda = self.generator.uniform(0, 1, self.problem.n_dims)
             r = self.generator.uniform(0, 1, self.problem.n_dims)
-            c_eq = c_pool[self.generator.integers(0, len(c_pool))].solution  # random selection 1 of candidate from the pool
+            c_eq = c_pool[
+                self.generator.integers(0, len(c_pool))].solution  # random selection 1 of candidate from the pool
             f = self.a1 * np.sign(r - 0.5) * (np.exp(-lamda * t) - 1.0)  # Eq. 14
             r1 = self.generator.uniform()
             r2 = self.generator.uniform()

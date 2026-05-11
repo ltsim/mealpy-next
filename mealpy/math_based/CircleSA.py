@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -56,14 +57,15 @@ class OriginalCircleSA(Optimizer):
         Args:
             epoch (int): The current iteration
         """
-        a = np.pi - np.pi * (epoch/self.epoch)**2       # Eq. 8
+        a = np.pi - np.pi * (epoch / self.epoch) ** 2  # Eq. 8
         p = 1 - 0.9 * (epoch / self.epoch) ** 0.5
         threshold = self.c_factor * self.epoch
         pop_new = []
         for idx in range(0, self.pop_size):
             w = a * self.generator.random() - a
             if epoch > threshold:
-                x_new = self.g_best.solution + (self.g_best.solution - self.pop[idx].solution) * np.tan(w * self.generator.random())
+                x_new = self.g_best.solution + (self.g_best.solution - self.pop[idx].solution) * np.tan(
+                    w * self.generator.random())
             else:
                 x_new = self.g_best.solution - (self.g_best.solution - self.pop[idx].solution) * np.tan(w * p)
             pos_new = self.correct_solution(x_new)

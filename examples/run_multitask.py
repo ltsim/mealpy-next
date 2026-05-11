@@ -17,8 +17,9 @@ We also build a dedicated class, Multitask, that can help you run several scenar
 
 ## Import libraries
 from opfunu.cec_based.cec2017 import F52017, F102017, F292017
-from mealpy import FloatVar
+
 from mealpy import BBO, DE
+from mealpy import FloatVar
 from mealpy import Multitask
 
 ## Define your own problems
@@ -63,7 +64,9 @@ term = {
 
 ## Define and run Multitask
 if __name__ == "__main__":
-    multitask = Multitask(algorithms=(model1, model2, model3, model4), problems=(p1, p2, p3), terminations=(term, ), modes=("thread", ), n_workers=4)
+    multitask = Multitask(algorithms=(model1, model2, model3, model4), problems=(p1, p2, p3), terminations=(term,),
+                          modes=("thread",), n_workers=4)
     # default modes = "single", default termination = epoch (as defined in problem dictionary)
-    multitask.execute(n_trials=5, n_jobs=None, save_path="history7", save_as="csv", save_convergence=True, verbose=False)
+    multitask.execute(n_trials=5, n_jobs=None, save_path="history7", save_as="csv", save_convergence=True,
+                      verbose=False)
     # multitask.execute(n_trials=5, save_path="history", save_as="csv", save_convergence=True, verbose=False)

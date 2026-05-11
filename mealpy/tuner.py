@@ -4,23 +4,25 @@
 #       Github: https://github.com/thieu1995        %                         
 # --------------------------------------------------%
 
-from typing import Union, List, Tuple, Dict
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from pathlib import Path
-from mealpy.utils.termination import Termination
-from mealpy.optimizer import Optimizer
-from mealpy.utils.agent import Agent
-from mealpy.utils.problem import Problem
-from mealpy.utils.validator import Validator
-from collections import abc
-from functools import partial, reduce
-from itertools import product
 import concurrent.futures as parallel
 import operator
 import os
 import platform
+from collections import abc
+from functools import partial, reduce
+from itertools import product
+from pathlib import Path
+from typing import Union, List, Tuple, Dict
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+from mealpy.optimizer import Optimizer
+from mealpy.utils.agent import Agent
+from mealpy.utils.problem import Problem
+from mealpy.utils.termination import Termination
+from mealpy.utils.validator import Validator
 
 
 class ParameterGrid:
@@ -58,7 +60,8 @@ class ParameterGrid:
 
     def __init__(self, param_grid):
         if not isinstance(param_grid, (abc.Mapping, abc.Iterable)):
-            raise TypeError(f"Parameter grid should be a dict or a list, got: {param_grid!r} of type {type(param_grid).__name__}")
+            raise TypeError(
+                f"Parameter grid should be a dict or a list, got: {param_grid!r} of type {type(param_grid).__name__}")
 
         if isinstance(param_grid, abc.Mapping):
             # wrap dictionary in a singleton list to support either dict or list of dicts
@@ -70,14 +73,16 @@ class ParameterGrid:
                 raise TypeError(f"Parameter grid is not a dict ({grid!r})")
             for key, value in grid.items():
                 if isinstance(value, np.ndarray) and value.ndim > 1:
-                    raise ValueError(f"Parameter array for {key!r} should be one-dimensional, got: {value!r} with shape {value.shape}")
+                    raise ValueError(
+                        f"Parameter array for {key!r} should be one-dimensional, got: {value!r} with shape {value.shape}")
                 if isinstance(value, str) or not isinstance(value, (np.ndarray, abc.Sequence)):
                     raise TypeError(
                         f"Parameter grid for parameter {key!r} needs to be a list or a"
                         f" numpy array, but got {value!r} (of type {type(value).__name__}) instead. Single values "
                         "need to be wrapped in a list with one element.")
                 if len(value) == 0:
-                    raise ValueError(f"Parameter grid for parameter {key!r} need to be a non-empty sequence, got: {value!r}")
+                    raise ValueError(
+                        f"Parameter grid for parameter {key!r} need to be a non-empty sequence, got: {value!r}")
         self.param_grid = param_grid
 
     def __iter__(self):
@@ -209,7 +214,8 @@ class Tuner:
     >>>     print(tuner.best_algorithm.get_name())
     """
 
-    def __init__(self, algorithm: Union[str, Optimizer] = None, param_grid: Union[Dict, List] = None, **kwargs: object) -> None:
+    def __init__(self, algorithm: Union[str, Optimizer] = None, param_grid: Union[Dict, List] = None,
+                 **kwargs: object) -> None:
         self.__set_keyword_arguments(kwargs)
         self.validator = Validator(log_to="console", log_file=None)
         self.algorithm = self.validator.check_is_instance("algorithm", algorithm, Optimizer)
@@ -341,7 +347,7 @@ class Tuner:
         return id_trial, g_best, self.algorithm.history.list_global_best_fit
 
     def __generate_dict_from_list(self, my_list):
-        keys = np.arange(1, len(my_list)+1)
+        keys = np.arange(1, len(my_list) + 1)
         return dict(zip(keys, my_list))
 
     def __generate_dict_result(self, params, trial, loss_list):
@@ -351,7 +357,8 @@ class Tuner:
         return result_dict
 
     def execute(self, problem: Union[Dict, Problem] = None, termination: Union[Dict, Termination] = None,
-                n_trials: int = 2, n_jobs: int = None, mode: str = "single", n_workers: int = 2, verbose: bool = True) -> None:
+                n_trials: int = 2, n_jobs: int = None, mode: str = "single", n_workers: int = 2,
+                verbose: bool = True) -> None:
         """Execute Tuner utility
 
         Args:
@@ -390,26 +397,30 @@ class Tuner:
             trial_list = list(range(0, self.n_trials))
             if n_cpus is not None:
                 with parallel.ProcessPoolExecutor(n_cpus) as executor:
-                    list_results = executor.map(partial(self.__run__, n_workers=n_workers, mode=mode, termination=termination), trial_list)
+                    list_results = executor.map(
+                        partial(self.__run__, n_workers=n_workers, mode=mode, termination=termination), trial_list)
                     for (idx, g_best, loss_epoch) in list_results:
                         best_fit_results[-1][trial_columns[idx]] = g_best.target.fitness
                         loss_results.append(self.__generate_dict_result(params, idx, loss_epoch))
                         if verbose:
-                            print(f"Algorithm: {self.algorithm.get_name()}, with params: {params}, trial: {idx + 1}, best fitness: {g_best.target.fitness}")
+                            print(
+                                f"Algorithm: {self.algorithm.get_name()}, with params: {params}, trial: {idx + 1}, best fitness: {g_best.target.fitness}")
             else:
                 for idx in trial_list:
                     idx, g_best, loss_epoch = self.__run__(idx, mode=mode, n_workers=n_workers, termination=termination)
                     best_fit_results[-1][trial_columns[idx]] = g_best.target.fitness
                     loss_results.append(self.__generate_dict_result(params, idx, loss_epoch))
                     if verbose:
-                        print(f"Algorithm: {self.algorithm.get_name()}, with params: {params}, trial: {idx+1}, best fitness: {g_best.target.fitness}")
+                        print(
+                            f"Algorithm: {self.algorithm.get_name()}, with params: {params}, trial: {idx + 1}, best fitness: {g_best.target.fitness}")
 
         self.df_fit = pd.DataFrame(best_fit_results)
         self.df_fit["trial_mean"] = self.df_fit[trial_columns].mean(axis=1)
         self.df_fit["trial_std"] = self.df_fit[trial_columns].std(axis=1)
         self.df_fit["rank_mean"] = self.df_fit["trial_mean"].rank(ascending=ascending)
         self.df_fit["rank_std"] = self.df_fit["trial_std"].rank(ascending=ascending)
-        self.df_fit["rank_mean_std"] = self.df_fit[["rank_mean", "rank_std"]].apply(tuple, axis=1).rank(method='dense', ascending=ascending)
+        self.df_fit["rank_mean_std"] = self.df_fit[["rank_mean", "rank_std"]].apply(tuple, axis=1).rank(method='dense',
+                                                                                                        ascending=ascending)
         self._best_row = self.df_fit[self.df_fit["rank_mean_std"] == self.df_fit["rank_mean_std"].min()]
         self._best_params = self._best_row["params"].values[0]
         self._best_score = self._best_row["trial_mean"].values[0]

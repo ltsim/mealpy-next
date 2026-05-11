@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -43,7 +44,8 @@ class DevHS(Optimizer):
     >>> print(f"Solution: {model.g_best.solution}, Fitness: {model.g_best.target.fitness}")
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, c_r: float = 0.95, pa_r: float = 0.05, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, c_r: float = 0.95, pa_r: float = 0.05,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -129,7 +131,8 @@ class OriginalHS(DevHS):
     optimization algorithm: harmony search. simulation, 76(2), pp.60-68.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, c_r: float = 0.95, pa_r: float = 0.05, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, c_r: float = 0.95, pa_r: float = 0.05,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -157,8 +160,9 @@ class OriginalHS(DevHS):
                 # Pitch Adjustment
                 if self.generator.uniform() <= self.pa_r:
                     mean = (self.problem.lb + self.problem.ub) / 2
-                    std_dev = abs(self.problem.ub - self.problem.lb) / 6  # This assumes a range of +/- 3 standard deviations
-                    delta = self.dyn_fw * self.generator.normal(mean, std_dev)      # Gaussian(Normal)
+                    std_dev = abs(
+                        self.problem.ub - self.problem.lb) / 6  # This assumes a range of +/- 3 standard deviations
+                    delta = self.dyn_fw * self.generator.normal(mean, std_dev)  # Gaussian(Normal)
                     pos_new[jdx] = pos_new[jdx] + delta[jdx]
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)

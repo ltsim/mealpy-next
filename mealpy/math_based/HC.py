@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -124,7 +125,7 @@ class SwarmHC(Optimizer):
         super().__init__(**kwargs)
         self.epoch = self.validator.check_int("epoch", epoch, [1, 100000])
         self.pop_size = self.validator.check_int("pop_size", pop_size, [5, 10000])
-        self.neighbour_size = self.validator.check_int("neighbour_size", neighbour_size, [2, int(self.pop_size/2)])
+        self.neighbour_size = self.validator.check_int("neighbour_size", neighbour_size, [2, int(self.pop_size / 2)])
         self.set_parameters(["epoch", "pop_size", "neighbour_size"])
         self.sort_flag = False
 

@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 from opfunu.cec_based.cec2017 import F52017
+
 from mealpy import FloatVar, BBO
 
 
@@ -15,6 +16,7 @@ def get_first_best_population(opt):
             if agent.target.fitness == opt.g_best.target.fitness:
                 return idx, pop_child
     return None, None
+
 
 ## Define your own problems
 f1 = F52017(30, f_bias=0)
@@ -29,7 +31,7 @@ p1 = {
 }
 
 optimizer = BBO.OriginalBBO(epoch=100, pop_size=30)
-optimizer.solve(p1, seed=10)        # Set seed for each solved problem
+optimizer.solve(p1, seed=10)  # Set seed for each solved problem
 
 idx, my_first_found_best_pop = get_first_best_population(optimizer)
 print(f"The global best solution found at generation: {idx}")

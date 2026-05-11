@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -45,7 +46,8 @@ class OriginalHGS(Optimizer):
     deep analysis, perspectives, and towards performance shifts. Expert Systems with Applications, 177, p.114864.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, PUP: float = 0.08, LH: float = 10000, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, PUP: float = 0.08, LH: float = 10000,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -98,11 +100,11 @@ class OriginalHGS(Optimizer):
         """
         ## Eq. (2.2)
         ### Find the current best and current worst
-        _, (g_best, ), (g_worst, ) = self.get_special_agents(self.pop, n_best=1, n_worst=1, minmax=self.problem.minmax)
+        _, (g_best,), (g_worst,) = self.get_special_agents(self.pop, n_best=1, n_worst=1, minmax=self.problem.minmax)
         pop = self.update_hunger_value__(self.pop, g_best, g_worst)
 
         ## Eq. (2.4)
-        shrink = 2 * (1 - epoch  / self.epoch)
+        shrink = 2 * (1 - epoch / self.epoch)
         total_hunger = np.sum([pop[idx].hunger for idx in range(0, self.pop_size)])
 
         pop_new = []

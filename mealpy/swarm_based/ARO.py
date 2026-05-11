@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -60,26 +61,29 @@ class OriginalARO(Optimizer):
         Args:
             epoch (int): The current iteration
         """
-        theta = 2 * (1 - epoch/self.epoch)
+        theta = 2 * (1 - epoch / self.epoch)
         pop_new = []
         for idx in range(0, self.pop_size):
-            L = (np.exp(1) - np.exp((epoch / self.epoch)**2)) * (np.sin(2*np.pi*self.generator.random()))
+            L = (np.exp(1) - np.exp((epoch / self.epoch) ** 2)) * (np.sin(2 * np.pi * self.generator.random()))
             temp = np.zeros(self.problem.n_dims)
-            rd_index = self.generator.choice(np.arange(0, self.problem.n_dims), int(np.ceil(self.generator.random()*self.problem.n_dims)), replace=False)
+            rd_index = self.generator.choice(np.arange(0, self.problem.n_dims),
+                                             int(np.ceil(self.generator.random() * self.problem.n_dims)), replace=False)
             temp[rd_index] = 1
-            R = L * temp        # Eq 2
-            A = 2 * np.log(1.0 / self.generator.random()) * theta      # Eq. 15
-            if A > 1:   # detour foraging strategy
+            R = L * temp  # Eq 2
+            A = 2 * np.log(1.0 / self.generator.random()) * theta  # Eq. 15
+            if A > 1:  # detour foraging strategy
                 rand_idx = self.generator.integers(0, self.pop_size)
                 pos_new = self.pop[rand_idx].solution + R * (self.pop[idx].solution - self.pop[rand_idx].solution) + \
-                    np.round(0.5 * (0.05 + self.generator.random())) * self.generator.normal(0, 1)      # Eq. 1
-            else:       # Random hiding stage
+                          np.round(0.5 * (0.05 + self.generator.random())) * self.generator.normal(0, 1)  # Eq. 1
+            else:  # Random hiding stage
                 gr = np.zeros(self.problem.n_dims)
-                rd_index = self.generator.choice(np.arange(0, self.problem.n_dims), int(np.ceil(self.generator.random() * self.problem.n_dims)), replace=False)
-                gr[rd_index] = 1        # Eq. 12
-                H = self.generator.normal(0, 1) * (epoch / self.epoch)       # Eq. 8
-                b = self.pop[idx].solution + H * gr * self.pop[idx].solution       # Eq. 13
-                pos_new = self.pop[idx].solution + R * (self.generator.random() * b - self.pop[idx].solution)      # Eq. 11
+                rd_index = self.generator.choice(np.arange(0, self.problem.n_dims),
+                                                 int(np.ceil(self.generator.random() * self.problem.n_dims)),
+                                                 replace=False)
+                gr[rd_index] = 1  # Eq. 12
+                H = self.generator.normal(0, 1) * (epoch / self.epoch)  # Eq. 8
+                b = self.pop[idx].solution + H * gr * self.pop[idx].solution  # Eq. 13
+                pos_new = self.pop[idx].solution + R * (self.generator.random() * b - self.pop[idx].solution)  # Eq. 11
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)
@@ -142,27 +146,30 @@ class LARO(Optimizer):
         Args:
             epoch (int): The current iteration
         """
-        theta = 2 * (1 - (epoch+1)/self.epoch)
+        theta = 2 * (1 - (epoch + 1) / self.epoch)
         pop_new = []
         for idx in range(0, self.pop_size):
-            L = (np.exp(1) - np.exp((epoch / self.epoch)**2)) * (np.sin(2*np.pi*self.generator.random()))
+            L = (np.exp(1) - np.exp((epoch / self.epoch) ** 2)) * (np.sin(2 * np.pi * self.generator.random()))
             temp = np.zeros(self.problem.n_dims)
-            rd_index = self.generator.choice(np.arange(0, self.problem.n_dims), int(np.ceil(self.generator.random()*self.problem.n_dims)), replace=False)
+            rd_index = self.generator.choice(np.arange(0, self.problem.n_dims),
+                                             int(np.ceil(self.generator.random() * self.problem.n_dims)), replace=False)
             temp[rd_index] = 1
-            R = L * temp        # Eq 2
-            A = 2 * np.log(1.0 / self.generator.random()) * theta      # Eq. 15
-            if A > 1:   # # detour foraging strategy
+            R = L * temp  # Eq 2
+            A = 2 * np.log(1.0 / self.generator.random()) * theta  # Eq. 15
+            if A > 1:  # # detour foraging strategy
                 rand_idx = self.generator.integers(0, self.pop_size)
                 pos_new = self.pop[rand_idx].solution + R * (self.pop[idx].solution - self.pop[rand_idx].solution) + \
-                    np.round(0.5 * (0.05 + self.generator.random())) * self.generator.normal(0, 1)      # Eq. 1
-            else:       # Random hiding stage
+                          np.round(0.5 * (0.05 + self.generator.random())) * self.generator.normal(0, 1)  # Eq. 1
+            else:  # Random hiding stage
                 gr = np.zeros(self.problem.n_dims)
-                rd_index = self.generator.choice(np.arange(0, self.problem.n_dims), int(np.ceil(self.generator.random() * self.problem.n_dims)), replace=False)
-                gr[rd_index] = 1        # Eq. 12
-                H = self.generator.normal(0, 1) * (epoch / self.epoch)       # Eq. 8
-                b = self.pop[idx].solution + H * gr * self.pop[idx].solution        # Eq. 13
+                rd_index = self.generator.choice(np.arange(0, self.problem.n_dims),
+                                                 int(np.ceil(self.generator.random() * self.problem.n_dims)),
+                                                 replace=False)
+                gr[rd_index] = 1  # Eq. 12
+                H = self.generator.normal(0, 1) * (epoch / self.epoch)  # Eq. 8
+                b = self.pop[idx].solution + H * gr * self.pop[idx].solution  # Eq. 13
                 levy = self.get_levy_flight_step(beta=1.5, multiplier=0.1)
-                pos_new = self.pop[idx].solution + R * (levy * b - self.pop[idx].solution)      # Eq. 11
+                pos_new = self.pop[idx].solution + R * (levy * b - self.pop[idx].solution)  # Eq. 11
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)
@@ -180,7 +187,7 @@ class LARO(Optimizer):
                 idx_far = np.sign(dd - TS) < 0
                 n_df = np.sum(idx_far)
                 n_dc = np.sum(np.sign(dd - TS) > 0)
-                src = 1 - 6*np.sum(dd**2) / np.dot(dd, (dd**2 - 1))
+                src = 1 - 6 * np.sum(dd ** 2) / np.dot(dd, (dd ** 2 - 1))
                 if len(dd[idx_far]) == 0:
                     df_lb, df_ub = np.min(dd), np.max(dd)
                 else:
@@ -245,26 +252,29 @@ class IARO(Optimizer):
         Args:
             epoch (int): The current iteration
         """
-        theta = 2 * (1 - (epoch+1)/self.epoch)
+        theta = 2 * (1 - (epoch + 1) / self.epoch)
         pop_new = []
         for idx in range(0, self.pop_size):
-            L = (np.exp(1) - np.exp((epoch / self.epoch)**2)) * (np.sin(2*np.pi*self.generator.random()))
+            L = (np.exp(1) - np.exp((epoch / self.epoch) ** 2)) * (np.sin(2 * np.pi * self.generator.random()))
             temp = np.zeros(self.problem.n_dims)
-            rd_index = self.generator.choice(np.arange(0, self.problem.n_dims), int(np.ceil(self.generator.random()*self.problem.n_dims)), replace=False)
+            rd_index = self.generator.choice(np.arange(0, self.problem.n_dims),
+                                             int(np.ceil(self.generator.random() * self.problem.n_dims)), replace=False)
             temp[rd_index] = 1
-            R = L * temp        # Eq 2
-            A = 2 * np.log(1.0 / self.generator.random()) * theta      # Eq. 15
-            if A > 1:   # # detour foraging strategy
+            R = L * temp  # Eq 2
+            A = 2 * np.log(1.0 / self.generator.random()) * theta  # Eq. 15
+            if A > 1:  # # detour foraging strategy
                 rand_idx = self.generator.integers(0, self.pop_size)
                 pos_new = self.pop[rand_idx].solution + R * (self.pop[idx].solution - self.pop[rand_idx].solution) + \
-                    np.round(0.5 * (0.05 + self.generator.random())) * self.generator.normal(0, 1)      # Eq. 1
-            else:       # Random hiding stage
+                          np.round(0.5 * (0.05 + self.generator.random())) * self.generator.normal(0, 1)  # Eq. 1
+            else:  # Random hiding stage
                 gr = np.zeros(self.problem.n_dims)
-                rd_index = self.generator.choice(np.arange(0, self.problem.n_dims), int(np.ceil(self.generator.random() * self.problem.n_dims)), replace=False)
-                gr[rd_index] = 1        # Eq. 12
-                H = self.generator.normal(0, 1) * (epoch / self.epoch)       # Eq. 8
-                b = self.pop[idx].solution + H * gr * self.pop[idx].solution        # Eq. 13
-                pos_new = self.pop[idx].solution + R * (self.generator.random() * b - self.pop[idx].solution)      # Eq. 11
+                rd_index = self.generator.choice(np.arange(0, self.problem.n_dims),
+                                                 int(np.ceil(self.generator.random() * self.problem.n_dims)),
+                                                 replace=False)
+                gr[rd_index] = 1  # Eq. 12
+                H = self.generator.normal(0, 1) * (epoch / self.epoch)  # Eq. 8
+                b = self.pop[idx].solution + H * gr * self.pop[idx].solution  # Eq. 13
+                pos_new = self.pop[idx].solution + R * (self.generator.random() * b - self.pop[idx].solution)  # Eq. 11
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)

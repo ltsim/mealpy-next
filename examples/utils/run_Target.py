@@ -12,6 +12,7 @@ def objective_function(solution):
     # This function returns a list of two objectives for the given solution
     return [solution[0] ** 2, solution[1] ** 2]
 
+
 # Define the solution and weights
 solution = [2, 3]
 weights = [0.5, 0.5]

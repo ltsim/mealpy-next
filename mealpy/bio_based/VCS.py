@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -42,7 +43,8 @@ class DevVCS(Optimizer):
     >>> print(f"Solution: {model.g_best.solution}, Fitness: {model.g_best.target.fitness}")
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, lamda: float = 0.5, sigma: float = 1.5, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, lamda: float = 0.5, sigma: float = 1.5,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -90,7 +92,8 @@ class DevVCS(Optimizer):
         for idx in range(0, self.pop_size):
             sigma = (np.log1p(epoch + 1) / self.epoch) * (self.pop[idx].solution - self.g_best.solution)
             gauss = self.generator.normal(self.generator.normal(self.g_best.solution, np.abs(sigma)))
-            pos_new = gauss + self.generator.uniform() * self.g_best.solution - self.generator.uniform() * self.pop[idx].solution
+            pos_new = gauss + self.generator.uniform() * self.g_best.solution - self.generator.uniform() * self.pop[
+                idx].solution
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop.append(agent)
@@ -173,7 +176,8 @@ class OriginalVCS(DevVCS):
     for optimization: Virus colony search. Advances in Engineering Software, 92, pp.65-88.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, lamda: float = 0.5, sigma: float = 1.5, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, lamda: float = 0.5, sigma: float = 1.5,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -199,8 +203,10 @@ class OriginalVCS(DevVCS):
         pop = []
         for idx in range(0, self.pop_size):
             sigma = (np.log1p(epoch) / self.epoch) * (self.pop[idx].solution - self.g_best.solution)
-            gauss = np.array([self.generator.normal(self.g_best.solution[j], np.abs(sigma[j])) for j in range(0, self.problem.n_dims)])
-            pos_new = gauss + self.generator.uniform() * self.g_best.solution - self.generator.uniform() * self.pop[idx].solution
+            gauss = np.array([self.generator.normal(self.g_best.solution[j], np.abs(sigma[j])) for j in
+                              range(0, self.problem.n_dims)])
+            pos_new = gauss + self.generator.uniform() * self.g_best.solution - self.generator.uniform() * self.pop[
+                idx].solution
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop.append(agent)
@@ -234,7 +240,8 @@ class OriginalVCS(DevVCS):
             for j in range(0, self.problem.n_dims):
                 if self.generator.uniform() > pr:
                     id1, id2 = self.generator.choice(list(set(range(0, self.pop_size)) - {idx}), 2, replace=False)
-                    pos_new[j] = self.pop[id1].solution[j] - (self.pop[id2].solution[j] - self.pop[idx].solution[j]) * self.generator.uniform()
+                    pos_new[j] = self.pop[id1].solution[j] - (
+                            self.pop[id2].solution[j] - self.pop[idx].solution[j]) * self.generator.uniform()
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop.append(agent)

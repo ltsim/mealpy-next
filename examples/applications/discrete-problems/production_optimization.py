@@ -38,7 +38,7 @@
 # and meeting customer demands, while considering various constraints and factors specific to the production environment.
 
 
-#============================================== EXAMPLE ========================================================
+# ============================================== EXAMPLE ========================================================
 
 # Let's consider a simplified example of production optimization in the context of a manufacturing company that produces electronic devices,
 # such as smartphones. The objective is to maximize production output while minimizing production costs.
@@ -70,6 +70,7 @@
 
 
 import numpy as np
+
 from mealpy import BinaryVar, WOA, Problem
 
 # Define the problem parameters
@@ -117,7 +118,7 @@ class SupplyChainProblem(Problem):
         x = x_decoded["placement_var"].reshape((self.data["num_tasks"], self.data["num_resources"]))
 
         # If any row has all 0 value, it indicates that this task is not allocated to any resource
-        if np.any(np.all(x==0, axis=1)) or np.any(np.all(x==0, axis=0)):
+        if np.any(np.all(x == 0, axis=1)) or np.any(np.all(x == 0, axis=0)):
             return self.data["penalty"]
 
         # Check violated constraints
@@ -135,14 +136,16 @@ class SupplyChainProblem(Problem):
             violated_constraints += 1
 
         # Quality constraint
-        defect_rate = np.dot(self.data["production_costs"].reshape(1, -1), x) / np.dot(self.data["production_outputs"], x)
+        defect_rate = np.dot(self.data["production_costs"].reshape(1, -1), x) / np.dot(self.data["production_outputs"],
+                                                                                       x)
         if np.any(defect_rate > max_defect_rate):
             violated_constraints += 1
 
         # Calculate the fitness value based on the objectives and constraints
-        profit = np.sum(np.dot(self.data["production_outputs"].reshape(1, -1), x)) - np.sum(np.dot(self.data["production_costs"].reshape(1, -1), x))
+        profit = np.sum(np.dot(self.data["production_outputs"].reshape(1, -1), x)) - np.sum(
+            np.dot(self.data["production_costs"].reshape(1, -1), x))
         if violated_constraints > 0:
-            return profit + self.data["penalty"] * violated_constraints       # Penalize solutions with violated constraints
+            return profit + self.data["penalty"] * violated_constraints  # Penalize solutions with violated constraints
         return profit
 
 
@@ -152,7 +155,8 @@ problem = SupplyChainProblem(bounds=bounds, minmax="max", data=data)
 model = WOA.OriginalWOA(epoch=50, pop_size=20)
 model.solve(problem)
 
-print(f"Best agent: {model.g_best}")                    # Encoded solution
-print(f"Best solution: {model.g_best.solution}")        # Encoded solution
+print(f"Best agent: {model.g_best}")  # Encoded solution
+print(f"Best solution: {model.g_best.solution}")  # Encoded solution
 print(f"Best fitness: {model.g_best.target.fitness}")
-print(f"Best real scheduling: {model.problem.decode_solution(model.g_best.solution)['placement_var'].reshape((num_tasks, num_resources))}")
+print(
+    f"Best real scheduling: {model.problem.decode_solution(model.g_best.solution)['placement_var'].reshape((num_tasks, num_resources))}")

@@ -6,6 +6,7 @@
 
 import numpy as np
 from scipy.spatial.distance import cdist
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -48,7 +49,9 @@ class OriginalSSpiderA(Optimizer):
     ~~~~~~~~~~
     [1] James, J.Q. and Li, V.O., 2015. A social spider algorithm for global optimization. Applied soft computing, 30, pp.614-627.
     """
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, r_a: float = 1.0, p_c: float = 0.7, p_m: float = 0.1, **kwargs: object) -> None:
+
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, r_a: float = 1.0, p_c: float = 0.7, p_m: float = 0.1,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -109,7 +112,8 @@ class OriginalSSpiderA(Optimizer):
         dist = cdist(all_pos, all_pos, 'euclidean')
         intensity_source = np.array([it.intensity for it in self.pop])
         intensity_attenuation = np.exp(-dist / (base_distance * self.r_a))  ## vector (pop_size)
-        intensity_receive = np.dot(np.reshape(intensity_source, (1, self.pop_size)), intensity_attenuation)  ## vector (1, pop_size)
+        intensity_receive = np.dot(np.reshape(intensity_source, (1, self.pop_size)),
+                                   intensity_attenuation)  ## vector (1, pop_size)
         id_best_intensity = np.argmax(intensity_receive)
         pop_new = []
         for idx in range(0, self.pop_size):
@@ -118,9 +122,11 @@ class OriginalSSpiderA(Optimizer):
                 agent.target_solution = self.pop[id_best_intensity].target_solution
             if self.generator.uniform() > self.p_c:  ## changing mask
                 agent.mask = np.where(self.generator.uniform(0, 1, self.problem.n_dims) < self.p_m, 0, 1)
-            pos_new = np.where(self.pop[idx].mask == 0, self.pop[idx].target_solution, self.pop[self.generator.integers(0, self.pop_size)].solution)
+            pos_new = np.where(self.pop[idx].mask == 0, self.pop[idx].target_solution,
+                               self.pop[self.generator.integers(0, self.pop_size)].solution)
             ## Perform random walk
-            pos_new = self.pop[idx].solution + self.generator.normal() * (self.pop[idx].solution - self.pop[idx].local_vector) + \
+            pos_new = self.pop[idx].solution + self.generator.normal() * (
+                    self.pop[idx].solution - self.pop[idx].local_vector) + \
                       (pos_new - self.pop[idx].solution) * self.generator.normal()
             agent.solution = self.correct_solution(pos_new)
             if self.mode not in self.AVAILABLE_MODES:

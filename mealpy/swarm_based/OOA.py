@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -45,6 +46,7 @@ class OriginalOOA(Optimizer):
     [1] Trojovský, P., & Dehghani, M. Osprey Optimization Algorithm: A new bio-inspired metaheuristic algorithm
     for solving engineering optimization problems. Frontiers in Mechanical Engineering, 8, 136.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -85,14 +87,16 @@ class OriginalOOA(Optimizer):
                     kk = self.generator.permutation(idxs)[0]
                     sf = self.pop[kk]
             r1 = self.generator.integers(1, 3)
-            pos_new = self.pop[idx].solution + self.generator.normal(0, 1) * (sf.solution - r1 * self.pop[idx].solution)     # Eq. 5
+            pos_new = self.pop[idx].solution + self.generator.normal(0, 1) * (
+                    sf.solution - r1 * self.pop[idx].solution)  # Eq. 5
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_agent(pos_new)
             if self.compare_target(agent.target, self.pop[idx].target, self.problem.minmax):
                 self.pop[idx] = agent
 
             # PHASE 2: CARRYING THE FISH TO THE SUITABLE POSITION (EXPLOITATION)
-            pos_new = self.pop[idx].solution + self.problem.lb + self.generator.random() * (self.problem.ub - self.problem.lb)     # Eq. 7
+            pos_new = self.pop[idx].solution + self.problem.lb + self.generator.random() * (
+                    self.problem.ub - self.problem.lb)  # Eq. 7
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_agent(pos_new)
             if self.compare_target(agent.target, self.pop[idx].target, self.problem.minmax):

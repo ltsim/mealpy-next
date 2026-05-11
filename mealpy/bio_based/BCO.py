@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -68,7 +69,9 @@ class OriginalBCO(Optimizer):
         self.max_swim_steps = self.validator.check_int("max_swim_steps", max_swim_steps, (2, 10))
         self.energy_threshold = self.validator.check_float("energy_threshold", energy_threshold, (0, 1.0))
         self.migration_prob = self.validator.check_float("migration_prob", migration_prob, (0, 1.0))
-        self.set_parameters(["epoch", "pop_size", "c_min", "c_max", "n_chemotaxis", "max_swim_steps", "energy_threshold", "migration_prob"])
+        self.set_parameters(
+            ["epoch", "pop_size", "c_min", "c_max", "n_chemotaxis", "max_swim_steps", "energy_threshold",
+             "migration_prob"])
         self.sort_flag = False
 
     def initialize_variables(self):

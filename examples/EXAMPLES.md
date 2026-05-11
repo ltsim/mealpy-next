@@ -43,7 +43,6 @@
 1:39:28 - Metaheuristic Algorithm method for tunning hyper-parameters
 ```
 
-
 ### Example
 
 * Please don't misunderstand between parameters (hyper-parameters) and variables.
@@ -99,12 +98,11 @@ best_position, best_fitness = model1.solve()
 print(f"Best solution: {best_position}, Best fitness: {best_fitness}")
 ```
 
-
 ## Version Mealpy == 2.3.0
 
 * Almost same as version 2.2.0 but
-  * The default amend_position function is moved from Optimizer to Problem class 
-  * amend_position can be used to rebound the position of agent, therefore can be used to solve discrete problem
+    * The default amend_position function is moved from Optimizer to Problem class
+    * amend_position can be used to rebound the position of agent, therefore can be used to solve discrete problem
 
 ```python 
 from mealpy.bio_based import SMA
@@ -134,15 +132,14 @@ print(f"Best solution: {best_position}, Best fitness: {best_fitness}")
 ## Version  Mealpy == 2.2.0
 
 * Almost same as version 2.1.2 but
-  * You can pass the Problem dictionary or Problem object to the model.
-  * You can pass the Termination dictionary or Termination object to the model. 
-  * The objective function is renamed as fitness function (obj_func -> fit_func) 
-  * The general format of a solution is: **\[position, target\]**
-    * position: numpy vector (1-D array)
-    * target: **\[fitness, list_objectives\]**
-    * list_objectives: **\[objective 1, objective 2, ...\]**
-  * After the training process, everything can be accessed via the objective "history" (model.history)
-
+    * You can pass the Problem dictionary or Problem object to the model.
+    * You can pass the Termination dictionary or Termination object to the model.
+    * The objective function is renamed as fitness function (obj_func -> fit_func)
+    * The general format of a solution is: **\[position, target\]**
+        * position: numpy vector (1-D array)
+        * target: **\[fitness, list_objectives\]**
+        * list_objectives: **\[objective 1, objective 2, ...\]**
+    * After the training process, everything can be accessed via the objective "history" (model.history)
 
 ```python 
 from mealpy.bio_based import SMA
@@ -164,12 +161,10 @@ model1 = SMA.BaseSMA(problem_dict1, epoch=100, pop_size=50, pr=0.03)
 best_position, best_fitness = model1.solve()
 print(f"Best solution: {best_position}, Best fitness: {best_fitness}")
 ```
-  
-
 
 ## Version 2.0.0 <= Mealpy <= 2.1.2
 
-* The batch-size idea is removed due to the new feature which is parallel training. 
+* The batch-size idea is removed due to the new feature which is parallel training.
 
 ```python 
 
@@ -368,9 +363,6 @@ model10.solve()
 
 ```
 
-
-
-
 ## Version 1.1.0 <= Mealpy <= 1.2.2
 
 * The batch-size idea is not existed in Meta-heuristics field. I just take an inspiration from training batch-size of
@@ -469,7 +461,7 @@ print(md1.solution[1])
 print(md1.loss_train)
 ```
 
-## Mealpy <= 1.0.5 
+## Mealpy <= 1.0.5
 
 ```python 
 # Simple example: this is for previous version ( version <= 1.0.5)

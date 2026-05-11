@@ -5,12 +5,12 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy import FloatVar, BBO
 
-
 problem = {
-    "obj_func": lambda sol: np.sum(sol**2),
-    "bounds": FloatVar(lb=(-100.,)*20, ub=(100.,)*20, name="delta"),
+    "obj_func": lambda sol: np.sum(sol ** 2),
+    "bounds": FloatVar(lb=(-100.,) * 20, ub=(100.,) * 20, name="delta"),
     "minmax": "min",
 }
 

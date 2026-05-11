@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -78,14 +79,17 @@ class OriginalAO(Optimizer):
             levy_step = self.get_levy_flight_step(beta=1.5, multiplier=1.0, case=-1)
             if epoch <= (2 / 3) * self.epoch:  # Eq. 3, 4
                 if self.generator.random() < 0.5:
-                    pos_new = self.g_best.solution * (1 - epoch / self.epoch) + self.generator.random() * (x_mean - self.g_best.solution)
+                    pos_new = self.g_best.solution * (1 - epoch / self.epoch) + self.generator.random() * (
+                            x_mean - self.g_best.solution)
                 else:
                     idx = self.generator.choice(list(set(range(0, self.pop_size)) - {idx}))
-                    pos_new = self.g_best.solution * levy_step + self.pop[idx].solution + self.generator.random() * (y - x)  # Eq. 5
+                    pos_new = self.g_best.solution * levy_step + self.pop[idx].solution + self.generator.random() * (
+                            y - x)  # Eq. 5
             else:
                 if self.generator.random() < 0.5:
                     pos_new = alpha * (self.g_best.solution - x_mean) - self.generator.random() * \
-                              (self.generator.random() * (self.problem.ub - self.problem.lb) + self.problem.lb) * delta  # Eq. 13
+                              (self.generator.random() * (
+                                      self.problem.ub - self.problem.lb) + self.problem.lb) * delta  # Eq. 13
                 else:
                     pos_new = QF * self.g_best.solution - (g2 * self.pop[idx].solution * self.generator.random()) - \
                               g2 * levy_step + self.generator.random() * g1  # Eq. 14
@@ -184,11 +188,13 @@ class AAO(Optimizer):
                                self.generator.random() * (x_mean - self.g_best.solution))  # Eq. (3) and Eq. (4)
                 else:
                     idx = self.generator.choice(list(set(range(0, self.pop_size)) - {idx}))
-                    pos_new = self.g_best.solution * levy_step + self.pop[idx].solution + self.generator.random() * (y - x)  # Eq. 5
+                    pos_new = self.g_best.solution * levy_step + self.pop[idx].solution + self.generator.random() * (
+                            y - x)  # Eq. 5
             else:
                 if self.generator.random() < 0.5:
                     pos_new = (alpha * (self.g_best.solution - x_mean) - self.generator.random() *
-                               (self.generator.random() * (self.problem.ub - self.problem.lb) + self.problem.lb) * delta)  # Eq. 13
+                               (self.generator.random() * (
+                                       self.problem.ub - self.problem.lb) + self.problem.lb) * delta)  # Eq. 13
                 else:
                     pos_new = (QF * self.g_best.solution - (g2 * self.pop[idx].solution * self.generator.random()) -
                                g2 * levy_step + self.generator.random() * g1)  # Eq. 14

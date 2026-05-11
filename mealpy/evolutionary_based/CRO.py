@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -51,8 +52,10 @@ class OriginalCRO(Optimizer):
     The coral reefs optimization algorithm: a novel metaheuristic for efficiently solving optimization problems. The Scientific World Journal, 2014.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, po: float = 0.4, Fb: float = 0.9, Fa: float = 0.1, Fd: float = 0.1,
-                 Pd: float = 0.5, GCR: float = 0.1, gamma_min: float = 0.02, gamma_max: float = 0.2, n_trials: int = 3, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, po: float = 0.4, Fb: float = 0.9, Fa: float = 0.1,
+                 Fd: float = 0.1,
+                 Pd: float = 0.5, GCR: float = 0.1, gamma_min: float = 0.02, gamma_max: float = 0.2, n_trials: int = 3,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -79,7 +82,8 @@ class OriginalCRO(Optimizer):
         self.gamma_min = self.validator.check_float("gamma_min", gamma_min, (0, 0.15))
         self.gamma_max = self.validator.check_float("gamma_max", gamma_max, (0.15, 1.0))
         self.n_trials = self.validator.check_int("n_trials", n_trials, [2, int(self.pop_size / 2)])
-        self.set_parameters(["epoch", "pop_size", "po", "Fb", "Fa", "Fd", "Pd", "GCR", "gamma_min", "gamma_max", "n_trials"])
+        self.set_parameters(
+            ["epoch", "pop_size", "po", "Fb", "Fa", "Fd", "Pd", "GCR", "gamma_min", "gamma_max", "n_trials"])
         self.sort_flag = False
 
     def initialization(self):
@@ -97,8 +101,9 @@ class OriginalCRO(Optimizer):
         self.occupied_list[self.occupied_idx_list] = 1
 
     def gaussian_mutation__(self, position):
-        random_pos = position + self.G1 * (self.problem.ub - self.problem.lb) * self.generator.normal(0, 1, self.problem.n_dims)
-        condition =self.generator.random(self.problem.n_dims) < self.GCR
+        random_pos = position + self.G1 * (self.problem.ub - self.problem.lb) * self.generator.normal(0, 1,
+                                                                                                      self.problem.n_dims)
+        condition = self.generator.random(self.problem.n_dims) < self.GCR
         pos_new = np.where(condition, random_pos, position)
         return self.correct_solution(pos_new)
 
@@ -127,12 +132,14 @@ class OriginalCRO(Optimizer):
     def sort_occupied_reef__(self):
         def reef_fitness(idx):
             return self.pop[idx].target.fitness
+
         return sorted(self.occupied_idx_list, key=reef_fitness)
 
     def broadcast_spawning_brooding__(self):
         # Step 1a
         larvae = []
-        selected_corals = self.generator.choice(self.occupied_idx_list, int(len(self.occupied_idx_list) * self.Fb), replace=False)
+        selected_corals = self.generator.choice(self.occupied_idx_list, int(len(self.occupied_idx_list) * self.Fb),
+                                                replace=False)
         for idx in self.occupied_idx_list:
             if idx not in selected_corals:
                 pos_new = self.gaussian_mutation__(self.pop[idx].solution)
@@ -143,7 +150,8 @@ class OriginalCRO(Optimizer):
         # Step 1b
         while len(selected_corals) >= 2:
             id1, id2 = self.generator.choice(range(len(selected_corals)), 2, replace=False)
-            pos_new = self.multi_point_cross__(self.pop[selected_corals[id1]].solution, self.pop[selected_corals[id2]].solution)
+            pos_new = self.multi_point_cross__(self.pop[selected_corals[id1]].solution,
+                                               self.pop[selected_corals[id2]].solution)
             agent = self.generate_empty_agent(pos_new)
             larvae.append(agent)
             if self.mode not in self.AVAILABLE_MODES:
@@ -225,8 +233,10 @@ class OCRO(OriginalCRO):
     Intelligence Systems, 12(2), p.1144.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, po: float = 0.4, Fb: float = 0.9, Fa: float = 0.1, Fd: float = 0.1, Pd: float = 0.5,
-                 GCR: float = 0.1, gamma_min: float = 0.02, gamma_max: float = 0.2, n_trials: int = 3, restart_count: int = 20, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, po: float = 0.4, Fb: float = 0.9, Fa: float = 0.1,
+                 Fd: float = 0.1, Pd: float = 0.5,
+                 GCR: float = 0.1, gamma_min: float = 0.02, gamma_max: float = 0.2, n_trials: int = 3,
+                 restart_count: int = 20, **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -244,7 +254,9 @@ class OCRO(OriginalCRO):
         """
         super().__init__(epoch, pop_size, po, Fb, Fa, Fd, Pd, GCR, gamma_min, gamma_max, n_trials, **kwargs)
         self.restart_count = self.validator.check_int("restart_count", restart_count, [2, int(epoch / 2)])
-        self.set_parameters(["epoch", "pop_size", "po", "Fb", "Fa", "Fd", "Pd", "GCR", "gamma_min", "gamma_max", "n_trials", "restart_count"])
+        self.set_parameters(
+            ["epoch", "pop_size", "po", "Fb", "Fa", "Fd", "Pd", "GCR", "gamma_min", "gamma_max", "n_trials",
+             "restart_count"])
         self.sort_flag = False
 
     def initialize_variables(self):

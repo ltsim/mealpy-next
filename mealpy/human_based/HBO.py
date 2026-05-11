@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -82,7 +83,7 @@ class OriginalHBO(Optimizer):
             # Heapifying
             t = c
             while t > 0:
-                parent_id = int(np.floor((t + 1)/degree) - 1)
+                parent_id = int(np.floor((t + 1) / degree) - 1)
                 if self.compare_target(pop[parent_id].target, pop[t].target, self.problem.minmax):
                     break
                 else:
@@ -101,36 +102,40 @@ class OriginalHBO(Optimizer):
         Args:
             epoch (int): The current iteration
         """
-        gama = (np.mod(epoch, self.it_per_cycle) +1) / self.qtr_cycle
+        gama = (np.mod(epoch, self.it_per_cycle) + 1) / self.qtr_cycle
         gama = np.abs(2 - gama)
         p1 = 1. - epoch / self.epoch
         p2 = p1 + (1 - p1) / 2
-        for c in range(self.pop_size-1, 0, -1):
-            if c == 0: # Dealing with root
+        for c in range(self.pop_size - 1, 0, -1):
+            if c == 0:  # Dealing with root
                 continue
             else:
-                parent_id = int(np.floor((c+1)/self.degree) - 1)
-                cur_agent = self.pop[self.heap[c][1]].copy()         #Sol to be updated
-                par_agent = self.pop[self.heap[parent_id][1]]           #Sol to be updated with reference to
+                parent_id = int(np.floor((c + 1) / self.degree) - 1)
+                cur_agent = self.pop[self.heap[c][1]].copy()  # Sol to be updated
+                par_agent = self.pop[self.heap[parent_id][1]]  # Sol to be updated with reference to
                 # Sol to be updated with reference to
-                if self.friend_limits[c, 0] < self.friend_limits[c, 1]+1:
+                if self.friend_limits[c, 0] < self.friend_limits[c, 1] + 1:
                     friend_idx = self.friend_limits[c, 0]
                 else:
-                    friend_idx = self.generator.choice(list(set(range(self.friend_limits[c, 0], self.friend_limits[c, 1])) - {c}))
+                    friend_idx = self.generator.choice(
+                        list(set(range(self.friend_limits[c, 0], self.friend_limits[c, 1])) - {c}))
                 fri_agent = self.pop[self.heap[friend_idx][1]]
-                #Position Updating
+                # Position Updating
                 rr = self.generator.random(self.problem.n_dims)
                 rn = (2 * self.generator.random(self.problem.n_dims) - 1)
                 for jdx in range(self.problem.n_dims):
                     if rr[jdx] < p1:
                         continue
                     elif rr[jdx] < p2:
-                        cur_agent.solution[jdx] = par_agent.solution[jdx] + rn[jdx] * gama * np.abs(par_agent.solution[jdx] - cur_agent.solution[jdx])
+                        cur_agent.solution[jdx] = par_agent.solution[jdx] + rn[jdx] * gama * np.abs(
+                            par_agent.solution[jdx] - cur_agent.solution[jdx])
                     else:
                         if self.compare_target(self.heap[friend_idx][0], self.heap[c][0], self.problem.minmax):
-                            cur_agent.solution[jdx] = fri_agent.solution[jdx] + rn[jdx] * gama * np.abs(fri_agent.solution[jdx] - cur_agent.solution[jdx])
+                            cur_agent.solution[jdx] = fri_agent.solution[jdx] + rn[jdx] * gama * np.abs(
+                                fri_agent.solution[jdx] - cur_agent.solution[jdx])
                         else:
-                            cur_agent.solution[jdx] += rn[jdx] * gama * np.abs(fri_agent.solution[jdx] - cur_agent.solution[jdx])
+                            cur_agent.solution[jdx] += rn[jdx] * gama * np.abs(
+                                fri_agent.solution[jdx] - cur_agent.solution[jdx])
                 pos_new = self.correct_solution(cur_agent.solution)
                 cur_agent = self.generate_agent(pos_new)
                 if self.compare_target(cur_agent.target, self.heap[c][0], self.problem.minmax):

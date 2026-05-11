@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -45,7 +46,8 @@ class OriginalCEM(Optimizer):
     cross-entropy method. Annals of operations research, 134(1), pp.19-67.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, n_best: int = 20, alpha: float = 0.7, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, n_best: int = 20, alpha: float = 0.7,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -56,7 +58,7 @@ class OriginalCEM(Optimizer):
         super().__init__(**kwargs)
         self.epoch = self.validator.check_int("epoch", epoch, [1, 100000])
         self.pop_size = self.validator.check_int("pop_size", pop_size, [10, 10000])
-        self.n_best = self.validator.check_int("n_best", n_best, [2, int(self.pop_size/2)])
+        self.n_best = self.validator.check_int("n_best", n_best, [2, int(self.pop_size / 2)])
         self.alpha = self.validator.check_float("alpha", alpha, (0, 1.0))
         self.set_parameters(["epoch", "pop_size", "n_best", "alpha"])
         self.sort_flag = True
@@ -89,7 +91,7 @@ class OriginalCEM(Optimizer):
             pop_new.append(agent)
             if self.mode not in self.AVAILABLE_MODES:
                 agent.target = self.get_target(pos_new)
-                self.pop[idx] =self.get_better_agent(agent, self.pop[idx], self.problem.minmax)
+                self.pop[idx] = self.get_better_agent(agent, self.pop[idx], self.problem.minmax)
         if self.mode in self.AVAILABLE_MODES:
             pop_new = self.update_target_for_population(pop_new)
             self.pop = self.greedy_selection_population(self.pop, pop_new, self.problem.minmax)

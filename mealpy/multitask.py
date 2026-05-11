@@ -4,15 +4,17 @@
 #       Github: https://github.com/thieu1995        %                         
 # --------------------------------------------------%
 
-from typing import Union, List, Tuple
-import pandas as pd
+import concurrent.futures as parallel
+import os
+from copy import deepcopy
+from functools import partial
 from pathlib import Path
+from typing import Union, List, Tuple
+
+import pandas as pd
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.validator import Validator
-from functools import partial
-import concurrent.futures as parallel
-from copy import deepcopy
-import os
 
 
 class Multitask:
@@ -80,8 +82,10 @@ class Multitask:
     >>>     multitask.execute(n_trials=5, n_jobs=None, save_path="history", save_as="csv", save_convergence=True, verbose=False)
     >>>     # multitask.execute(n_trials=5, save_path="history", save_as="csv", save_convergence=True, verbose=False)
     """
+
     def __init__(self, algorithms: Union[List, Tuple] = None, problems: Union[List, Tuple] = None,
-                 terminations: Union[List, Tuple] = None, modes: Union[List, Tuple] = None, n_workers: int = None, **kwargs: object) -> None:
+                 terminations: Union[List, Tuple] = None, modes: Union[List, Tuple] = None, n_workers: int = None,
+                 **kwargs: object) -> None:
         self.__set_keyword_arguments(kwargs)
         self.validator = Validator(log_to="console", log_file=None)
         self.algorithms = self.validator.check_list_tuple("algorithms", algorithms, "Optimizer")
@@ -97,15 +101,18 @@ class Multitask:
             return None
         elif type(values) in (list, tuple):
             if len(values) == 1:
-                values_final = [[deepcopy(values[0]) for _ in range(0, self.m_problems)] for _ in range(0, self.n_algorithms)]
+                values_final = [[deepcopy(values[0]) for _ in range(0, self.m_problems)] for _ in
+                                range(0, self.n_algorithms)]
             elif len(values) == self.n_algorithms:
-                values_final = [deepcopy(values[idx] for _ in range(0, self.m_problems)) for idx in range(0, self.n_algorithms)]
+                values_final = [deepcopy(values[idx] for _ in range(0, self.m_problems)) for idx in
+                                range(0, self.n_algorithms)]
             elif len(values) == self.m_problems:
                 values_final = [deepcopy(values) for _ in range(0, self.n_algorithms)]
             elif len(values) == (self.n_algorithms * self.m_problems):
                 values_final = values
             else:
-                raise ValueError(f"{name} should be list of {kind} instances with size (1) or (n) or (m) or (n*m), n: #algorithms, m: #problems.")
+                raise ValueError(
+                    f"{name} should be list of {kind} instances with size (1) or (n) or (m) or (n*m), n: #algorithms, m: #problems.")
             return values_final
         else:
             raise ValueError(f"{name} should be list of {kind} instances.")
@@ -162,7 +169,7 @@ class Multitask:
 
         for id_optimizer, optimizer in enumerate(self.algorithms):
             if not isinstance(optimizer, Optimizer):
-                print(f"Model: {id_optimizer+1} is not an instance of Optimizer class.")
+                print(f"Model: {id_optimizer + 1} is not an instance of Optimizer class.")
                 continue
 
             ## Check parent directories
@@ -183,23 +190,27 @@ class Multitask:
 
                 convergence_trials = {}
                 best_fit_trials = []
-                trial_list = list(range(1, n_trials+1))
+                trial_list = list(range(1, n_trials + 1))
 
                 if n_processors is not None:
                     with parallel.ProcessPoolExecutor(n_processors) as executor:
-                        list_results = executor.map(partial(self.__run__, optimizer=optimizer, problem=problem, termination=term, mode=mode), trial_list)
+                        list_results = executor.map(
+                            partial(self.__run__, optimizer=optimizer, problem=problem, termination=term, mode=mode),
+                            trial_list)
                         for result in list_results:
                             convergence_trials[f"trial_{result['id_trial']}"] = result['convergence']
                             best_fit_trials.append(result['best_fitness'])
                             if verbose:
-                                print(f"Solving problem: {result['problem_name']} using algorithm: {optimizer.get_name()}, on the: {result['id_trial']} trial")
+                                print(
+                                    f"Solving problem: {result['problem_name']} using algorithm: {optimizer.get_name()}, on the: {result['id_trial']} trial")
                 else:
                     for idx in trial_list:
                         result = self.__run__(idx, optimizer, problem, termination=term, mode=mode)
                         convergence_trials[f"trial_{result['id_trial']}"] = result['convergence']
                         best_fit_trials.append(result['best_fitness'])
                         if verbose:
-                            print(f"Solving problem: {result['problem_name']} using algorithm: {optimizer.get_name()}, on the: {result['id_trial']} trial")
+                            print(
+                                f"Solving problem: {result['problem_name']} using algorithm: {optimizer.get_name()}, on the: {result['id_trial']} trial")
 
                 best_fit_optimizer_results[result['problem_name']] = best_fit_trials
                 if save_convergence:

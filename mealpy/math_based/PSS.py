@@ -6,6 +6,7 @@
 
 import numpy as np
 from scipy.stats import qmc
+
 from mealpy.optimizer import Optimizer
 
 
@@ -45,7 +46,8 @@ class OriginalPSS(Optimizer):
     [1] Shaqfa, M. and Beyer, K., 2021. Pareto-like sequential sampling heuristic for global optimisation. Soft Computing, 25(14), pp.9077-9096.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, acceptance_rate: float = 0.9, sampling_method: str = "LHS", **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, acceptance_rate: float = 0.9,
+                 sampling_method: str = "LHS", **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -69,7 +71,7 @@ class OriginalPSS(Optimizer):
     def create_population(self, pop_size=None):
         if self.sampling_method == "MC":
             pop = self.generator.random(self.pop_size, self.problem.n_dims)
-        else:       # Default: "LHS"
+        else:  # Default: "LHS"
             sampler = qmc.LatinHypercube(d=self.problem.n_dims)
             pop = sampler.random(n=pop_size)
         return pop
@@ -102,7 +104,8 @@ class OriginalPSS(Optimizer):
                 deviation = self.generator.uniform(min(0, self.g_best.solution[k]), max(0, self.g_best.solution[k]))
                 if self.new_solution:
                     # The deviation is positive dynamic real number
-                    deviation = abs(0.5 * (1. - self.acceptance_rate) * (self.problem.ub[k] - self.problem.lb[k])) * (1 - (epoch / self.epoch))
+                    deviation = abs(0.5 * (1. - self.acceptance_rate) * (self.problem.ub[k] - self.problem.lb[k])) * (
+                            1 - (epoch / self.epoch))
                 reduced_lb = self.g_best.solution[k] - deviation
                 reduced_lb = np.amax([reduced_lb, self.problem.lb[k]])
                 reduced_ub = reduced_lb + deviation * 2.

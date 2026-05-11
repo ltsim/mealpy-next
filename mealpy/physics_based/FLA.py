@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -50,6 +51,7 @@ class OriginalFLA(Optimizer):
     [1] Hashim, F. A., Mostafa, R. R., Hussien, A. G., Mirjalili, S., & Sallam, K. M. (2023). Fick’s Law Algorithm: A physical
     law-based algorithm for numerical optimization. Knowledge-Based Systems, 260, 110146.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, C1: float = 0.5, C2: float = 2.0,
                  C3: float = 0.1, C4: float = 0.2, C5: float = 2.0, DD: float = 0.01, **kwargs: object) -> None:
         """
@@ -78,7 +80,7 @@ class OriginalFLA(Optimizer):
     def before_main_loop(self):
         self.xss = self.get_sorted_population(self.pop, self.problem.minmax)
         self.g_best = self.xss[0].copy()
-        self.n1 = int(np.round(self.pop_size/2))
+        self.n1 = int(np.round(self.pop_size / 2))
         self.n2 = self.pop_size - self.n1
         self.pop1 = self.pop[:self.n1].copy()
         self.pop2 = self.pop[self.n1:].copy()
@@ -102,30 +104,34 @@ class OriginalFLA(Optimizer):
         xm1 = np.mean(pos1_list, axis=0)
         xm2 = np.mean(pos2_list, axis=0)
         xm = np.mean(pos_list, axis=0)
-        tf = np.sinh(epoch/ self.epoch)**self.C1
+        tf = np.sinh(epoch / self.epoch) ** self.C1
         pop_new = []
         if tf < 0.9:
-            dof = np.exp(-(self.C2 * tf - self.generator.random()))**self.C2
+            dof = np.exp(-(self.C2 * tf - self.generator.random())) ** self.C2
             tdo = self.C5 * tf - self.generator.random()
             if tdo < self.generator.random():
-                m1n, m2n = self.C3*self.n1, self.C4*self.n1
-                nt12 = int(np.round((m2n - m1n)*self.generator.random() + m1n))
+                m1n, m2n = self.C3 * self.n1, self.C4 * self.n1
+                nt12 = int(np.round((m2n - m1n) * self.generator.random() + m1n))
                 for idx in range(0, nt12):
                     dfg = self.generator.integers(1, 3)
-                    jj = -self.DD * (xm2 - xm1) / (np.linalg.norm(self.best2.solution - self.pop1[idx].solution) + self.EPSILON)
-                    pos_new = self.best2.solution + dfg*dof*self.generator.random(self.problem.n_dims)*(jj*self.best2.solution - self.pop1[idx].solution)
+                    jj = -self.DD * (xm2 - xm1) / (
+                            np.linalg.norm(self.best2.solution - self.pop1[idx].solution) + self.EPSILON)
+                    pos_new = self.best2.solution + dfg * dof * self.generator.random(self.problem.n_dims) * (
+                            jj * self.best2.solution - self.pop1[idx].solution)
                     pos_new = self.correct_solution(pos_new)
                     agent = self.generate_empty_agent(pos_new)
                     pop_new.append(agent)
                 for idx in range(nt12, self.n1):
-                    tt = self.pop1[idx].solution + dof * (self.generator.random(self.problem.n_dims) * (self.problem.ub - self.problem.lb) + self.problem.lb)
+                    tt = self.pop1[idx].solution + dof * (self.generator.random(self.problem.n_dims) * (
+                            self.problem.ub - self.problem.lb) + self.problem.lb)
                     pp = self.generator.random(self.problem.n_dims)
                     pos_new = np.where(pp < 0.8, self.best1.solution, np.where(pp >= 0.9, self.pop1[idx].solution, tt))
                     pos_new = self.correct_solution(pos_new)
                     agent = self.generate_empty_agent(pos_new)
                     pop_new.append(agent)
                 for idx in range(0, self.n2):
-                    pos_new = self.best2.solution + dof * (self.generator.random(self.problem.n_dims) * (self.problem.ub - self.problem.lb) + self.problem.lb)
+                    pos_new = self.best2.solution + dof * (self.generator.random(self.problem.n_dims) * (
+                            self.problem.ub - self.problem.lb) + self.problem.lb)
                     pos_new = self.correct_solution(pos_new)
                     agent = self.generate_empty_agent(pos_new)
                     pop_new.append(agent)
@@ -134,24 +140,28 @@ class OriginalFLA(Optimizer):
                 nt12 = int(np.round((m2n - m1n) * self.generator.random() + m1n))
                 for idx in range(0, nt12):
                     dfg = self.generator.integers(1, 3)
-                    jj = -self.DD*(xm1-xm2) / (np.linalg.norm(self.best1.solution - self.pop2[idx].solution) + self.EPSILON)
-                    pos_new = self.best1.solution + dfg * dof * self.generator.random(self.problem.n_dims) * (jj * self.best1.solution - self.pop2[idx].solution)
+                    jj = -self.DD * (xm1 - xm2) / (
+                            np.linalg.norm(self.best1.solution - self.pop2[idx].solution) + self.EPSILON)
+                    pos_new = self.best1.solution + dfg * dof * self.generator.random(self.problem.n_dims) * (
+                            jj * self.best1.solution - self.pop2[idx].solution)
                     pos_new = self.correct_solution(pos_new)
                     agent = self.generate_empty_agent(pos_new)
                     pop_new.append(agent)
                 for idx in range(nt12, self.n2):
-                    tt = self.pop2[idx].solution + dof * (self.generator.random(self.problem.n_dims) * (self.problem.ub - self.problem.lb) + self.problem.lb)
+                    tt = self.pop2[idx].solution + dof * (self.generator.random(self.problem.n_dims) * (
+                            self.problem.ub - self.problem.lb) + self.problem.lb)
                     pp = self.generator.random(self.problem.n_dims)
                     pos_new = np.where(pp < 0.8, self.best2.solution, np.where(pp >= 0.9, self.pop2[idx].solution, tt))
                     pos_new = self.correct_solution(pos_new)
                     agent = self.generate_empty_agent(pos_new)
                     pop_new.append(agent)
                 for idx in range(0, self.n1):
-                    pos_new = self.best1.solution + dof * (self.generator.random(self.problem.n_dims) * (self.problem.ub - self.problem.lb) + self.problem.lb)
+                    pos_new = self.best1.solution + dof * (self.generator.random(self.problem.n_dims) * (
+                            self.problem.ub - self.problem.lb) + self.problem.lb)
                     pos_new = self.correct_solution(pos_new)
                     agent = self.generate_empty_agent(pos_new)
                     pop_new.append(agent)
-        else:       # Equilibrium operator (EO)
+        else:  # Equilibrium operator (EO)
             if tf <= 1:
                 for idx in range(0, self.n1):
                     dfg = self.generator.integers(1, 3)
@@ -159,11 +169,12 @@ class OriginalFLA(Optimizer):
                     if tttt == 0:
                         jj = 0
                     else:
-                        jj = -self.DD*(self.best1.solution - xm1) / tttt
+                        jj = -self.DD * (self.best1.solution - xm1) / tttt
                     drf = np.exp(-jj / tf)
                     ms = np.exp(-self.best1.target.fitness / (self.pop1[idx].target.fitness + self.EPSILON))
                     qeo = dfg * drf * self.generator.random(self.problem.n_dims)
-                    pos_new = self.best1.solution + qeo*self.pop1[idx].solution + qeo *(ms * self.best1.solution - self.pop1[idx].solution)
+                    pos_new = self.best1.solution + qeo * self.pop1[idx].solution + qeo * (
+                            ms * self.best1.solution - self.pop1[idx].solution)
                     pos_new = self.correct_solution(pos_new)
                     agent = self.generate_empty_agent(pos_new)
                     pop_new.append(agent)
@@ -177,11 +188,12 @@ class OriginalFLA(Optimizer):
                     drf = np.exp(-jj / tf)
                     ms = np.exp(-self.best2.target.fitness / (self.pop2[idx].target.fitness + self.EPSILON))
                     qeo = dfg * drf * self.generator.random(self.problem.n_dims)
-                    pos_new = self.best2.solution + qeo * self.pop2[idx].solution + qeo * (ms * self.best2.solution - self.pop2[idx].solution)
+                    pos_new = self.best2.solution + qeo * self.pop2[idx].solution + qeo * (
+                            ms * self.best2.solution - self.pop2[idx].solution)
                     pos_new = self.correct_solution(pos_new)
                     agent = self.generate_empty_agent(pos_new)
                     pop_new.append(agent)
-            else:   # Steady state operator (SSO)
+            else:  # Steady state operator (SSO)
                 for idx in range(0, self.n1):
                     dfg = self.generator.integers(1, 3)
                     tttt = np.linalg.norm(self.g_best.solution - self.pop1[idx].solution)
@@ -192,7 +204,8 @@ class OriginalFLA(Optimizer):
                     drf = np.exp(-jj / tf)
                     ms = np.exp(-self.fsss / (self.pop1[idx].target.fitness + self.EPSILON))
                     qg = dfg * drf * self.generator.random(self.problem.n_dims)
-                    pos_new = self.g_best.solution + qg * self.pop1[idx].solution + qg * (ms * self.best1.solution - self.pop1[idx].solution)
+                    pos_new = self.g_best.solution + qg * self.pop1[idx].solution + qg * (
+                            ms * self.best1.solution - self.pop1[idx].solution)
                     pos_new = self.correct_solution(pos_new)
                     agent = self.generate_empty_agent(pos_new)
                     pop_new.append(agent)
@@ -206,7 +219,8 @@ class OriginalFLA(Optimizer):
                     drf = np.exp(-jj / tf)
                     ms = np.exp(-self.fsss / (self.pop2[idx].target.fitness + self.EPSILON))
                     qg = dfg * drf * self.generator.random(self.problem.n_dims)
-                    pos_new = self.g_best.solution + qg * self.pop2[idx].solution + qg * (ms * self.g_best.solution - self.pop2[idx].solution)
+                    pos_new = self.g_best.solution + qg * self.pop2[idx].solution + qg * (
+                            ms * self.g_best.solution - self.pop2[idx].solution)
                     pos_new = self.correct_solution(pos_new)
                     agent = self.generate_empty_agent(pos_new)
                     pop_new.append(agent)

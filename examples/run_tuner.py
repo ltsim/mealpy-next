@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 from opfunu.cec_based.cec2017 import F52017
+
 from mealpy import FloatVar, BBO, Tuner
 
 ## You can define your own problem, here I took the F5 benchmark function in CEC-2017 as an example.

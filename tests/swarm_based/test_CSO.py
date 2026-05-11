@@ -26,7 +26,8 @@ def problem():
 
 def test_CSO_results(problem):
     models = [
-        CSO.OriginalCSO(epoch=10, pop_size=50, mixture_ratio=0.15, smp=5, spc=False, cdc=0.8, srd=0.15, c1=0.4, w_min=0.4, w_max=0.9)
+        CSO.OriginalCSO(epoch=10, pop_size=50, mixture_ratio=0.15, smp=5, spc=False, cdc=0.8, srd=0.15, c1=0.4,
+                        w_min=0.4, w_max=0.9)
     ]
     for model in models:
         g_best = model.solve(problem)

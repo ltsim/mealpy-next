@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -49,8 +50,10 @@ class CleverBookBeesA(Optimizer):
     [1] D. T. Pham, Ghanbarzadeh A., Koc E., Otri S., Rahim S., and M.Zaidi. The bees algorithm - a novel tool
     for complex optimisation problems. In Proceedings of IPROMS 2006 Conference, pages 454–461, 2006.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, n_elites: int = 16, n_others: int = 4,
-                 patch_size: float = 5.0, patch_reduction: float = 0.985, n_sites: int = 3, n_elite_sites: int = 1, **kwargs: object) -> None:
+                 patch_size: float = 5.0, patch_reduction: float = 0.985, n_sites: int = 3, n_elite_sites: int = 1,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -71,7 +74,8 @@ class CleverBookBeesA(Optimizer):
         self.patch_reduction = self.validator.check_float("patch_reduction", patch_reduction, (0, 1.0))
         self.n_sites = self.validator.check_int("n_sites", n_sites, [2, 5])
         self.n_elite_sites = self.validator.check_int("n_elite_sites", n_elite_sites, [1, 3])
-        self.set_parameters(["epoch", "pop_size", "n_elites", "n_others", "patch_size", "patch_reduction", "n_sites", "n_elite_sites"])
+        self.set_parameters(
+            ["epoch", "pop_size", "n_elites", "n_others", "patch_size", "patch_reduction", "n_sites", "n_elite_sites"])
         self.sort_flag = True
 
     def search_neighborhood__(self, parent=None, neigh_size=None):
@@ -82,7 +86,8 @@ class CleverBookBeesA(Optimizer):
         for idx in range(0, neigh_size):
             t1 = self.generator.integers(0, len(parent.solution) - 1)
             new_bee = parent.solution.copy()
-            new_bee[t1] = (parent.solution[t1] + self.generator.uniform() * self.patch_size) if self.generator.uniform() < 0.5 \
+            new_bee[t1] = (parent.solution[
+                               t1] + self.generator.uniform() * self.patch_size) if self.generator.uniform() < 0.5 \
                 else (parent.solution[t1] - self.generator.uniform() * self.patch_size)
             pos_new = self.correct_solution(new_bee)
             agent = self.generate_empty_agent(pos_new)
@@ -178,11 +183,12 @@ class OriginalBeesA(Optimizer):
         # (Scout Bee Count or Population Size, Selected Sites Count)
         self.selected_site_ratio = self.validator.check_float("selected_site_ratio", selected_site_ratio, (0, 1.0))
         self.elite_site_ratio = self.validator.check_float("elite_site_ratio", elite_site_ratio, (0, 1.0))
-        self.selected_site_bee_ratio = self.validator.check_float("selected_site_bee_ratio", selected_site_bee_ratio, (0, 1.0))
+        self.selected_site_bee_ratio = self.validator.check_float("selected_site_bee_ratio", selected_site_bee_ratio,
+                                                                  (0, 1.0))
         self.elite_site_bee_ratio = self.validator.check_float("elite_site_bee_ratio", elite_site_bee_ratio, (0, 3.0))
         self.dance_radius = self.validator.check_float("dance_radius", dance_radius, (0, 1.0))
         self.dance_reduction = self.validator.check_float("dance_reduction", dance_reduction, (0, 1.0))
-        self.set_parameters(["epoch", "pop_size", "selected_site_ratio", "elite_site_ratio", "selected_site_bee_ratio", 
+        self.set_parameters(["epoch", "pop_size", "selected_site_ratio", "elite_site_ratio", "selected_site_bee_ratio",
                              "elite_site_bee_ratio", "dance_radius", "dance_reduction"])
         # Initial Value of Dance Radius
         self.dyn_radius = self.dance_radius

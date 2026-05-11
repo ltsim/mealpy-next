@@ -7,9 +7,10 @@
 # https://machinelearningmastery.com/display-deep-learning-model-training-history-in-keras/
 
 import numpy as np
-from keras.models import Sequential
 from keras.layers import Dense
+from keras.models import Sequential
 from sklearn.metrics import accuracy_score
+
 from mealpy import GWO, FloatVar
 
 
@@ -39,7 +40,7 @@ class HybridMlp:
     def create_problem(self):
         self.problem = {
             "obj_func": self.fitness_function,
-            "bounds": FloatVar(lb=(-1.,)*self.n_dims, ub=(1.,)*self.n_dims),
+            "bounds": FloatVar(lb=(-1.,) * self.n_dims, ub=(1.,) * self.n_dims),
             "minmax": "max",
             "log_to": "console",
         }

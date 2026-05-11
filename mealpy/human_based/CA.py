@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -85,7 +86,8 @@ class OriginalCA(Optimizer):
             epoch (int): The current iteration
         """
         # create next generation
-        pop_child = [self.create_faithful__(self.dyn_belief_space["lb"], self.dyn_belief_space["ub"]) for _ in range(0, self.pop_size)]
+        pop_child = [self.create_faithful__(self.dyn_belief_space["lb"], self.dyn_belief_space["ub"]) for _ in
+                     range(0, self.pop_size)]
         # select next generation
         pop_new = []
         pop_full = self.pop + pop_child

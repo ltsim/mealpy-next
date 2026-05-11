@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -49,8 +50,10 @@ class OriginalICA(Optimizer):
     optimization inspired by imperialistic competition. In 2007 IEEE congress on evolutionary computation (pp. 4661-4667). Ieee.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, empire_count: int = 5, assimilation_coeff: float = 1.5, revolution_prob: float = 0.05,
-                 revolution_rate: float = 0.1, revolution_step_size: float = 0.1, zeta: float = 0.1, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, empire_count: int = 5, assimilation_coeff: float = 1.5,
+                 revolution_prob: float = 0.05,
+                 revolution_rate: float = 0.1, revolution_step_size: float = 0.1, zeta: float = 0.1,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -104,7 +107,8 @@ class OriginalICA(Optimizer):
         for i in range(0, self.empire_count - 1):
             self.empires[i] = []
             n_colonies = int(round(prob_empires_list[i] * colony_count))
-            idx_list = self.generator.choice(list(set(range(0, colony_count)) - set(idx_already_selected)), n_colonies, replace=False).tolist()
+            idx_list = self.generator.choice(list(set(range(0, colony_count)) - set(idx_already_selected)), n_colonies,
+                                             replace=False).tolist()
             idx_already_selected += idx_list
             for idx in idx_list:
                 self.empires[i].append(self.pop_colonies[idx])
@@ -124,7 +128,8 @@ class OriginalICA(Optimizer):
         for idx, colonies in self.empires.items():
             for idx_colony, colony in enumerate(colonies):
                 pos_new = colony.solution + self.assimilation_coeff * \
-                          self.generator.uniform(0, 1, self.problem.n_dims) * (self.pop_empires[idx].solution - colony.solution)
+                          self.generator.uniform(0, 1, self.problem.n_dims) * (
+                                  self.pop_empires[idx].solution - colony.solution)
                 pos_new = self.correct_solution(pos_new)
                 self.empires[idx][idx_colony].solution = pos_new
                 if self.mode not in self.AVAILABLE_MODES:

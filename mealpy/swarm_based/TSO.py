@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -41,6 +42,7 @@ class OriginalTSO(Optimizer):
     [1] Xie, L., Han, T., Zhou, H., Zhang, Z. R., Han, B., & Tang, A. (2021). Tuna swarm optimization: a novel swarm-based
     metaheuristic algorithm for global optimization. Computational intelligence and Neuroscience, 2021.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -63,19 +65,23 @@ class OriginalTSO(Optimizer):
         else:
             if self.generator.random() < 0.5:
                 r1 = self.generator.random()
-                beta = np.exp(r1 * np.exp(3*np.cos(np.pi*((self.epoch - epoch) / self.epoch)))) * np.cos(2*np.pi*r1)
+                beta = np.exp(r1 * np.exp(3 * np.cos(np.pi * ((self.epoch - epoch) / self.epoch)))) * np.cos(
+                    2 * np.pi * r1)
                 if self.generator.random() < C:
-                    local_pos = a1*(self.g_best.solution + beta * np.abs(self.g_best.solution - self.pop[0].solution)) + a2 * self.pop[0].solution   # Eq (8.3)
+                    local_pos = a1 * (self.g_best.solution + beta * np.abs(
+                        self.g_best.solution - self.pop[0].solution)) + a2 * self.pop[0].solution  # Eq (8.3)
                 else:
                     rand_pos = self.problem.generate_solution()
-                    local_pos = a1 * (rand_pos + beta*np.abs(rand_pos - self.pop[0].solution)) + a2 * self.pop[0].solution  # Eq (8.1)
+                    local_pos = a1 * (rand_pos + beta * np.abs(rand_pos - self.pop[0].solution)) + a2 * self.pop[
+                        0].solution  # Eq (8.1)
             else:
                 tf = self.generator.choice([-1, 1])
                 if self.generator.random() < 0.5:
-                    local_pos = tf * t**2 * self.pop[0].solution        # Eq 9.2
+                    local_pos = tf * t ** 2 * self.pop[0].solution  # Eq 9.2
                 else:
-                    local_pos = self.g_best.solution + self.generator.random(self.problem.n_dims) * (self.g_best.solution - self.pop[0].solution) + \
-                        tf * t**2 * (self.g_best.solution - self.pop[0].solution)
+                    local_pos = self.g_best.solution + self.generator.random(self.problem.n_dims) * (
+                            self.g_best.solution - self.pop[0].solution) + \
+                                tf * t ** 2 * (self.g_best.solution - self.pop[0].solution)
         return local_pos
 
     def evolve(self, epoch):
@@ -99,20 +105,24 @@ class OriginalTSO(Optimizer):
                 else:
                     if self.generator.random() > 0.5:
                         r1 = self.generator.random()
-                        beta = np.exp(r1 * np.exp(3*np.cos(np.pi * (self.epoch - epoch)/self.epoch))) * np.cos(2*np.pi*r1)
+                        beta = np.exp(r1 * np.exp(3 * np.cos(np.pi * (self.epoch - epoch) / self.epoch))) * np.cos(
+                            2 * np.pi * r1)
                         if self.generator.random() < C:
-                            pos_new = a1 * (self.g_best.solution + beta*np.abs(self.g_best.solution - self.pop[idx].solution)) + \
-                                a2 * self.pop[idx-1].solution       # Eq. 8.4
+                            pos_new = a1 * (self.g_best.solution + beta * np.abs(
+                                self.g_best.solution - self.pop[idx].solution)) + \
+                                      a2 * self.pop[idx - 1].solution  # Eq. 8.4
                         else:
                             rand_pos = self.problem.generate_solution()
-                            pos_new = a1 * (rand_pos + beta*np.abs(rand_pos - self.pop[idx].solution)) + a2 * self.pop[idx-1].solution  # Eq 8.2
+                            pos_new = a1 * (rand_pos + beta * np.abs(rand_pos - self.pop[idx].solution)) + a2 * \
+                                      self.pop[idx - 1].solution  # Eq 8.2
                     else:
                         tf = self.generator.choice([-1, 1])
                         if self.generator.random() < 0.5:
                             pos_new = self.g_best.solution + self.generator.random(self.problem.n_dims) * \
-                                      (self.g_best.solution - self.pop[idx].solution) + tf * tt**2 * (self.g_best.solution - self.pop[idx].solution) # Eq 9.1
+                                      (self.g_best.solution - self.pop[idx].solution) + tf * tt ** 2 * (
+                                              self.g_best.solution - self.pop[idx].solution)  # Eq 9.1
                         else:
-                            pos_new = tf * tt**2 * self.pop[idx].solution        # Eq 9.2
+                            pos_new = tf * tt ** 2 * self.pop[idx].solution  # Eq 9.2
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)

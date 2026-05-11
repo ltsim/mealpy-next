@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -45,7 +46,9 @@ class OriginalGTO(Optimizer):
     [1] Sadeeq, H. T., & Abdulazeez, A. M. (2022). Giant Trevally Optimizer (GTO): A Novel Metaheuristic
     Algorithm for Global Optimization and Challenging Engineering Problems. IEEE Access, 10, 121615-121640.
     """
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, A: float = 0.4, H: float = 2.0, **kwargs: object) -> None:
+
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, A: float = 0.4, H: float = 2.0,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -72,7 +75,8 @@ class OriginalGTO(Optimizer):
         pop_new = []
         for idx in range(0, self.pop_size):
             # Eq.(4)
-            pos_new = self.g_best.solution * self.generator.random() + ((self.problem.ub - self.problem.lb) * self.generator.random() + self.problem.lb) * \
+            pos_new = self.g_best.solution * self.generator.random() + (
+                    (self.problem.ub - self.problem.lb) * self.generator.random() + self.problem.lb) * \
                       self.get_levy_flight_step(beta=1.5, multiplier=0.01, size=self.problem.n_dims, case=-1)
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
@@ -91,7 +95,7 @@ class OriginalGTO(Optimizer):
         pop_new = []
         for idx in range(0, self.pop_size):
             r3 = self.generator.random()
-            pos_new = self.g_best.solution * self.A * r3 + pos_m - self.pop[idx].solution * r3        # Eq. 7
+            pos_new = self.g_best.solution * self.A * r3 + pos_m - self.pop[idx].solution * r3  # Eq. 7
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)
@@ -104,14 +108,14 @@ class OriginalGTO(Optimizer):
         _, self.g_best = self.update_global_best_agent(self.pop, save=False)
 
         # Step 3: Attacking
-        H = self.generator.random() * self.H * (1 - epoch / self.epoch)     #  Eq.(15)
+        H = self.generator.random() * self.H * (1 - epoch / self.epoch)  # Eq.(15)
         pop_new = []
         for idx in range(0, self.pop_size):
             # the distance between the prey and the attacker, and can be calculated using (12):
             dist = np.sum(np.abs(self.g_best.solution - self.pop[idx].solution))
             theta2 = (360 - 0) * self.generator.random() + 0
-            theta1 = (1.33 / 1.00029) * np.sin(np.radians(theta2))        # calculate theta_1 using (10)
-            VD = np.sin(np.radians(theta1)) * dist      # Eq. 11
+            theta1 = (1.33 / 1.00029) * np.sin(np.radians(theta2))  # calculate theta_1 using (10)
+            VD = np.sin(np.radians(theta1)) * dist  # Eq. 11
             # Eq. (13)
             pos_new = self.pop[idx].solution * np.sin(np.radians(theta2)) * self.pop[idx].target.fitness + VD + H
             pos_new = self.correct_solution(pos_new)
@@ -163,6 +167,7 @@ class Matlab102GTO(Optimizer):
     [1] Sadeeq, H. T., & Abdulazeez, A. M. (2022). Giant Trevally Optimizer (GTO): A Novel Metaheuristic
     Algorithm for Global Optimization and Challenging Engineering Problems. IEEE Access, 10, 121615-121640.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -186,8 +191,9 @@ class Matlab102GTO(Optimizer):
         pop_new = []
         for idx in range(0, self.pop_size):
             # foraging movement patterns of giant trevallies are simulated using Eq.(4)
-            pos_new = self.g_best.solution * self.generator.random() + ((self.problem.ub - self.problem.lb) * self.generator.random() + self.problem.lb) * \
-                    self.get_levy_flight_step(beta=1.5, multiplier=0.01, size=self.problem.n_dims, case=-1)
+            pos_new = self.g_best.solution * self.generator.random() + (
+                    (self.problem.ub - self.problem.lb) * self.generator.random() + self.problem.lb) * \
+                      self.get_levy_flight_step(beta=1.5, multiplier=0.01, size=self.problem.n_dims, case=-1)
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)
@@ -207,7 +213,7 @@ class Matlab102GTO(Optimizer):
             # In the choosing area step, giant trevallies identify and select the best area in terms of
             # the amount of food (seabirds) within the selected search space where they can hunt for prey.
             r3 = self.generator.random()
-            pos_new = self.g_best.solution * A * r3 + pos_m - self.pop[idx].solution * r3        # Eq. 7
+            pos_new = self.g_best.solution * A * r3 + pos_m - self.pop[idx].solution * r3  # Eq. 7
 
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
@@ -221,16 +227,16 @@ class Matlab102GTO(Optimizer):
         self.pop, self.g_best = self.update_global_best_agent(self.pop, save=False)
 
         # Step 3: Attacking
-        H = self.generator.random() * 2. * (1. - epoch / self.epoch)     #  Eq.(15)
+        H = self.generator.random() * 2. * (1. - epoch / self.epoch)  # Eq.(15)
         pop_new = []
         for idx in range(0, self.pop_size):
             # the distance between the prey and the attacker, and can be calculated using (12):
             dist = np.sum(np.abs(self.g_best.solution - self.pop[idx].solution))
             theta2 = (360 - 0) * self.generator.random() + 0
-            theta1 = 1.3296 * np.sin(np.radians(theta2))        # calculate theta_1 using (10)
+            theta1 = 1.3296 * np.sin(np.radians(theta2))  # calculate theta_1 using (10)
             # visual distortion indicates the apparent height of the bird, which is always seen
             # to be higher than its actual height due to the refraction of the light.
-            VD = np.sin(np.radians(theta1)) * dist      # Eq. 11
+            VD = np.sin(np.radians(theta1)) * dist  # Eq. 11
             # the behavior of giant trevally when chasing and jumping out of the water is mathematically simulated using (13)
             pos_new = self.pop[idx].solution * np.sin(np.radians(theta2)) * self.pop[idx].target.fitness + VD + H
             pos_new = self.correct_solution(pos_new)
@@ -282,6 +288,7 @@ class Matlab101GTO(Optimizer):
     [1] Sadeeq, H. T., & Abdulazeez, A. M. (2022). Giant Trevally Optimizer (GTO): A Novel Metaheuristic
     Algorithm for Global Optimization and Challenging Engineering Problems. IEEE Access, 10, 121615-121640.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -308,8 +315,10 @@ class Matlab101GTO(Optimizer):
                 if idx == jdx:
                     continue
                 # foraging movement patterns of giant trevallies are simulated using Eq.(4)
-                pos_new = self.g_best.solution * self.generator.random() + ((self.problem.ub - self.problem.lb) * self.generator.random() +
-                        self.problem.lb) * self.get_levy_flight_step(beta=1.5, multiplier=0.01, size=self.problem.n_dims, case=-1)
+                pos_new = self.g_best.solution * self.generator.random() + (
+                        (self.problem.ub - self.problem.lb) * self.generator.random() +
+                        self.problem.lb) * self.get_levy_flight_step(beta=1.5, multiplier=0.01,
+                                                                     size=self.problem.n_dims, case=-1)
                 pos_new = self.correct_solution(pos_new)
                 agent = self.generate_empty_agent(pos_new)
                 pop_new.append(agent)
@@ -328,7 +337,7 @@ class Matlab101GTO(Optimizer):
             # In the choosing area step, giant trevallies identify and select the best area in terms of
             # the amount of food (seabirds) within the selected search space where they can hunt for prey.
             r3 = self.generator.random()
-            pos_new = self.g_best.solution * A * r3 + pos_m - self.pop[idx].solution * r3        # Eq. 7
+            pos_new = self.g_best.solution * A * r3 + pos_m - self.pop[idx].solution * r3  # Eq. 7
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)
@@ -341,7 +350,7 @@ class Matlab101GTO(Optimizer):
         _, self.g_best = self.update_global_best_agent(self.pop, save=False)
 
         # Step 3: Attacking
-        H = self.generator.random() * 2. * (1.0 - epoch / self.epoch)     #  Eq.(15)
+        H = self.generator.random() * 2. * (1.0 - epoch / self.epoch)  # Eq.(15)
         for idx in range(0, self.pop_size):
             pop_new = []
             for jdx in range(0, self.pop_size):
@@ -350,10 +359,10 @@ class Matlab101GTO(Optimizer):
                 # the distance between the prey and the attacker, and can be calculated using (12):
                 dist = np.sum(np.abs(self.g_best.solution - self.pop[idx].solution))
                 theta2 = (360 - 0) * self.generator.random() + 0
-                theta1 = 1.3296 * np.sin(np.radians(theta2))        # calculate theta_1 using (10)
+                theta1 = 1.3296 * np.sin(np.radians(theta2))  # calculate theta_1 using (10)
                 # visual distortion indicates the apparent height of the bird, which is always seen
                 # to be higher than its actual height due to the refraction of the light.
-                VD = np.sin(np.radians(theta1)) * dist      # Eq. 11
+                VD = np.sin(np.radians(theta1)) * dist  # Eq. 11
                 # the behavior of giant trevally when chasing and jumping out of the water is mathematically simulated using (13)
                 pos_new = self.pop[idx].solution * np.sin(np.radians(theta2)) * self.pop[idx].target.fitness + VD + H
                 pos_new = self.correct_solution(pos_new)

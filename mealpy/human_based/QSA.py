@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -87,7 +88,8 @@ class DevQSA(Optimizer):
             beta = np.power(current_epoch, np.power(current_epoch / self.epoch, 0.5))
             alpha = self.generator.uniform(-1, 1)
             E = self.generator.exponential(0.5, self.problem.n_dims)
-            F1 = beta * alpha * (E * np.abs(A - pop[idx].solution)) + self.generator.exponential(0.5) * (A - pop[idx].solution)
+            F1 = beta * alpha * (E * np.abs(A - pop[idx].solution)) + self.generator.exponential(0.5) * (
+                    A - pop[idx].solution)
             F2 = beta * alpha * (E * np.abs(A - pop[idx].solution))
             if case == 1:
                 pos_new = A + F1
@@ -149,7 +151,8 @@ class DevQSA(Optimizer):
         for idx in range(self.pop_size):
             X_new = pop[idx].solution.copy()
             id1 = self.generator.choice(self.pop_size)
-            temp = g_best.solution + self.generator.exponential(0.5, self.problem.n_dims) * (pop[id1].solution - pop[idx].solution)
+            temp = g_best.solution + self.generator.exponential(0.5, self.problem.n_dims) * (
+                    pop[id1].solution - pop[idx].solution)
             X_new = np.where(self.generator.random(self.problem.n_dims) > pr[idx], temp, X_new)
             pos_new = self.correct_solution(X_new)
             agent = self.generate_empty_agent(pos_new)
@@ -207,7 +210,7 @@ class OppoQSA(DevQSA):
         super().__init__(epoch, pop_size, **kwargs)
         self.sort_flag = True
 
-    def opposition_based__(self, pop = None, g_best = None):
+    def opposition_based__(self, pop=None, g_best=None):
         pop = self.get_sorted_population(pop, self.problem.minmax)
         pop_new = []
         for idx in range(0, self.pop_size):
@@ -426,7 +429,7 @@ class OriginalQSA(DevQSA):
                     X1 = pop[i1].solution
                     X2 = pop[i2].solution
                     pos_new[jdx] = X1[jdx] + e * (X2[jdx] - pop[idx].solution[jdx])
-            pos_new= self.correct_solution(pos_new)
+            pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)
             if self.mode not in self.AVAILABLE_MODES:

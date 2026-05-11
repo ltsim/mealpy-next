@@ -13,6 +13,7 @@
 # Further modifications and optimizations may be required depending on your specific use case.
 
 import numpy as np
+
 from mealpy import PermutationVar, WOA, Problem
 
 # Define the graph representation
@@ -30,7 +31,7 @@ class ShortestPathProblem(Problem):
     def __init__(self, bounds=None, minmax="min", data=None, **kwargs):
         super().__init__(bounds, minmax, **kwargs)
         self.data = data
-        self.eps = 1e10         # Penalty function for vertex with 0 connection
+        self.eps = 1e10  # Penalty function for vertex with 0 connection
 
     # Calculate the fitness of an individual
     def obj_func(self, x):
@@ -55,7 +56,7 @@ problem = ShortestPathProblem(bounds=bounds, minmax="min", data=graph)
 model = WOA.OriginalWOA(epoch=100, pop_size=20)
 model.solve(problem)
 
-print(f"Best agent: {model.g_best}")                    # Encoded solution
-print(f"Best solution: {model.g_best.solution}")        # Encoded solution
+print(f"Best agent: {model.g_best}")  # Encoded solution
+print(f"Best solution: {model.g_best.solution}")  # Encoded solution
 print(f"Best fitness: {model.g_best.target.fitness}")
-print(f"Best real scheduling: {model.problem.decode_solution(model.g_best.solution)}")      # Decoded (Real) solution
+print(f"Best real scheduling: {model.problem.decode_solution(model.g_best.solution)}")  # Decoded (Real) solution

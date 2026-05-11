@@ -4,8 +4,10 @@
 #       Github: https://github.com/thieu1995        %
 # --------------------------------------------------%
 
-import numpy as np
 import math
+
+import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -69,8 +71,10 @@ class OriginalNRO(Optimizer):
             epoch (int): The current iteration
         """
         xichma_v = 1
-        xichma_u = ((math.gamma(1 + 1.5) * math.sin(math.pi * 1.5 / 2)) / (math.gamma((1 + 1.5) / 2) * 1.5 * 2 ** ((1.5 - 1) / 2))) ** (1.0 / 1.5)
-        levy_b = (self.generator.normal(0, xichma_u)) / (np.sqrt(np.abs(self.generator.normal(0, xichma_v))) ** (1.0 / 1.5))
+        xichma_u = ((math.gamma(1 + 1.5) * math.sin(math.pi * 1.5 / 2)) / (
+                math.gamma((1 + 1.5) / 2) * 1.5 * 2 ** ((1.5 - 1) / 2))) ** (1.0 / 1.5)
+        levy_b = (self.generator.normal(0, xichma_u)) / (
+                np.sqrt(np.abs(self.generator.normal(0, xichma_v))) ** (1.0 / 1.5))
         # NFi phase
         Pb = self.generator.uniform()
         Pfi = self.generator.uniform()
@@ -87,20 +91,28 @@ class OriginalNRO(Optimizer):
             if self.generator.uniform() <= Pfi:
                 ### Update based on Eq. 3
                 if self.generator.uniform() <= Pb:
-                    xichma1 = (np.log(epoch) * 1.0 / epoch) * np.abs(np.subtract(self.pop[idx].solution, self.g_best.solution))
-                    gauss = np.array([self.generator.normal(self.g_best.solution[j], xichma1[j]) for j in range(self.problem.n_dims)])
-                    Xi = gauss + self.generator.uniform() * self.g_best.solution - round(self.generator.random() + 1) * Nei
+                    xichma1 = (np.log(epoch) * 1.0 / epoch) * np.abs(
+                        np.subtract(self.pop[idx].solution, self.g_best.solution))
+                    gauss = np.array([self.generator.normal(self.g_best.solution[j], xichma1[j]) for j in
+                                      range(self.problem.n_dims)])
+                    Xi = gauss + self.generator.uniform() * self.g_best.solution - round(
+                        self.generator.random() + 1) * Nei
                 ### Update based on Eq. 6
                 else:
                     i2 = self.generator.choice(temp1, replace=False)
-                    xichma2 = (np.log(epoch) * 1.0 / epoch) * np.abs(np.subtract(self.pop[i2].solution, self.g_best.solution))
-                    gauss = np.array([self.generator.normal(self.pop[idx].solution[j], xichma2[j]) for j in range(self.problem.n_dims)])
-                    Xi = gauss + self.generator.uniform() * self.g_best.solution - round(self.generator.random() + 2) * Nei
+                    xichma2 = (np.log(epoch) * 1.0 / epoch) * np.abs(
+                        np.subtract(self.pop[i2].solution, self.g_best.solution))
+                    gauss = np.array([self.generator.normal(self.pop[idx].solution[j], xichma2[j]) for j in
+                                      range(self.problem.n_dims)])
+                    Xi = gauss + self.generator.uniform() * self.g_best.solution - round(
+                        self.generator.random() + 2) * Nei
             ## Update based on Eq. 9
             else:
                 i3 = self.generator.choice(temp1, replace=False)
-                xichma2 = (np.log(epoch) * 1.0 / epoch) * np.abs(np.subtract(self.pop[i3].solution, self.g_best.solution))
-                Xi = np.array([self.generator.normal(self.pop[idx].solution[j], xichma2[j]) for j in range(self.problem.n_dims)])
+                xichma2 = (np.log(epoch) * 1.0 / epoch) * np.abs(
+                    np.subtract(self.pop[i3].solution, self.g_best.solution))
+                Xi = np.array(
+                    [self.generator.normal(self.pop[idx].solution[j], xichma2[j]) for j in range(self.problem.n_dims)])
             ## Check the boundary and evaluate the fitness function
             pos_new = self.correct_solution(Xi)
             agent = self.generate_empty_agent(pos_new)
@@ -124,23 +136,28 @@ class OriginalNRO(Optimizer):
                 for j in range(self.problem.n_dims):
                     #### Levy flight strategy is described as Eq. 18
                     if self.pop[i2].solution[j] == self.pop[idx].solution[j]:
-                        X_ion[j] = self.pop[idx].solution[j] + alpha * levy_b * (self.pop[idx].solution[j] - self.g_best.solution[j])
+                        X_ion[j] = self.pop[idx].solution[j] + alpha * levy_b * (
+                                self.pop[idx].solution[j] - self.g_best.solution[j])
                     #### If not, based on Eq. 11, 12
                     else:
                         if self.generator.uniform() <= 0.5:
-                            X_ion[j] = self.pop[i1].solution[j] + self.generator.uniform() * (self.pop[i2].solution[j] - self.pop[idx].solution[j])
+                            X_ion[j] = self.pop[i1].solution[j] + self.generator.uniform() * (
+                                    self.pop[i2].solution[j] - self.pop[idx].solution[j])
                         else:
-                            X_ion[j] = self.pop[i1].solution[j] - self.generator.uniform() * (self.pop[i2].solution[j] - self.pop[idx].solution[j])
+                            X_ion[j] = self.pop[i1].solution[j] - self.generator.uniform() * (
+                                    self.pop[i2].solution[j] - self.pop[idx].solution[j])
             else:  #### Levy flight strategy is described as Eq. 21
                 _, _, worst = self.get_special_agents(self.pop, n_worst=1, minmax=self.problem.minmax)
                 X_worst = worst[0]
                 for j in range(self.problem.n_dims):
                     ##### Based on Eq. 21
                     if X_worst.solution[j] == self.g_best.solution[j]:
-                        X_ion[j] = self.pop[idx].solution[j] + alpha * levy_b * (self.problem.ub[j] - self.problem.lb[j])
+                        X_ion[j] = self.pop[idx].solution[j] + alpha * levy_b * (
+                                self.problem.ub[j] - self.problem.lb[j])
                     ##### Based on Eq. 13
                     else:
-                        X_ion[j] = self.pop[idx].solution[j] + round(self.generator.uniform()) * self.generator.uniform() * \
+                        X_ion[j] = self.pop[idx].solution[j] + round(
+                            self.generator.uniform()) * self.generator.uniform() * \
                                    (X_worst.solution[j] - self.g_best.solution[j])
             ## Check the boundary and evaluate the fitness function for X_ion
             pos_new = self.correct_solution(X_ion)
@@ -174,9 +191,11 @@ class OriginalNRO(Optimizer):
                 else:
                     if self.generator.uniform() > 0.5:
                         X_fu = self.pop[idx].solution - 0.5 * (np.sin(2 * np.pi * freq * epoch + np.pi) *
-                            (self.epoch - epoch) / self.epoch + 1) * (self.pop[i1].solution - self.pop[i2].solution)
+                                                               (self.epoch - epoch) / self.epoch + 1) * (
+                                       self.pop[i1].solution - self.pop[i2].solution)
                     else:
-                        X_fu = self.pop[idx].solution - 0.5 * (np.sin(2 * np.pi * freq * epoch + np.pi) * epoch / self.epoch + 1) * \
+                        X_fu = self.pop[idx].solution - 0.5 * (
+                                np.sin(2 * np.pi * freq * epoch + np.pi) * epoch / self.epoch + 1) * \
                                (self.pop[i1].solution - self.pop[i2].solution)
             pos_new = self.correct_solution(X_fu)
             agent = self.generate_empty_agent(pos_new)

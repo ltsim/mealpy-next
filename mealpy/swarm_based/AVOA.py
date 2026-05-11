@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -73,37 +74,44 @@ class OriginalAVOA(Optimizer):
         Args:
             epoch (int): The current iteration
         """
-        a = self.generator.uniform(-2, 2) * ((np.sin((np.pi / 2) * (epoch / self.epoch)) ** self.gama) + np.cos((np.pi / 2) * (epoch / self.epoch)) - 1)
-        ppp = (2 * self.generator.random() + 1) * (1 - epoch/self.epoch) + a
+        a = self.generator.uniform(-2, 2) * ((np.sin((np.pi / 2) * (epoch / self.epoch)) ** self.gama) + np.cos(
+            (np.pi / 2) * (epoch / self.epoch)) - 1)
+        ppp = (2 * self.generator.random() + 1) * (1 - epoch / self.epoch) + a
         _, best_list, _ = self.get_special_agents(self.pop, n_best=2, minmax=self.problem.minmax)
         pop_new = []
         for idx in range(0, self.pop_size):
-            F = ppp * (2 * self.generator.random() -1)
-            rand_idx = self.generator.choice([0, 1], p=[self.alpha, 1-self.alpha])
+            F = ppp * (2 * self.generator.random() - 1)
+            rand_idx = self.generator.choice([0, 1], p=[self.alpha, 1 - self.alpha])
             rand_pos = best_list[rand_idx].solution
-            if np.abs(F) >= 1:      # Exploration
+            if np.abs(F) >= 1:  # Exploration
                 if self.generator.random() < self.p1:
                     pos_new = rand_pos - (np.abs((2 * self.generator.random()) * rand_pos - self.pop[idx].solution)) * F
                 else:
-                    pos_new = rand_pos - F + self.generator.random()*((self.problem.ub - self.problem.lb)*self.generator.random() + self.problem.lb)
-            else:                   # Exploitation
-                if np.abs(F) < 0.5:      # Phase 1
+                    pos_new = rand_pos - F + self.generator.random() * (
+                            (self.problem.ub - self.problem.lb) * self.generator.random() + self.problem.lb)
+            else:  # Exploitation
+                if np.abs(F) < 0.5:  # Phase 1
                     best_x1 = best_list[0].solution
                     best_x2 = best_list[1].solution
                     if self.generator.random() < self.p2:
-                        A = best_x1 - ((best_x1 * self.pop[idx].solution) / (best_x1 - self.pop[idx].solution**2 + self.EPSILON))*F
-                        B = best_x2 - ((best_x2 * self.pop[idx].solution) / (best_x2 - self.pop[idx].solution**2 + self.EPSILON))*F
+                        A = best_x1 - ((best_x1 * self.pop[idx].solution) / (
+                                best_x1 - self.pop[idx].solution ** 2 + self.EPSILON)) * F
+                        B = best_x2 - ((best_x2 * self.pop[idx].solution) / (
+                                best_x2 - self.pop[idx].solution ** 2 + self.EPSILON)) * F
                         pos_new = (A + B) / 2
                     else:
                         pos_new = rand_pos - np.abs(rand_pos - self.pop[idx].solution) * F * \
                                   self.get_levy_flight_step(beta=1.5, multiplier=1., size=self.problem.n_dims, case=-1)
-                else:       # Phase 2
+                else:  # Phase 2
                     if self.generator.random() < self.p3:
-                        pos_new = (np.abs((2 * self.generator.random()) * rand_pos - self.pop[idx].solution)) * (F + self.generator.random()) - \
+                        pos_new = (np.abs((2 * self.generator.random()) * rand_pos - self.pop[idx].solution)) * (
+                                F + self.generator.random()) - \
                                   (rand_pos - self.pop[idx].solution)
                     else:
-                        s1 = rand_pos * (self.generator.random() * self.pop[idx].solution / (2 * np.pi)) * np.cos(self.pop[idx].solution)
-                        s2 = rand_pos * (self.generator.random() * self.pop[idx].solution / (2 * np.pi)) * np.sin(self.pop[idx].solution)
+                        s1 = rand_pos * (self.generator.random() * self.pop[idx].solution / (2 * np.pi)) * np.cos(
+                            self.pop[idx].solution)
+                        s2 = rand_pos * (self.generator.random() * self.pop[idx].solution / (2 * np.pi)) * np.sin(
+                            self.pop[idx].solution)
                         pos_new = rand_pos - (s1 + s2)
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)

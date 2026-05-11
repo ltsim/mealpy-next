@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -142,12 +143,15 @@ class OriginalMSO(Optimizer):
                 hh = self.g_best.solution - self.pop[idx].solution
             zf = np.sign(hh)
             hh = np.abs(hh * self.generator.random(self.problem.n_dims))
-            gama = self.generator.random(self.problem.n_dims) * 90 * ((self.epoch - self.nfe_counter * 0.99) / self.epoch)
+            gama = self.generator.random(self.problem.n_dims) * 90 * (
+                    (self.epoch - self.nfe_counter * 0.99) / self.epoch)
             amax = self.atand(1.0 / (2 * self.tand(gama)))
             amin = self.atand((self.sind(gama) * self.cosd(gama)) / (1 + (self.sind(gama)) ** 2))
             fai = (amax - amin) * self.generator.random() + amin
             omg = self.asind(self.generator.random() * self.sind(fai + gama))
-            x = (hh / self.tand(gama)) - (((hh / self.sind(gama)) - (hh * self.sind(fai)) / (self.cosd(fai + gama))) * self.cosd(omg)) / self.cosd(omg - gama)
+            x = (hh / self.tand(gama)) - (
+                    ((hh / self.sind(gama)) - (hh * self.sind(fai)) / (self.cosd(fai + gama))) * self.cosd(
+                omg)) / self.cosd(omg - gama)
             pos_new = self.pop[idx].solution + x * zf
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_agent(pos_new)

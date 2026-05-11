@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -45,7 +46,8 @@ class OriginalGOA(Optimizer):
     theory and application. Advances in Engineering Software, 105, pp.30-47.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, c_min: float = 0.00004, c_max: float = 2.0, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, c_min: float = 0.00004, c_max: float = 2.0,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -81,13 +83,15 @@ class OriginalGOA(Optimizer):
             S_i_total = np.zeros(self.problem.n_dims)
             for j in range(0, self.pop_size):
                 dist = np.sqrt(np.sum((self.pop[idx].solution - self.pop[j].solution) ** 2))
-                r_ij_vector = (self.pop[idx].solution - self.pop[j].solution) / (dist + self.EPSILON)  # xj - xi / dij in Eq.(2.7)
+                r_ij_vector = (self.pop[idx].solution - self.pop[j].solution) / (
+                        dist + self.EPSILON)  # xj - xi / dij in Eq.(2.7)
                 xj_xi = 2 + np.remainder(dist, 2)  # |xjd - xid| in Eq. (2.7)
                 ## The first part inside the big bracket in Eq. (2.7)   16 955 230 764    212 047 193 643
                 ran = (c / 2) * (self.problem.ub - self.problem.lb)
                 s_ij = ran * self.s_function__(xj_xi) * r_ij_vector
                 S_i_total += s_ij
-            x_new = c * self.generator.normal(0, 1, self.problem.n_dims) * S_i_total + self.g_best.solution  # Eq. (2.7) in the paper
+            x_new = c * self.generator.normal(0, 1,
+                                              self.problem.n_dims) * S_i_total + self.g_best.solution  # Eq. (2.7) in the paper
             pos_new = self.correct_solution(x_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)

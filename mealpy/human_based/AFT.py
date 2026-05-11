@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -39,6 +40,7 @@ class OriginalAFT(Optimizer):
     [1] Braik, M., Ryalat, M. H., & Al-Zoubi, H. (2022). A novel meta-heuristic algorithm for solving
     numerical optimization problems: Ali Baba and the forty thieves. Neural Computing and Applications, 34(1), 409-455.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -53,7 +55,7 @@ class OriginalAFT(Optimizer):
 
     def before_main_loop(self):
         # Initialize best positions (Marjaneh's astute plans)
-        self.pop_best = self.pop.copy()     # It is like local best positions like in PSO
+        self.pop_best = self.pop.copy()  # It is like local best positions like in PSO
         # self.pop is population of alibaba ==> It will always update with new version no matter what
 
     def evolve(self, epoch):
@@ -65,7 +67,7 @@ class OriginalAFT(Optimizer):
         """
         # Calculate AFT parameters
         # Perception potential - decreases over iterations
-        Pp = 0.1 * np.log(2.75 * (epoch/ self.epoch) ** 0.1)
+        Pp = 0.1 * np.log(2.75 * (epoch / self.epoch) ** 0.1)
 
         # Tracking distance - decreases over iterations
         Td = 2 * np.exp(-2 * (epoch / self.epoch) ** 2)
@@ -81,16 +83,19 @@ class OriginalAFT(Optimizer):
                     # Case 1: Follow global best with tracking distance
                     direction = np.sign(self.generator.random() - 0.5)
                     movement = (Td * (self.pop_best[idx].solution - self.pop[idx].solution) * self.generator.random() +
-                                Td * (self.pop[idx].solution - self.pop_best[random_followers[idx]].solution) * self.generator.random())
+                                Td * (self.pop[idx].solution - self.pop_best[
+                                random_followers[idx]].solution) * self.generator.random())
                     pos_new = self.g_best.solution + movement * direction
                 else:
                     # Case 3: Random exploration within tracking distance
-                    pos_new = self.problem.lb + Td * (self.problem.ub - self.problem.lb) * self.generator.random(self.problem.n_dims)
+                    pos_new = self.problem.lb + Td * (self.problem.ub - self.problem.lb) * self.generator.random(
+                        self.problem.n_dims)
             else:
                 # Thieves don't know where to search - opposite direction (Marjaneh's tricks)
                 direction = np.sign(self.generator.random() - 0.5)
                 movement = (Td * (self.pop_best[idx].solution - self.pop[idx].solution) * self.generator.random() +
-                            Td * (self.pop[idx].solution - self.pop_best[random_followers[idx]].solution) * self.generator.random())
+                            Td * (self.pop[idx].solution - self.pop_best[
+                            random_followers[idx]].solution) * self.generator.random())
                 pos_new = self.g_best.solution - movement * direction
             # Clip to bounds
             pos_new = self.correct_solution(pos_new)

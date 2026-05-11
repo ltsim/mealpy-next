@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -95,15 +96,18 @@ class OriginalDOA(Optimizer):
                         # Forgetting and supplementation strategy
                         cos_term = (np.cos((epoch + self.epoch / 10) * np.pi / self.epoch) + 1) / 2
                         for jdx in in_indices:
-                            pos_new[jdx] = pbest.solution[jdx] + (self.generator.random() * (self.problem.ub[jdx] - self.problem.lb[jdx]) + self.problem.lb[jdx]) * cos_term
+                            pos_new[jdx] = pbest.solution[jdx] + (
+                                    self.generator.random() * (self.problem.ub[jdx] - self.problem.lb[jdx]) +
+                                    self.problem.lb[jdx]) * cos_term
                             # Boundary handling
                             if pos_new[jdx] > self.problem.ub[jdx] or pos_new[jdx] < self.problem.lb[jdx]:
-                                if self.problem.n_dims > 15:    # For high-dimensional problems
+                                if self.problem.n_dims > 15:  # For high-dimensional problems
                                     rdx = self.generator.choice(list(set(range(self.pop_size)) - {idx}))
                                     pos_new[jdx] = self.pop[rdx].solution[jdx]
-                                else:   # For low-dimensional problems
-                                    pos_new[jdx] = self.generator.random() * (self.problem.ub[jdx] - self.problem.lb[jdx]) + self.problem.lb[jdx]
-                    else:   # Alternative update strategy
+                                else:  # For low-dimensional problems
+                                    pos_new[jdx] = self.generator.random() * (
+                                            self.problem.ub[jdx] - self.problem.lb[jdx]) + self.problem.lb[jdx]
+                    else:  # Alternative update strategy
                         for jdx in in_indices:
                             rdx = self.generator.choice(list(set(range(self.pop_size)) - {idx}))
                             pos_new[jdx] = self.pop[rdx].solution[jdx]
@@ -115,7 +119,7 @@ class OriginalDOA(Optimizer):
                     pop_new[idx].target = self.get_target(pop_new[idx].solution)
             pop_new = self.update_target_for_population(pop_new)
             self.pop = pop_new
-        else:   # Exploitation phase (last 10% of iterations)
+        else:  # Exploitation phase (last 10% of iterations)
             # Update population
             pop_new = []
             for idx in range(self.pop_size):
@@ -125,14 +129,17 @@ class OriginalDOA(Optimizer):
                 pos_new = self.g_best.solution.copy()
                 for jdx in in_indices:
                     cos_term = (np.cos(epoch * np.pi / self.epoch) + 1) / 2
-                    pos_new[jdx] = pos_new[jdx] + (self.generator.random() * (self.problem.ub[idx] - self.problem.lb[idx]) + self.problem.lb[idx]) * cos_term
+                    pos_new[jdx] = pos_new[jdx] + (
+                            self.generator.random() * (self.problem.ub[idx] - self.problem.lb[idx]) +
+                            self.problem.lb[idx]) * cos_term
                     # Boundary handling
                     if pos_new[jdx] > self.problem.ub[jdx] or pos_new[jdx] < self.problem.lb[jdx]:
                         if self.problem.n_dims > 15:
                             rdx = self.generator.choice(list(set(range(self.pop_size)) - {idx}))
                             pos_new[jdx] = self.pop[rdx].solution[jdx]
                         else:
-                            pos_new[jdx] = self.generator.random() * (self.problem.ub[jdx] - self.problem.lb[jdx]) + self.problem.lb[jdx]
+                            pos_new[jdx] = self.generator.random() * (self.problem.ub[jdx] - self.problem.lb[jdx]) + \
+                                           self.problem.lb[jdx]
                 pos_new = self.correct_solution(pos_new)
                 agent = self.generate_empty_agent(pos_new)
                 pop_new.append(agent)

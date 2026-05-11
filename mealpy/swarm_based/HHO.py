@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -72,7 +73,8 @@ class OriginalHHO(Optimizer):
                 # Harris' hawks perch randomly based on 2 strategy:
                 if self.generator.random() >= 0.5:  # perch based on other family members
                     X_rand = self.pop[self.generator.integers(0, self.pop_size)].solution.copy()
-                    pos_new = X_rand - self.generator.uniform() * np.abs(X_rand - 2 * self.generator.uniform() * self.pop[idx].solution)
+                    pos_new = X_rand - self.generator.uniform() * np.abs(
+                        X_rand - 2 * self.generator.uniform() * self.pop[idx].solution)
                 else:  # perch on a random tall tree (random site inside group's home range)
                     X_m = np.mean([x.solution for x in self.pop])
                     pos_new = (self.g_best.solution - X_m) - self.generator.uniform() * \

@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -56,8 +57,10 @@ class OriginalBFO(Optimizer):
     IEEE control systems magazine, 22(3), pp.52-67.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, Ci: float = 0.01, Ped: float = 0.25, Nc: int = 5, Ns: int = 4,
-                 d_attract: float = 0.1, w_attract: float = 0.2, h_repels: float = 0.1, w_repels: float = 10, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, Ci: float = 0.01, Ped: float = 0.25, Nc: int = 5,
+                 Ns: int = 4,
+                 d_attract: float = 0.1, w_attract: float = 0.2, h_repels: float = 0.1, w_repels: float = 10,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -84,7 +87,8 @@ class OriginalBFO(Optimizer):
         self.w_attract = self.validator.check_float("w_attract", w_attract, (0, 1.0))
         self.h_repels = self.validator.check_float("h_repels", h_repels, (0, 1.0))
         self.w_repels = self.validator.check_float("w_repels", w_repels, (2.0, 20.0))
-        self.set_parameters(["epoch", "pop_size", "Ci", "Ped", "Nc", "Ns", "d_attract", "w_attract", "h_repels", "w_repels"])
+        self.set_parameters(
+            ["epoch", "pop_size", "Ci", "Ped", "Nc", "Ns", "d_attract", "w_attract", "h_repels", "w_repels"])
         self.half_pop_size = int(self.pop_size / 2)
         self.is_parallelizable = False
         self.sort_flag = False
@@ -249,9 +253,11 @@ class ABFO(Optimizer):
         for idx in range(0, self.pop_size):
             step_size = self.update_step_size__(self.pop, idx)
             for m in range(0, self.swim_length):  # Ns
-                delta_i = (self.g_best.solution - self.pop[idx].solution) + (self.pop[idx].local_solution - self.pop[idx].solution)
+                delta_i = (self.g_best.solution - self.pop[idx].solution) + (
+                        self.pop[idx].local_solution - self.pop[idx].solution)
                 delta = np.sqrt(np.abs(np.dot(delta_i, delta_i.T)))
-                unit_vector = self.generator.uniform(self.problem.lb, self.problem.ub) if delta == 0 else (delta_i / delta)
+                unit_vector = self.generator.uniform(self.problem.lb, self.problem.ub) if delta == 0 else (
+                        delta_i / delta)
                 pos_new = self.pop[idx].solution + step_size * unit_vector
                 pos_new = self.correct_solution(pos_new)
                 agent = self.generate_agent(pos_new)
@@ -263,7 +269,8 @@ class ABFO(Optimizer):
                         self.pop[idx].update(local_solution=pos_new.copy(), local_target=agent.target.copy())
                 else:
                     self.pop[idx].nutrients -= 1
-            if self.pop[idx].nutrients > max(self.N_split, self.N_split + (len(self.pop) - self.pop_size) / self.N_adapt):
+            if self.pop[idx].nutrients > max(self.N_split,
+                                             self.N_split + (len(self.pop) - self.pop_size) / self.N_adapt):
                 tt = self.generator.normal(0, 1, self.problem.n_dims)
                 pos_new = tt * self.pop[idx].solution + (1 - tt) * (self.g_best.solution - self.pop[idx].solution)
                 pos_new = self.correct_solution(pos_new)

@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -73,10 +74,11 @@ class OriginalLCO(Optimizer):
             elif prob < 0.7:  # Update using Eq. 2-6
                 f1 = 1 - epoch / self.epoch
                 f2 = 1 - f1
-                prev_pos = self.g_best.solution if idx == 0 else self.pop[idx-1].solution
+                prev_pos = self.g_best.solution if idx == 0 else self.pop[idx - 1].solution
                 best_diff = f1 * self.r1 * (self.g_best.solution - self.pop[idx].solution)
                 better_diff = f2 * self.r1 * (prev_pos - self.pop[idx].solution)
-                temp = self.pop[idx].solution + self.generator.random() * better_diff + self.generator.random() * best_diff
+                temp = self.pop[
+                           idx].solution + self.generator.random() * better_diff + self.generator.random() * best_diff
             else:
                 temp = self.problem.ub - (self.pop[idx].solution - self.problem.lb) * self.generator.random()
             pos_new = self.correct_solution(temp)
@@ -150,7 +152,8 @@ class DevLCO(OriginalLCO):
                 else:
                     better_diff = f * self.r1 * (self.g_best.solution - self.pop[idx].solution)
                 best_diff = (1 - f) * self.r1 * (self.pop[0].solution - self.pop[idx].solution)
-                temp = self.pop[idx].solution + self.generator.random() * better_diff + self.generator.random() * best_diff
+                temp = self.pop[
+                           idx].solution + self.generator.random() * better_diff + self.generator.random() * best_diff
             else:
                 temp = self.problem.generate_solution()
             pos_new = self.correct_solution(temp)

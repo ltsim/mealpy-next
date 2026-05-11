@@ -6,10 +6,11 @@
 
 import concurrent.futures as parallel
 from pathlib import Path
+
 from opfunu.cec_basic import cec2014_nobias
 from pandas import DataFrame
-from mealpy.evolutionary_based.DE import OriginalDE
 
+from mealpy.evolutionary_based.DE import OriginalDE
 
 model_name = "DE"
 N_TRIALS = 5
@@ -26,6 +27,7 @@ PATH_ERROR = "history/error/" + model_name + "/"
 PATH_BEST_FIT = "history/best_fit/"
 Path(PATH_ERROR).mkdir(parents=True, exist_ok=True)
 Path(PATH_BEST_FIT).mkdir(parents=True, exist_ok=True)
+
 
 def find_minimum(function_name):
     """

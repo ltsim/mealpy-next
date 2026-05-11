@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -66,7 +67,7 @@ class MyAlgorithm(Optimizer):
         Args:
             epoch (int): The current iteration
         """
-        epxilon = 1 - 1 * (epoch + 1) / self.epoch      # The epxilon in each epoch is changing based on this equation
+        epxilon = 1 - 1 * (epoch + 1) / self.epoch  # The epxilon in each epoch is changing based on this equation
 
         ## 1. Replace the almost worst agent by random agent
         if np.random.uniform() < self.p1:
@@ -87,7 +88,8 @@ class MyAlgorithm(Optimizer):
             if idx == 0:
                 pos_new = self.pop[idx][self.ID_POS] + epxilon * self.space * np.random.uniform(0, 1)
             else:
-                pos_new = self.pop[idx][self.ID_POS] + epxilon * self.space * (self.pop[0][self.ID_POS] - self.pop[idx][self.ID_POS])
+                pos_new = self.pop[idx][self.ID_POS] + epxilon * self.space * (
+                            self.pop[0][self.ID_POS] - self.pop[idx][self.ID_POS])
             pos_new = self.amend_position(pos_new, self.problem.lb, self.problem.ub)
             fit_new = self.get_target_wrapper(pos_new)
             if self.compare_agent([pos_new, fit_new], self.pop[idx]):
@@ -98,12 +100,13 @@ class MyAlgorithm(Optimizer):
 
 ## Time to test our new optimizer
 def fitness(solution):
-    return np.sum(solution**2)
+    return np.sum(solution ** 2)
+
 
 problem_dict1 = {
     "fit_func": fitness,
-    "lb": [-100, ]*100,
-    "ub": [100, ]*100,
+    "lb": [-100, ] * 100,
+    "ub": [100, ] * 100,
     "minmax": "min",
 }
 

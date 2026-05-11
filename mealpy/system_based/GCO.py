@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -39,7 +40,8 @@ class DevGCO(Optimizer):
     >>> print(f"Solution: {model.g_best.solution}, Fitness: {model.g_best.target.fitness}")
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, cr: float = 0.7, wf: float = 1.25, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, cr: float = 0.7, wf: float = 1.25,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -94,7 +96,8 @@ class DevGCO(Optimizer):
             fit_list = np.array([agent.target.fitness for agent in self.pop])
             fit_max = np.max(fit_list)
             fit_min = np.min(fit_list)
-            self.dyn_list_cell_counter[idx] += 10 * (self.pop[idx].target.fitness - fit_max) / (fit_min - fit_max + self.EPSILON)
+            self.dyn_list_cell_counter[idx] += 10 * (self.pop[idx].target.fitness - fit_max) / (
+                    fit_min - fit_max + self.EPSILON)
 
 
 class OriginalGCO(DevGCO):
@@ -134,7 +137,8 @@ class OriginalGCO(DevGCO):
     Germinal center optimization algorithm. International Journal of Computational Intelligence Systems, 12(1), p.13.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, cr: float = 0.7, wf: float = 1.25, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, cr: float = 0.7, wf: float = 1.25,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000

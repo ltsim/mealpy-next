@@ -68,9 +68,9 @@
 
 # univariate mlp example
 from sklearn.preprocessing import LabelEncoder
+
 from examples.applications.keras.timeseries_util import generate_data, decode_solution, generate_loss_value
 from mealpy.evolutionary_based import FPA
-from mealpy.swarm_based import GWO
 
 
 def fitness_function(solution, data):
@@ -85,7 +85,8 @@ if __name__ == "__main__":
     OPT_ENCODER.fit(['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam'])  # domain range ==> 7 values
 
     WOI_ENCODER = LabelEncoder()
-    WOI_ENCODER.fit(['uniform', 'lecun_uniform', 'normal', 'zero', 'glorot_normal', 'glorot_uniform', 'he_normal', 'he_uniform'])
+    WOI_ENCODER.fit(
+        ['uniform', 'lecun_uniform', 'normal', 'zero', 'glorot_normal', 'glorot_uniform', 'he_normal', 'he_uniform'])
 
     ACT_ENCODER = LabelEncoder()
     ACT_ENCODER.fit(['softmax', 'softplus', 'softsign', 'relu', 'tanh', 'sigmoid', 'hard_sigmoid', 'linear'])

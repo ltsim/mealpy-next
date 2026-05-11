@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -45,7 +46,9 @@ class OriginalAGTO(Optimizer):
     [1] Abdollahzadeh, B., Soleimanian Gharehchopogh, F., & Mirjalili, S. (2021). Artificial gorilla troops optimizer: a new
     nature‐inspired metaheuristic algorithm for global optimization problems. International Journal of Intelligent Systems, 36(10), 5887-5958.
     """
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, p1: float = 0.03, p2: float = 0.8, beta: float = 3.0, **kwargs: object) -> None:
+
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, p1: float = 0.03, p2: float = 0.8, beta: float = 3.0,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -54,8 +57,8 @@ class OriginalAGTO(Optimizer):
         super().__init__(**kwargs)
         self.epoch = self.validator.check_int("epoch", epoch, [1, 100000])
         self.pop_size = self.validator.check_int("pop_size", pop_size, [5, 10000])
-        self.p1 = self.validator.check_float("p1", p1, (0, 1))      # p in the paper
-        self.p2 = self.validator.check_float("p2", p2, (0, 1))      # w in the paper
+        self.p1 = self.validator.check_float("p1", p1, (0, 1))  # p in the paper
+        self.p2 = self.validator.check_float("p2", p2, (0, 1))  # w in the paper
         self.beta = self.validator.check_float("beta", beta, [-10.0, 10.0])
         self.set_parameters(["epoch", "pop_size", "p1", "p2", "beta"])
         self.sort_flag = False
@@ -67,7 +70,7 @@ class OriginalAGTO(Optimizer):
         Args:
             epoch (int): The current iteration
         """
-        a = (np.cos(2*self.generator.random())+1) * (1 - epoch/self.epoch)
+        a = (np.cos(2 * self.generator.random()) + 1) * (1 - epoch / self.epoch)
         c = a * (2 * self.generator.random() - 1)
         ## Exploration
         pop_new = []
@@ -78,11 +81,12 @@ class OriginalAGTO(Optimizer):
                 if self.generator.random() >= 0.5:
                     z = self.generator.uniform(-a, a, self.problem.n_dims)
                     rand_idx = self.generator.integers(0, self.pop_size)
-                    pos_new = (self.generator.random() - a) * self.pop[rand_idx].solution + c * z * self.pop[idx].solution
+                    pos_new = (self.generator.random() - a) * self.pop[rand_idx].solution + c * z * self.pop[
+                        idx].solution
                 else:
                     id1, id2 = self.generator.choice(list(set(range(0, self.pop_size)) - {idx}), 2, replace=False)
-                    pos_new = self.pop[idx].solution - c*(c*self.pop[idx].solution - self.pop[id1].solution) + \
-                        self.generator.random() * (self.pop[idx].solution - self.pop[id2].solution)
+                    pos_new = self.pop[idx].solution - c * (c * self.pop[idx].solution - self.pop[id1].solution) + \
+                              self.generator.random() * (self.pop[idx].solution - self.pop[id2].solution)
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)
@@ -101,14 +105,15 @@ class OriginalAGTO(Optimizer):
             if a >= self.p2:
                 g = 2 ** c
                 delta = (np.abs(np.mean(pos_list, axis=0)) ** g) ** (1.0 / g)
-                pos_new = c*delta*(self.pop[idx].solution - self.g_best.solution) + self.pop[idx].solution
+                pos_new = c * delta * (self.pop[idx].solution - self.g_best.solution) + self.pop[idx].solution
             else:
                 if self.generator.random() >= 0.5:
                     h = self.generator.normal(0, 1, self.problem.n_dims)
                 else:
                     h = self.generator.normal(0, 1)
                 r1 = self.generator.random()
-                pos_new = self.g_best.solution - (2*r1-1)*(self.g_best.solution - self.pop[idx].solution) * (self.beta * h)
+                pos_new = self.g_best.solution - (2 * r1 - 1) * (self.g_best.solution - self.pop[idx].solution) * (
+                        self.beta * h)
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)
@@ -151,6 +156,7 @@ class MGTO(Optimizer):
     [1] Mostafa, R. R., Gaheen, M. A., Abd ElAziz, M., Al-Betar, M. A., & Ewees, A. A. (2023). An improved gorilla
     troops optimizer for global optimization problems and feature selection. Knowledge-Based Systems, 110462.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, pp: float = 0.03, **kwargs: object) -> None:
         """
         Args:
@@ -161,7 +167,7 @@ class MGTO(Optimizer):
         super().__init__(**kwargs)
         self.epoch = self.validator.check_int("epoch", epoch, [1, 100000])
         self.pop_size = self.validator.check_int("pop_size", pop_size, [5, 10000])
-        self.pp = self.validator.check_float("p1", pp, (0, 1))      # p in the paper
+        self.pp = self.validator.check_float("p1", pp, (0, 1))  # p in the paper
         self.set_parameters(["epoch", "pop_size", "pp"])
         self.sort_flag = False
 
@@ -205,11 +211,12 @@ class MGTO(Optimizer):
             else:
                 if self.generator.random() >= 0.5:
                     rand_idx = self.generator.integers(0, self.pop_size)
-                    pos_new = (self.generator.random() - C) * self.pop[rand_idx].solution + L * self.generator.uniform(-C, C) * self.pop[idx].solution
+                    pos_new = (self.generator.random() - C) * self.pop[rand_idx].solution + L * self.generator.uniform(
+                        -C, C) * self.pop[idx].solution
                 else:
                     id1, id2 = self.generator.choice(list(set(range(0, self.pop_size)) - {idx}), 2, replace=False)
-                    pos_new = self.pop[idx].solution - L*(L*self.pop[idx].solution - self.pop[id1].solution) + \
-                        self.generator.random() * (self.pop[idx].solution - self.pop[id2].solution)
+                    pos_new = self.pop[idx].solution - L * (L * self.pop[idx].solution - self.pop[id1].solution) + \
+                              self.generator.random() * (self.pop[idx].solution - self.pop[id2].solution)
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)
@@ -230,11 +237,12 @@ class MGTO(Optimizer):
                 M = (np.abs(np.mean(pos_list, axis=0)) ** g) ** (1.0 / g)
                 # print(M)
                 p = self.generator.uniform(0, 1, self.problem.n_dims)
-                pos_new = L * M * (self.pop[idx].solution - self.g_best.solution) * (0.01 * np.tan(np.pi*( p - 0.5)))
+                pos_new = L * M * (self.pop[idx].solution - self.g_best.solution) * (0.01 * np.tan(np.pi * (p - 0.5)))
             else:
                 Q = 2 * self.generator.random() - 1
                 v = self.generator.uniform(0, 1)
-                pos_new = self.g_best.solution - Q * (self.g_best.solution - self.pop[idx].solution) * np.tan(v * np.pi/2)
+                pos_new = self.g_best.solution - Q * (self.g_best.solution - self.pop[idx].solution) * np.tan(
+                    v * np.pi / 2)
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)

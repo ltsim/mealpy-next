@@ -4,9 +4,10 @@
 #       Github: https://github.com/thieu1995        %                         
 # --------------------------------------------------%
 
-from mealpy import FloatVar, WOA, Tuner
 import numpy as np
 import pytest
+
+from mealpy import FloatVar, WOA, Tuner
 
 
 @pytest.fixture(scope="module")  # scope: Call only 1 time at the beginning

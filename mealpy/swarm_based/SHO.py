@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -43,7 +44,9 @@ class OriginalSHO(Optimizer):
     [1] Dhiman, G. and Kumar, V., 2017. Spotted hyena optimizer: a novel bio-inspired based metaheuristic
     technique for engineering applications. Advances in Engineering Software, 114, pp.48-70.
     """
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, h_factor: float = 5., n_trials: int = 10, **kwargs: object) -> None:
+
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, h_factor: float = 5., n_trials: int = 10,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -81,7 +84,7 @@ class OriginalSHO(Optimizer):
                 N = 1
                 for _ in range(0, self.n_trials):
                     pos_temp = self.g_best.solution + self.generator.normal(0, 1, self.problem.n_dims) * \
-                              self.generator.uniform(self.problem.lb, self.problem.ub)
+                               self.generator.uniform(self.problem.lb, self.problem.ub)
                     pos_new = self.correct_solution(pos_temp)
                     agent = self.generate_agent(pos_new)
                     if self.compare_target(agent.target, self.g_best.target, self.problem.minmax):

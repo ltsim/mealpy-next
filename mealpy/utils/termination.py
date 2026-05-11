@@ -67,7 +67,7 @@ class Termination:
         self.name, self.message, self.log_to, self.log_file = "Termination", "", None, None
         self.__set_condition(self.max_epoch, self.max_fe, self.max_time, self.max_early_stop)
         self.logger = Logger(self.log_to, log_file=self.log_file).create_logger(name=f"{__name__}.{__class__.__name__}",
-                                    format_str='%(asctime)s, %(levelname)s, %(name)s [line: %(lineno)d]: %(message)s')
+                                                                                format_str='%(asctime)s, %(levelname)s, %(name)s [line: %(lineno)d]: %(message)s')
         self.logger.propagate = False
 
     def __set_keyword_arguments(self, kwargs):
@@ -80,7 +80,8 @@ class Termination:
 
     def __set_condition(self, max_epoch, max_fe, max_time, max_early_stop):
         if (max_epoch is None) and (max_fe is None) and (max_time is None) and (max_early_stop is None):
-            raise ValueError("Please set at least one stopping condition with parameter 'max_epoch' or 'max_fe' or 'max_time' or 'max_early_stop'")
+            raise ValueError(
+                "Please set at least one stopping condition with parameter 'max_epoch' or 'max_fe' or 'max_time' or 'max_early_stop'")
         else:
             if max_epoch is not None:
                 self.max_epoch = self.validator.check_int("max_epoch", max_epoch, [1, 10000000])

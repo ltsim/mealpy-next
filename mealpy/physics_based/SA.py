@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -43,7 +44,8 @@ class OriginalSA(Optimizer):
     [1] Kirkpatrick, S., Gelatt Jr, C. D., & Vecchi, M. P. (1983). Optimization by simulated annealing. science, 220(4598), 671-680.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 2, temp_init: float = 100, step_size: float = 0.1, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 2, temp_init: float = 100, step_size: float = 0.1,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -79,7 +81,7 @@ class OriginalSA(Optimizer):
             # Calculate the energy difference
             delta_energy = np.abs(self.agent_current.target.fitness - agent.target.fitness)
             # calculate probability acceptance criterion
-            p_accept = np.exp(-delta_energy/ (self.temp_init / epoch))
+            p_accept = np.exp(-delta_energy / (self.temp_init / epoch))
             if self.generator.random() < p_accept:
                 self.agent_current = agent
         self.pop = [self.g_best.copy(), self.agent_current.copy()]
@@ -157,7 +159,7 @@ class GaussianSA(Optimizer):
         else:
             # Calculate the energy difference
             delta_energy = np.abs(self.agent_current.target.fitness - agent.target.fitness)
-            p_accept = np.exp(-delta_energy/self.temp_current)
+            p_accept = np.exp(-delta_energy / self.temp_current)
             if self.generator.random() < p_accept:
                 self.agent_current = agent
         # Reduce the temperature
@@ -204,8 +206,10 @@ class SwarmSA(Optimizer):
     annealing: Theory and applications (pp. 7-15). Springer, Dordrecht.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, max_sub_iter: int = 5, t0: int = 1000, t1: int = 1, move_count: int = 5,
-                 mutation_rate: float = 0.1, mutation_step_size: float = 0.1, mutation_step_size_damp: float = 0.99, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, max_sub_iter: int = 5, t0: int = 1000, t1: int = 1,
+                 move_count: int = 5,
+                 mutation_rate: float = 0.1, mutation_step_size: float = 0.1, mutation_step_size_damp: float = 0.99,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -224,10 +228,11 @@ class SwarmSA(Optimizer):
         self.max_sub_iter = self.validator.check_int("max_sub_iter", max_sub_iter, [1, 100000])
         self.t0 = self.validator.check_int("t0", t0, [500, 2000])
         self.t1 = self.validator.check_int("t1", t1, [1, 100])
-        self.move_count = self.validator.check_int("move_count", move_count, [2, int(self.pop_size/2)])
+        self.move_count = self.validator.check_int("move_count", move_count, [2, int(self.pop_size / 2)])
         self.mutation_rate = self.validator.check_float("mutation_rate", mutation_rate, (0, 1.0))
         self.mutation_step_size = self.validator.check_float("mutation_step_size", mutation_step_size, (0, 1.0))
-        self.mutation_step_size_damp = self.validator.check_float("mutation_step_size_damp", mutation_step_size_damp, (0, 1.0))
+        self.mutation_step_size_damp = self.validator.check_float("mutation_step_size_damp", mutation_step_size_damp,
+                                                                  (0, 1.0))
         self.set_parameters(["epoch", "pop_size", "max_sub_iter", "t0", "t1", "move_count",
                              "mutation_rate", "mutation_step_size", "mutation_step_size_damp"])
         self.sort_flag = True

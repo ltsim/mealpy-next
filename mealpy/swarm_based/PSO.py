@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -43,7 +44,8 @@ class OriginalPSO(Optimizer):
     ICNN'95-international conference on neural networks (Vol. 4, pp. 1942-1948). IEEE.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, c1: float = 2.05, c2: float = 2.05, w: float = 0.4, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, c1: float = 2.05, c2: float = 2.05, w: float = 0.4,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch: maximum number of iterations, default = 10000
@@ -93,8 +95,10 @@ class OriginalPSO(Optimizer):
         """
         # Update weight after each move count  (weight down)
         for idx in range(0, self.pop_size):
-            cognitive = self.c1 * self.generator.random(self.problem.n_dims) * (self.pop[idx].local_solution - self.pop[idx].solution)
-            social = self.c2 * self.generator.random(self.problem.n_dims) * (self.g_best.solution - self.pop[idx].solution)
+            cognitive = self.c1 * self.generator.random(self.problem.n_dims) * (
+                    self.pop[idx].local_solution - self.pop[idx].solution)
+            social = self.c2 * self.generator.random(self.problem.n_dims) * (
+                    self.g_best.solution - self.pop[idx].solution)
             self.pop[idx].velocity = self.w * self.pop[idx].velocity + cognitive + social
             pos_new = self.pop[idx].solution + self.pop[idx].velocity
             pos_new = self.correct_solution(pos_new)
@@ -140,7 +144,8 @@ class AIW_PSO(Optimizer):
     Lecture Notes in Computer Science(), vol 4029. Springer, Berlin, Heidelberg. https://doi.org/10.1007/11785231_48
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, c1: float = 2.05, c2: float = 2.05, alpha: float = 0.4, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, c1: float = 2.05, c2: float = 2.05, alpha: float = 0.4,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch: maximum number of iterations, default = 10000
@@ -191,11 +196,13 @@ class AIW_PSO(Optimizer):
         current_best = self.get_best_agent(self.pop, self.problem.minmax)
         for idx in range(0, self.pop_size):
             denom = np.abs(self.pop[idx].local_solution - current_best.solution)
-            denom = np.where(denom==0, 1e-6, denom)
-            isa = np.abs(self.pop[idx].solution - self.pop[idx].local_solution) / denom     # individual search ability
+            denom = np.where(denom == 0, 1e-6, denom)
+            isa = np.abs(self.pop[idx].solution - self.pop[idx].local_solution) / denom  # individual search ability
             w = 1 - self.alpha * (1.0 / (1.0 + np.exp(-isa)))
-            cognitive = self.c1 * self.generator.random(self.problem.n_dims) * (self.pop[idx].local_solution - self.pop[idx].solution)
-            social = self.c2 * self.generator.random(self.problem.n_dims) * (self.g_best.solution - self.pop[idx].solution)
+            cognitive = self.c1 * self.generator.random(self.problem.n_dims) * (
+                    self.pop[idx].local_solution - self.pop[idx].solution)
+            social = self.c2 * self.generator.random(self.problem.n_dims) * (
+                    self.g_best.solution - self.pop[idx].solution)
             velocity = w * self.pop[idx].velocity + cognitive + social
             self.pop[idx].velocity = np.clip(velocity, self.v_min, self.v_max)
             pos_new = self.pop[idx].solution + self.pop[idx].velocity
@@ -296,8 +303,10 @@ class LDW_PSO(Optimizer):
         # Update weight after each move count  (weight down)
         w = (self.epoch - epoch) / self.epoch * (self.w_max - self.w_min) + self.w_min
         for idx in range(0, self.pop_size):
-            cognitive = self.c1 * self.generator.random(self.problem.n_dims) * (self.pop[idx].local_solution - self.pop[idx].solution)
-            social = self.c2 * self.generator.random(self.problem.n_dims) * (self.g_best.solution - self.pop[idx].solution)
+            cognitive = self.c1 * self.generator.random(self.problem.n_dims) * (
+                    self.pop[idx].local_solution - self.pop[idx].solution)
+            social = self.c2 * self.generator.random(self.problem.n_dims) * (
+                    self.g_best.solution - self.pop[idx].solution)
             velocity = w * self.pop[idx].velocity + cognitive + social
             self.pop[idx].velocity = np.clip(velocity, self.v_min, self.v_max)
             pos_new = self.pop[idx].solution + self.pop[idx].velocity
@@ -380,7 +389,8 @@ class P_PSO(Optimizer):
             bb = 2 * (np.cos(self.dyn_delta_list[idx]))
             ee = np.abs(np.cos(self.dyn_delta_list[idx])) ** aa
             tt = np.abs(np.sin(self.dyn_delta_list[idx])) ** bb
-            v_new = ee * (self.pop[idx].local_solution - self.pop[idx].solution) + tt * (self.g_best.solution - self.pop[idx].solution)
+            v_new = ee * (self.pop[idx].local_solution - self.pop[idx].solution) + tt * (
+                    self.g_best.solution - self.pop[idx].solution)
             v_new = np.minimum(np.maximum(v_new, -self.v_max), self.v_max)
             self.pop[idx].velocity = v_new
             pos_new = self.pop[idx].solution + v_new
@@ -460,10 +470,12 @@ class HPSO_TVAC(P_PSO):
             c1_it = np.abs(w) ** (c_it * w)
             c2_it = np.abs(1 - w) ** (c_it / (1 - w))
             #################### HPSO
-            v_new = c1_it * self.generator.uniform(0, 1, self.problem.n_dims) * (self.pop[idx].local_solution - self.pop[idx].solution) + \
+            v_new = c1_it * self.generator.uniform(0, 1, self.problem.n_dims) * (
+                    self.pop[idx].local_solution - self.pop[idx].solution) + \
                     c2_it * self.generator.uniform(0, 1, self.problem.n_dims) * \
                     (self.g_best.solution + self.pop[idx_k].local_solution - 2 * self.pop[idx].solution)
-            v_new = np.where(v_new == 0, np.sign(0.5 - self.generator.uniform()) * self.generator.uniform() * self.v_max, v_new)
+            v_new = np.where(v_new == 0,
+                             np.sign(0.5 - self.generator.uniform()) * self.generator.uniform() * self.v_max, v_new)
             v_new = np.sign(v_new) * np.minimum(np.abs(v_new), self.v_max)
             #########################
             v_new = np.minimum(np.maximum(v_new, -self.v_max), self.v_max)
@@ -533,7 +545,7 @@ class C_PSO(P_PSO):
         self.set_parameters(["epoch", "pop_size", "c1", "c2", "w_min", "w_max"])
         self.sort_flag = False
         self.is_parallelizable = False
-    
+
     def initialize_variables(self):
         self.v_max = 0.5 * (self.problem.ub - self.problem.lb)
         self.v_min = -self.v_max
@@ -564,7 +576,8 @@ class C_PSO(P_PSO):
         fit_min = np.min(list_fits)
         for idx in range(self.pop_size):
             w = self.get_weights__(self.pop[idx].target.fitness, fit_avg, fit_min)
-            v_new = w * self.pop[idx].velocity + self.c1 * self.generator.random() * (self.pop[idx].local_solution - self.pop[idx].solution) + \
+            v_new = w * self.pop[idx].velocity + self.c1 * self.generator.random() * (
+                    self.pop[idx].local_solution - self.pop[idx].solution) + \
                     self.c2 * self.generator.random() * (self.g_best.solution - self.pop[idx].solution)
             v_new = np.clip(v_new, self.v_min, self.v_max)
             x_new = self.pop[idx].solution + v_new
@@ -653,7 +666,7 @@ class CL_PSO(Optimizer):
         self.set_parameters(["epoch", "pop_size", "c_local", "w_min", "w_max", "max_flag"])
         self.sort_flag = False
         self.is_parallelizable = True
-    
+
     def initialize_variables(self):
         self.v_max = 0.5 * (self.problem.ub - self.problem.lb)
         self.v_min = -self.v_max
@@ -720,7 +733,8 @@ class CL_PSO(Optimizer):
             pop_child = self.greedy_selection_population(self.pop, pop_new, self.problem.minmax)
             for idx in range(0, self.pop_size):
                 if self.compare_target(pop_new[idx].target, self.pop[idx].local_target, self.problem.minmax):
-                    pop_child[idx].update(local_solution=pop_new[idx].solution.copy(), local_target=pop_new[idx].target.copy())
+                    pop_child[idx].update(local_solution=pop_new[idx].solution.copy(),
+                                          local_target=pop_new[idx].target.copy())
                     self.flags[idx] = 0
                 else:
                     self.flags[idx] += 1

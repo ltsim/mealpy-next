@@ -19,8 +19,8 @@
 
 
 import numpy as np
-from mealpy import BinaryVar, WOA, Problem
 
+from mealpy import BinaryVar, WOA, Problem
 
 num_tasks = 10
 num_assets = 5
@@ -30,7 +30,7 @@ data = {
     "num_tasks": num_tasks,
     "num_assets": num_assets,
     "task_durations": task_durations,
-    "unassigned_penalty": -100         # Define a penalty value for no task is assigned to asset
+    "unassigned_penalty": -100  # Define a penalty value for no task is assigned to asset
 }
 
 
@@ -54,7 +54,8 @@ problem = MaintenanceSchedulingProblem(bounds=bounds, minmax="max", data=data)
 model = WOA.OriginalWOA(epoch=50, pop_size=20)
 model.solve(problem)
 
-print(f"Best agent: {model.g_best}")                    # Encoded solution
-print(f"Best solution: {model.g_best.solution}")        # Encoded solution
+print(f"Best agent: {model.g_best}")  # Encoded solution
+print(f"Best solution: {model.g_best.solution}")  # Encoded solution
 print(f"Best fitness: {model.g_best.target.fitness}")
-print(f"Best real scheduling: {model.problem.decode_solution(model.g_best.solution).reshape((num_tasks, num_assets))}")      # Decoded (Real) solution
+print(
+    f"Best real scheduling: {model.problem.decode_solution(model.g_best.solution).reshape((num_tasks, num_assets))}")  # Decoded (Real) solution

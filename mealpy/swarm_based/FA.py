@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -95,7 +96,8 @@ class OriginalFA(Optimizer):
             pop_new = []
             for j in range(0, si_):
                 pos_new = self.pop[idx].solution.copy()
-                list_idx = self.generator.choice(range(0, self.problem.n_dims), round(self.generator.uniform() * self.problem.n_dims), replace=False)
+                list_idx = self.generator.choice(range(0, self.problem.n_dims),
+                                                 round(self.generator.uniform() * self.problem.n_dims), replace=False)
                 displacement = Ai * self.generator.uniform(-1, 1)
                 pos_new[list_idx] = pos_new[list_idx] + displacement
                 pos_new = np.where(np.logical_or(pos_new < self.problem.lb, pos_new > self.problem.ub),
@@ -110,7 +112,8 @@ class OriginalFA(Optimizer):
         for _ in range(0, self.m_sparks):
             idx = self.generator.integers(0, self.pop_size)
             pos_new = self.pop[idx].solution.copy()
-            list_idx = self.generator.choice(range(0, self.problem.n_dims), round(self.generator.uniform() * self.problem.n_dims), replace=False)
+            list_idx = self.generator.choice(range(0, self.problem.n_dims),
+                                             round(self.generator.uniform() * self.problem.n_dims), replace=False)
             pos_new[list_idx] = pos_new[list_idx] + self.generator.normal(0, 1, len(list_idx))  # Gaussian
             condition = np.logical_or(pos_new < self.problem.lb, pos_new > self.problem.ub)
             pos_true = self.problem.lb + np.abs(pos_new) % (self.problem.ub - self.problem.lb)

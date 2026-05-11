@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -79,10 +80,12 @@ class OriginalEP(Optimizer):
         """
         child = []
         for idx in range(0, self.pop_size):
-            pos_new = self.pop[idx].solution + self.pop[idx].strategy * self.generator.normal(0, 1.0, self.problem.n_dims)
+            pos_new = self.pop[idx].solution + self.pop[idx].strategy * self.generator.normal(0, 1.0,
+                                                                                              self.problem.n_dims)
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
-            s_old = self.pop[idx].strategy + self.generator.normal(0, 1.0, self.problem.n_dims) * np.abs(self.pop[idx].strategy) ** 0.5
+            s_old = self.pop[idx].strategy + self.generator.normal(0, 1.0, self.problem.n_dims) * np.abs(
+                self.pop[idx].strategy) ** 0.5
             agent.update(solution=pos_new, strategy=s_old, win=0)
             child.append(agent)
             if self.mode not in self.AVAILABLE_MODES:
@@ -152,9 +155,11 @@ class LevyEP(OriginalEP):
         """
         child = []
         for idx in range(0, self.pop_size):
-            pos_new = self.pop[idx].solution + self.pop[idx].strategy * self.generator.normal(0, 1.0, self.problem.n_dims)
+            pos_new = self.pop[idx].solution + self.pop[idx].strategy * self.generator.normal(0, 1.0,
+                                                                                              self.problem.n_dims)
             pos_new = self.correct_solution(pos_new)
-            s_old = self.pop[idx].strategy + self.generator.normal(0, 1.0, self.problem.n_dims) * np.abs(self.pop[idx].strategy) ** 0.5
+            s_old = self.pop[idx].strategy + self.generator.normal(0, 1.0, self.problem.n_dims) * np.abs(
+                self.pop[idx].strategy) ** 0.5
             agent = self.generate_empty_agent(pos_new)
             agent.update(solution=pos_new, strategy=s_old, win=0)
             child.append(agent)
@@ -180,7 +185,8 @@ class LevyEP(OriginalEP):
         pop_comeback = []
         idx_list = self.generator.choice(range(0, len(pop_left)), int(0.5 * len(pop_left)), replace=False)
         for idx in idx_list:
-            pos_new = pop_left[idx].solution + self.get_levy_flight_step(multiplier=0.01, size=self.problem.n_dims, case=0)
+            pos_new = pop_left[idx].solution + self.get_levy_flight_step(multiplier=0.01, size=self.problem.n_dims,
+                                                                         case=0)
             pos_new = self.correct_solution(pos_new)
             strategy = self.distance = 0.05 * (self.problem.ub - self.problem.lb)
             agent = self.generate_empty_agent(pos_new)

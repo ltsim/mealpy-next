@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -73,7 +74,7 @@ class OriginalTSA(Optimizer):
             t2 = self.g_best.solution - A * np.abs(self.g_best.solution - c2 * self.pop[idx].solution)
             pos_new = np.where(c3 >= 0.5, t1, t2)
             if idx != 0:
-                pos_new = (pos_new + self.pop[idx-1].solution) / 2
+                pos_new = (pos_new + self.pop[idx - 1].solution) / 2
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_new.append(agent)

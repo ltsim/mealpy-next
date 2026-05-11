@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -66,29 +67,33 @@ class OriginalSeaHO(Optimizer):
             epoch (int): The current iteration
         """
         # The motor behavior of sea horses
-        step_length = self.get_levy_flight_step(beta=1.5, multiplier=0.01, size=(self.pop_size, self.problem.n_dims), case=-1)
+        step_length = self.get_levy_flight_step(beta=1.5, multiplier=0.01, size=(self.pop_size, self.problem.n_dims),
+                                                case=-1)
         pop_new = []
         for idx in range(0, self.pop_size):
             beta = self.generator.normal(0, 1, self.problem.n_dims)
             theta = 2 * np.pi * self.generator.random(self.problem.n_dims)
             row = self.uu * np.exp(theta * self.vv)
             xx, yy, zz = row * np.cos(theta), row * np.sin(theta), row * theta
-            if self.generator.normal(0, 1) > 0:      # Eq. 4
-                pos_new = self.pop[idx].solution + step_length[idx] * ((self.g_best.solution - self.pop[idx].solution) * xx * yy * zz + self.g_best.solution)
-            else:                               # Eq. 7
-                pos_new = self.pop[idx].solution + self.generator.random(self.problem.n_dims) * self.ll * beta * (self.g_best.solution - beta * self.g_best.solution)
+            if self.generator.normal(0, 1) > 0:  # Eq. 4
+                pos_new = self.pop[idx].solution + step_length[idx] * (
+                        (self.g_best.solution - self.pop[idx].solution) * xx * yy * zz + self.g_best.solution)
+            else:  # Eq. 7
+                pos_new = self.pop[idx].solution + self.generator.random(self.problem.n_dims) * self.ll * beta * (
+                        self.g_best.solution - beta * self.g_best.solution)
             pos_new = self.correct_solution(pos_new)
             pop_new.append(pos_new)
 
         # The predation behavior of sea horses
         pop_child = []
-        alpha = (1 - epoch/self.epoch) ** (2 * epoch / self.epoch)
+        alpha = (1 - epoch / self.epoch) ** (2 * epoch / self.epoch)
         for idx in range(0, self.pop_size):
             r1 = self.generator.random(self.problem.n_dims)
             if self.generator.random() >= 0.1:
-                pos_new = alpha * (self.g_best.solution - r1 * pop_new[idx]) + (1 - alpha) * self.g_best.solution        # Eq. 10
+                pos_new = alpha * (self.g_best.solution - r1 * pop_new[idx]) + (
+                        1 - alpha) * self.g_best.solution  # Eq. 10
             else:
-                pos_new = (1 - alpha) * (pop_new[idx] - r1 * self.g_best.solution) + alpha * pop_new[idx]               # Eq. 11
+                pos_new = (1 - alpha) * (pop_new[idx] - r1 * self.g_best.solution) + alpha * pop_new[idx]  # Eq. 11
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_child.append(agent)
@@ -96,15 +101,15 @@ class OriginalSeaHO(Optimizer):
                 pop_child[-1].target = self.get_target(pos_new)
         if self.mode in self.AVAILABLE_MODES:
             pop_child = self.update_target_for_population(pop_child)
-        pop_child = self.get_sorted_population(pop_child, self.problem.minmax)         # Sorted population
+        pop_child = self.get_sorted_population(pop_child, self.problem.minmax)  # Sorted population
 
         # The reproductive behavior of sea horses
-        dads = pop_child[:int(self.pop_size/2)]
-        moms = pop_child[int(self.pop_size/2):]
+        dads = pop_child[:int(self.pop_size / 2)]
+        moms = pop_child[int(self.pop_size / 2):]
         pop_offspring = []
-        for kdx in range(0, int(self.pop_size/2)):
+        for kdx in range(0, int(self.pop_size / 2)):
             r3 = self.generator.random()
-            pos_new = r3 * dads[kdx].solution + (1 - r3) * moms[kdx].solution           # Eq. 13
+            pos_new = r3 * dads[kdx].solution + (1 - r3) * moms[kdx].solution  # Eq. 13
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_empty_agent(pos_new)
             pop_offspring.append(agent)

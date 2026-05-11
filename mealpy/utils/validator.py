@@ -4,9 +4,11 @@
 #       Github: https://github.com/thieu1995        %                         
 # --------------------------------------------------%
 
-import numpy as np
 import operator
 from numbers import Number
+
+import numpy as np
+
 from mealpy.utils.logger import Logger
 
 SEQUENCE = (list, tuple, np.ndarray)
@@ -42,14 +44,14 @@ class Validator:
         self.log_to, self.log_file = None, None
         self.__set_keyword_arguments(kwargs)
         self.logger = Logger(self.log_to, log_file=self.log_file).create_logger(name=f"{__name__}.{__class__.__name__}",
-            format_str='%(asctime)s, %(levelname)s, %(name)s [line: %(lineno)d]: %(message)s')
+                                                                                format_str='%(asctime)s, %(levelname)s, %(name)s [line: %(lineno)d]: %(message)s')
         self.logger.propagate = False
 
     def __set_keyword_arguments(self, kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    def check_int(self, name:str, value: int, bound=None):
+    def check_int(self, name: str, value: int, bound=None):
         if isinstance(value, Number):
             if bound is None:
                 return int(value)

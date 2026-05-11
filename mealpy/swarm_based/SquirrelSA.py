@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -40,6 +41,7 @@ class OriginalSquirrelSA(Optimizer):
     [1] Jain, M., Singh, V., & Rani, A. (2019). A novel nature-inspired algorithm for optimization: Squirrel search algorithm.
     Swarm and evolutionary computation, 44, 148-175.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, n_food_sources=4, predator_prob=0.1,
                  gliding_constant=1.9, scaling_factor=18, beta=1.5, **kwargs: object) -> None:
         """
@@ -60,7 +62,8 @@ class OriginalSquirrelSA(Optimizer):
         self.gliding_constant = self.validator.check_float("gliding_constant", gliding_constant, [0.0, 10.0])
         self.scaling_factor = self.validator.check_float("scaling_factor", scaling_factor, [1, 100])
         self.beta = self.validator.check_float("beta", beta, [0.0, 10.0])
-        self.set_parameters(["epoch", "pop_size", "n_food_sources", "predator_prob", "gliding_constant", "scaling_factor", "beta"])
+        self.set_parameters(
+            ["epoch", "pop_size", "n_food_sources", "predator_prob", "gliding_constant", "scaling_factor", "beta"])
         self.sort_flag = True
 
     def initialize_variables(self):
@@ -101,11 +104,12 @@ class OriginalSquirrelSA(Optimizer):
         # Assign roles: 1 hickory, 3 acorn, rest normal trees
         pop_new = self.pop.copy()
         # Case 1: Acorn squirrels move toward hickory tree
-        for idx in range(1, self.n_acorn_trees+1):
+        for idx in range(1, self.n_acorn_trees + 1):
             d_g = self.calculate_gliding_distance()
             if self.generator.random() >= self.predator_prob:
                 # No predator: move toward hickory
-                pos_new = self.pop[idx].solution + d_g * self.gliding_constant * (self.g_best.solution - self.pop[idx].solution)
+                pos_new = self.pop[idx].solution + d_g * self.gliding_constant * (
+                        self.g_best.solution - self.pop[idx].solution)
             else:
                 # Predator present: random location
                 pos_new = self.generator.uniform(self.problem.lb, self.problem.ub, self.problem.n_dims)
@@ -118,7 +122,7 @@ class OriginalSquirrelSA(Optimizer):
         # Case 2: Normal squirrels move toward acorn trees
         indices_random = np.array(list(range(self.pop_size - self.n_food_sources)))
         self.generator.shuffle(indices_random)
-        indices_random = indices_random + self.n_food_sources # True indices of normal squirrels
+        indices_random = indices_random + self.n_food_sources  # True indices of normal squirrels
         n_cut = self.generator.integers(1, self.pop_size - self.n_food_sources - 1)
         for idx in indices_random[n_cut:]:
             # Select random acorn tree
@@ -126,7 +130,8 @@ class OriginalSquirrelSA(Optimizer):
             d_g = self.calculate_gliding_distance()
             if self.generator.random() >= self.predator_prob:
                 # No predator: move toward acorn
-                pos_new = self.pop[idx].solution + d_g * self.gliding_constant * (self.pop[jdx].solution - self.pop[idx].solution)
+                pos_new = self.pop[idx].solution + d_g * self.gliding_constant * (
+                        self.pop[jdx].solution - self.pop[idx].solution)
             else:
                 # Predator present: random location
                 pos_new = self.generator.uniform(self.problem.lb, self.problem.ub, self.problem.n_dims)
@@ -141,7 +146,8 @@ class OriginalSquirrelSA(Optimizer):
             d_g = self.calculate_gliding_distance()
             if self.generator.random() >= self.predator_prob:
                 # No predator: move toward hickory
-                pos_new = self.pop[idx].solution + d_g * self.gliding_constant * (self.pop[0].solution - self.pop[idx].solution)
+                pos_new = self.pop[idx].solution + d_g * self.gliding_constant * (
+                        self.pop[0].solution - self.pop[idx].solution)
             else:
                 # Predator present: random location
                 pos_new = self.generator.uniform(self.problem.lb, self.problem.ub, self.problem.n_dims)
@@ -152,7 +158,8 @@ class OriginalSquirrelSA(Optimizer):
             pop_new[idx] = agent
 
         # Seasonal monitoring condition
-        S_c = np.mean([ np.sqrt(np.sum((self.pop[idx].solution - self.pop[0].solution)**2)) for idx in range(1, self.n_food_sources) ])
+        S_c = np.mean([np.sqrt(np.sum((self.pop[idx].solution - self.pop[0].solution) ** 2)) for idx in
+                       range(1, self.n_food_sources)])
         # Calculate minimum seasonal constant
         S_min = (10e-6 / 365) * (epoch / (self.epoch / 2.5))
 
@@ -161,7 +168,7 @@ class OriginalSquirrelSA(Optimizer):
             n_relocate = max(1, len(self.pop_size - self.n_food_sources) // 4)
             relocate_indices = self.generator.choice(indices_random, n_relocate, replace=False)
             for idx in relocate_indices:
-                levy = self.get_levy_flight_step(beta = self.beta, multiplier = 0.01, size = self.problem.n_dims, case = -1)
+                levy = self.get_levy_flight_step(beta=self.beta, multiplier=0.01, size=self.problem.n_dims, case=-1)
                 pos_new = self.problem.lb + levy * (self.problem.ub - self.problem.lb)
                 pos_new = self.correct_solution(pos_new)
                 agent = self.generate_empty_agent(pos_new)

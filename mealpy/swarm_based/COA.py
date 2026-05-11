@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -93,7 +94,8 @@ class OriginalCOA(Optimizer):
             for i in range(self.n_coyotes):
                 rc1, rc2 = self.generator.choice(list(set(range(0, self.n_coyotes)) - {i}), 2, replace=False)
                 # Try to update the social condition according to the alpha and the pack tendency(Eq. 12)
-                pos_new = self.pop_group[p][i].solution + self.generator.random() * (self.pop_group[p][0].solution - self.pop_group[p][rc1].solution) + \
+                pos_new = self.pop_group[p][i].solution + self.generator.random() * (
+                        self.pop_group[p][0].solution - self.pop_group[p][rc1].solution) + \
                           self.generator.random() * (tendency - self.pop_group[p][rc2].solution)
                 # Keep the coyotes in the search space (optimization problem constraint)
                 pos_new = self.correct_solution(pos_new)
@@ -111,7 +113,8 @@ class OriginalCOA(Optimizer):
             id_dad, id_mom = self.generator.choice(list(range(0, self.n_coyotes)), 2, replace=False)
             prob1 = (1. - self.ps) / 2.
             # Generate the pup considering intrinsic and extrinsic influence
-            pup = np.where(self.generator.random(self.problem.n_dims) < prob1, self.pop_group[p][id_dad].solution, self.pop_group[p][id_mom].solution)
+            pup = np.where(self.generator.random(self.problem.n_dims) < prob1, self.pop_group[p][id_dad].solution,
+                           self.pop_group[p][id_mom].solution)
             # Eventual noise
             pos_new = self.generator.normal(0, 1) * pup
             pos_new = self.correct_solution(pos_new)
@@ -134,7 +137,8 @@ class OriginalCOA(Optimizer):
             if self.generator.random() < self.p_leave:
                 id_pack1, id_pack2 = self.generator.choice(list(range(0, self.n_packs)), 2, replace=False)
                 id1, id2 = self.generator.choice(list(range(0, self.n_coyotes)), 2, replace=False)
-                self.pop_group[id_pack1][id1], self.pop_group[id_pack2][id2] = self.pop_group[id_pack2][id2], self.pop_group[id_pack1][id1]
+                self.pop_group[id_pack1][id1], self.pop_group[id_pack2][id2] = self.pop_group[id_pack2][id2], \
+                    self.pop_group[id_pack1][id1]
 
         # Update coyotes ages
         for id_pack in range(0, self.n_packs):

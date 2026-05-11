@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -44,6 +45,7 @@ class OriginalSPBO(Optimizer):
     [1] Das, B., Mukherjee, V., & Das, D. (2020). Student psychology based optimization algorithm: A new population based
     optimization algorithm for solving optimization problems. Advances in Engineering software, 146, 102804.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         super().__init__(**kwargs)
         self.epoch = self.validator.check_int("epoch", epoch, [1, 100000])
@@ -60,25 +62,29 @@ class OriginalSPBO(Optimizer):
         """
         for jdx in range(0, self.problem.n_dims):
             idx_best = self.get_index_best(self.pop, self.problem.minmax)
-            mid = self.generator.integers(1, self.pop_size-1)
+            mid = self.generator.integers(1, self.pop_size - 1)
             x_mean = np.mean([agent.solution for agent in self.pop], axis=0)
             pop_new = []
             for idx in range(0, self.pop_size):
                 if idx == idx_best:
                     k = self.generator.choice([1, 2])
                     j = self.generator.choice(list(set(range(0, self.pop_size)) - {idx}))
-                    new_pos = self.g_best.solution + (-1)**k * self.generator.random(self.problem.n_dims) * (self.g_best.solution - self.pop[j].solution)
+                    new_pos = self.g_best.solution + (-1) ** k * self.generator.random(self.problem.n_dims) * (
+                            self.g_best.solution - self.pop[j].solution)
                 elif idx < mid:
                     ## Good Student
                     if self.generator.random() > self.generator.random():
-                        new_pos = self.g_best.solution + self.generator.random(self.problem.n_dims) * (self.g_best.solution - self.pop[idx].solution)
+                        new_pos = self.g_best.solution + self.generator.random(self.problem.n_dims) * (
+                                self.g_best.solution - self.pop[idx].solution)
                     else:
-                        new_pos = self.pop[idx].solution + self.generator.random(self.problem.n_dims) * (self.g_best.solution - self.pop[idx].solution) + \
-                            self.generator.random() * (self.pop[idx].solution - x_mean)
+                        new_pos = self.pop[idx].solution + self.generator.random(self.problem.n_dims) * (
+                                self.g_best.solution - self.pop[idx].solution) + \
+                                  self.generator.random() * (self.pop[idx].solution - x_mean)
                 else:
                     ## Average Student
                     if self.generator.random() > self.generator.random():
-                        new_pos = self.pop[idx].solution + self.generator.random(self.problem.n_dims) * (x_mean - self.pop[idx].solution)
+                        new_pos = self.pop[idx].solution + self.generator.random(self.problem.n_dims) * (
+                                x_mean - self.pop[idx].solution)
                     else:
                         new_pos = self.problem.generate_solution()
                 new_pos = self.correct_solution(new_pos)
@@ -138,15 +144,19 @@ class DevSPBO(OriginalSPBO):
         for idx in range(0, self.pop_size):
             if idx == 0:
                 j = self.generator.choice(list(set(range(0, self.pop_size)) - {idx}))
-                new_pos = self.g_best.solution + self.generator.normal(0, 1, self.problem.n_dims) * (self.g_best.solution - self.pop[j].solution)
-            elif idx < good:    ## Good Student
+                new_pos = self.g_best.solution + self.generator.normal(0, 1, self.problem.n_dims) * (
+                        self.g_best.solution - self.pop[j].solution)
+            elif idx < good:  ## Good Student
                 if self.generator.random() > self.generator.random():
-                    new_pos = self.g_best.solution + self.generator.normal(0, 1, self.problem.n_dims) * (self.g_best.solution - self.pop[idx].solution)
+                    new_pos = self.g_best.solution + self.generator.normal(0, 1, self.problem.n_dims) * (
+                            self.g_best.solution - self.pop[idx].solution)
                 else:
                     ra = self.generator.random(self.problem.n_dims)
-                    new_pos = self.pop[idx].solution + ra * (self.g_best.solution - self.pop[idx].solution) + (1 - ra) * (self.pop[idx].solution - x_mean)
+                    new_pos = self.pop[idx].solution + ra * (self.g_best.solution - self.pop[idx].solution) + (
+                            1 - ra) * (self.pop[idx].solution - x_mean)
             elif idx < average:  ## Average Student
-                new_pos = self.pop[idx].solution + self.generator.normal(0, 1, self.problem.n_dims) * (x_mean - self.pop[idx].solution)
+                new_pos = self.pop[idx].solution + self.generator.normal(0, 1, self.problem.n_dims) * (
+                        x_mean - self.pop[idx].solution)
             else:
                 new_pos = self.problem.generate_solution()
             new_pos = self.correct_solution(new_pos)

@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 from mealpy.utils.agent import Agent
 
@@ -100,7 +101,8 @@ class OriginalBA(Optimizer):
         for idx in range(self.pop_size):
             ## Replace the old position by the new one when its has better fitness.
             ##  and then update loudness and emission rate
-            if self.compare_target(pop_new[idx].target, self.pop[idx].target, self.problem.minmax) and self.generator.random() < self.loudness:
+            if self.compare_target(pop_new[idx].target, self.pop[idx].target,
+                                   self.problem.minmax) and self.generator.random() < self.loudness:
                 self.pop[idx].update(solution=pop_new[idx].solution, target=pop_new[idx].target)
 
 
@@ -146,7 +148,8 @@ class AdaptiveBA(Optimizer):
     """
 
     def __init__(self, epoch: int = 10000, pop_size: object = 100, loudness_min: float = 1.0, loudness_max: float = 2.0,
-                 pr_min: float = 0.15, pr_max: float = 0.85, pf_min: float = -10., pf_max: float = 10., **kwargs: object) -> None:
+                 pr_min: float = 0.15, pr_max: float = 0.85, pf_min: float = -10., pf_max: float = 10.,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch (int): maximum number of iterations, default = 10000
@@ -168,7 +171,8 @@ class AdaptiveBA(Optimizer):
         self.pf_min = self.validator.check_float("pf_min", pf_min, [-10., 10.])
         self.pf_max = self.validator.check_float("pf_max", pf_max, [0., 10.])
         self.alpha = self.gamma = 0.9
-        self.set_parameters(["epoch", "pop_size", "loudness_min", "loudness_max", "pr_min", "pr_max", "pf_min", "pf_max"])
+        self.set_parameters(
+            ["epoch", "pop_size", "loudness_min", "loudness_max", "pr_min", "pr_max", "pf_min", "pf_max"])
         self.sort_flag = False
 
     def generate_empty_agent(self, solution: np.ndarray = None) -> Agent:
@@ -205,10 +209,12 @@ class AdaptiveBA(Optimizer):
         for idx in range(0, self.pop_size):
             ## Replace the old position by the new one when its has better fitness.
             ##  and then update loudness and emission rate
-            if self.compare_target(pop_new[idx].target, self.pop[idx].target, self.problem.minmax) and self.generator.random() < pop_new[idx].loudness:
+            if self.compare_target(pop_new[idx].target, self.pop[idx].target,
+                                   self.problem.minmax) and self.generator.random() < pop_new[idx].loudness:
                 loudness = self.alpha * pop_new[idx].loudness
                 pulse_rate = pop_new[idx].pulse_rate * (1 - np.exp(-self.gamma * epoch))
-                self.pop[idx].update(solution=pop_new[idx].solution, target=pop_new[idx].target, loudness=loudness, pulse_rate=pulse_rate)
+                self.pop[idx].update(solution=pop_new[idx].solution, target=pop_new[idx].target, loudness=loudness,
+                                     pulse_rate=pulse_rate)
 
 
 class DevBA(Optimizer):
@@ -271,7 +277,8 @@ class DevBA(Optimizer):
         pop_new = []
         for idx in range(0, self.pop_size):
             pf = self.pf_min + (self.pf_max - self.pf_min) * self.generator.uniform()  # Eq. 2
-            self.dyn_list_velocity[idx] = self.generator.uniform() * self.dyn_list_velocity[idx] + (self.g_best.solution - self.pop[idx].solution) * pf  # Eq. 3
+            self.dyn_list_velocity[idx] = self.generator.uniform() * self.dyn_list_velocity[idx] + (
+                    self.g_best.solution - self.pop[idx].solution) * pf  # Eq. 3
             x = self.pop[idx].solution + self.dyn_list_velocity[idx]  # Eq. 4
             pos_new = self.correct_solution(x)
             agent = self.generate_empty_agent(pos_new)

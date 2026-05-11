@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -46,6 +47,7 @@ class OriginalSTO(Optimizer):
     [1] Trojovský, P., Dehghani, M., & Hanuš, P. (2022). Siberian Tiger Optimization: A New Bio-Inspired
     Metaheuristic Algorithm for Solving Engineering Optimization Problems. IEEE Access, 10, 132396-132431.
     """
+
     def __init__(self, epoch: int = 10000, pop_size: int = 100, **kwargs: object) -> None:
         """
         Args:
@@ -86,14 +88,16 @@ class OriginalSTO(Optimizer):
                     kk = self.generator.permutation(idxs)[0]
                     sf = self.pop[kk]
             r1 = self.generator.integers(1, 3)
-            pos_new = self.pop[idx].solution + self.generator.random() * (sf.solution - r1 * self.pop[idx].solution)     # Eq. 5
+            pos_new = self.pop[idx].solution + self.generator.random() * (
+                    sf.solution - r1 * self.pop[idx].solution)  # Eq. 5
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_agent(pos_new)
             if self.compare_target(agent.target, self.pop[idx].target, self.problem.minmax):
                 self.pop[idx] = agent
 
             # PHASE 2: CARRYING THE FISH TO THE SUITABLE POSITION (EXPLOITATION)
-            pos_new = self.pop[idx].solution + self.generator.random() * (self.problem.ub - self.problem.lb) / epoch     # Eq. 7
+            pos_new = self.pop[idx].solution + self.generator.random() * (
+                    self.problem.ub - self.problem.lb) / epoch  # Eq. 7
             pos_new = self.correct_solution(pos_new)
             agent = self.generate_agent(pos_new)
             if self.compare_target(agent.target, self.pop[idx].target, self.problem.minmax):

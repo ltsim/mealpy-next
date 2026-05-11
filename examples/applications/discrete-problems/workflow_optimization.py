@@ -79,6 +79,7 @@
 
 
 import numpy as np
+
 from mealpy import BinaryVar, WOA, Problem
 
 # Define the problem parameters
@@ -93,9 +94,9 @@ data = {
     "num_patients": num_patients,
     "num_resources": num_resources,
     "waiting_matrix": waiting_matrix,
-    "max_resource_capacity": 10,        # Maximum capacity of each room
-    "max_waiting_time": 60,             # Maximum waiting time
-    "penalty_value": 1e2,         # Define a penalty value
+    "max_resource_capacity": 10,  # Maximum capacity of each room
+    "max_waiting_time": 60,  # Maximum waiting time
+    "penalty_value": 1e2,  # Define a penalty value
     "penalty_patient": 1e10
 }
 
@@ -111,19 +112,21 @@ class SupplyChainProblem(Problem):
 
         # If any row has all 0 value, it indicates that this patient is not allocated to any room.
         # If a patient a assigned to more than 3 room, not allow
-        if np.any(np.all(x==0, axis=1)) or np.any(np.sum(x>3, axis=1)):
+        if np.any(np.all(x == 0, axis=1)) or np.any(np.sum(x > 3, axis=1)):
             return self.data["penalty_patient"]
 
         # Calculate fitness based on optimization objectives
         room_used = np.sum(x, axis=0)
         wait_time = np.sum(x * self.data["waiting_matrix"], axis=1)
-        violated_constraints = np.sum(room_used > self.data["max_resource_capacity"]) + np.sum(wait_time > self.data["max_waiting_time"])
+        violated_constraints = np.sum(room_used > self.data["max_resource_capacity"]) + np.sum(
+            wait_time > self.data["max_waiting_time"])
 
         # Calculate the fitness value based on the objectives
         resource_utilization_fitness = 1 - np.mean(room_used) / self.data["max_resource_capacity"]
         waiting_time_fitness = 1 - np.mean(wait_time) / self.data["max_waiting_time"]
 
-        fitness = resource_utilization_fitness + waiting_time_fitness + self.data['penalty_value'] * violated_constraints
+        fitness = resource_utilization_fitness + waiting_time_fitness + self.data[
+            'penalty_value'] * violated_constraints
         return fitness
 
 
@@ -133,7 +136,8 @@ problem = SupplyChainProblem(bounds=bounds, minmax="min", data=data)
 model = WOA.OriginalWOA(epoch=50, pop_size=20)
 model.solve(problem)
 
-print(f"Best agent: {model.g_best}")                    # Encoded solution
-print(f"Best solution: {model.g_best.solution}")        # Encoded solution
+print(f"Best agent: {model.g_best}")  # Encoded solution
+print(f"Best solution: {model.g_best.solution}")  # Encoded solution
 print(f"Best fitness: {model.g_best.target.fitness}")
-print(f"Best real scheduling: {model.problem.decode_solution(model.g_best.solution)['placement_var'].reshape((num_patients, num_resources))}")
+print(
+    f"Best real scheduling: {model.problem.decode_solution(model.g_best.solution)['placement_var'].reshape((num_patients, num_resources))}")

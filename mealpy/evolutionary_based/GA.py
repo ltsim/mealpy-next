@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+
 from mealpy.optimizer import Optimizer
 
 
@@ -62,7 +63,8 @@ class BaseGA(Optimizer):
     [1] Whitley, D., 1994. A genetic algorithm tutorial. Statistics and computing, 4(2), pp.65-85.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, pc: float = 0.95, pm: float = 0.025, **kwargs: object) -> None:
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, pc: float = 0.95, pm: float = 0.025,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch: maximum number of iterations, default = 10000
@@ -89,19 +91,23 @@ class BaseGA(Optimizer):
         self.mutation_multipoints = True
 
         if "selection" in kwargs:
-            self.selection = self.validator.check_str("selection", kwargs["selection"], ["tournament", "random", "roulette"])
+            self.selection = self.validator.check_str("selection", kwargs["selection"],
+                                                      ["tournament", "random", "roulette"])
         if "k_way" in kwargs:
             self.k_way = self.validator.check_float("k_way", kwargs["k_way"], (0, 1.0))
         if "crossover" in kwargs:
-            self.crossover = self.validator.check_str("crossover", kwargs["crossover"], ["one_point", "multi_points", "uniform", "arithmetic"])
+            self.crossover = self.validator.check_str("crossover", kwargs["crossover"],
+                                                      ["one_point", "multi_points", "uniform", "arithmetic"])
         if "mutation_multipoints" in kwargs:
-            self.mutation_multipoints = self.validator.check_bool("mutation_multipoints", kwargs["mutation_multipoints"])
+            self.mutation_multipoints = self.validator.check_bool("mutation_multipoints",
+                                                                  kwargs["mutation_multipoints"])
         if self.mutation_multipoints:
             if "mutation" in kwargs:
                 self.mutation = self.validator.check_str("mutation", kwargs["mutation"], ["flip", "swap"])
         else:
             if "mutation" in kwargs:
-                self.mutation = self.validator.check_str("mutation", kwargs["mutation"], ["flip", "swap", "scramble", "inversion"])
+                self.mutation = self.validator.check_str("mutation", kwargs["mutation"],
+                                                         ["flip", "swap", "scramble", "inversion"])
 
     def selection_process__(self, list_fitness):
         """
@@ -124,7 +130,7 @@ class BaseGA(Optimizer):
                 id_c2 = self.get_index_roulette_wheel_selection(list_fitness)
         elif self.selection == "random":
             id_c1, id_c2 = self.generator.choice(range(self.pop_size), 2, replace=False)
-        else:   ## tournament
+        else:  ## tournament
             id_c1, id_c2 = self.get_index_kway_tournament_selection(self.pop, k_way=self.k_way, output=2)
         return self.pop[id_c1].solution, self.pop[id_c2].solution
 
@@ -150,7 +156,7 @@ class BaseGA(Optimizer):
                 id_c2 = self.get_index_roulette_wheel_selection(list_fitness)
         elif self.selection == "random":
             id_c1, id_c2 = self.generator.choice(range(len(pop_selected)), 2, replace=False)
-        else:   ## tournament
+        else:  ## tournament
             id_c1, id_c2 = self.get_index_kway_tournament_selection(pop_selected, k_way=self.k_way, output=2)
         return pop_selected[id_c1].solution, pop_selected[id_c2].solution
 
@@ -173,7 +179,7 @@ class BaseGA(Optimizer):
         elif self.selection == "random":
             id_c1 = self.generator.choice(range(len(pop_dad)))
             id_c2 = self.generator.choice(range(len(pop_mom)))
-        else:   ## tournament
+        else:  ## tournament
             id_c1 = self.get_index_kway_tournament_selection(pop_dad, k_way=self.k_way, output=1)[0]
             id_c2 = self.get_index_kway_tournament_selection(pop_mom, k_way=self.k_way, output=1)[0]
         return pop_dad[id_c1].solution, pop_mom[id_c2].solution
@@ -196,15 +202,15 @@ class BaseGA(Optimizer):
         if self.crossover == "arithmetic":
             w1, w2 = self.crossover_arithmetic(dad, mom)
         elif self.crossover == "one_point":
-            cut = self.generator.integers(1, self.problem.n_dims-1)
+            cut = self.generator.integers(1, self.problem.n_dims - 1)
             w1 = np.concatenate([dad[:cut], mom[cut:]])
             w2 = np.concatenate([mom[:cut], dad[cut:]])
         elif self.crossover == "multi_points":
-            idxs = self.generator.choice(range(1, self.problem.n_dims-1), 2, replace=False)
+            idxs = self.generator.choice(range(1, self.problem.n_dims - 1), 2, replace=False)
             cut1, cut2 = np.min(idxs), np.max(idxs)
             w1 = np.concatenate([dad[:cut1], mom[cut1:cut2], dad[cut2:]])
             w2 = np.concatenate([mom[:cut1], dad[cut1:cut2], mom[cut2:]])
-        else:           # uniform
+        else:  # uniform
             flip = self.generator.integers(0, 2, self.problem.n_dims)
             w1 = dad * flip + mom * (1 - flip)
             w2 = mom * flip + dad * (1 - flip)
@@ -238,7 +244,7 @@ class BaseGA(Optimizer):
                     idx_swap = self.generator.choice(list(set(range(0, self.problem.n_dims)) - {idx}))
                     child[idx], child[idx_swap] = child[idx_swap], child[idx]
                     return child
-            else:       # "flip"
+            else:  # "flip"
                 mutation_child = self.problem.generate_solution()
                 flag_child = self.generator.uniform(0, 1, self.problem.n_dims) < self.pm
                 return np.where(flag_child, mutation_child, child)
@@ -259,7 +265,7 @@ class BaseGA(Optimizer):
                 self.generator.shuffle(temp)
                 child[cut1:cut2] = temp
                 return child
-            else:   # "flip"
+            else:  # "flip"
                 idx = self.generator.integers(0, self.problem.n_dims)
                 child[idx] = self.generator.uniform(self.problem.lb[idx], self.problem.ub[idx])
                 return child
@@ -291,7 +297,7 @@ class BaseGA(Optimizer):
         """
         list_fitness = np.array([agent.target.fitness for agent in self.pop])
         pop_new = []
-        for i in range(0, int(self.pop_size/2)):
+        for i in range(0, int(self.pop_size / 2)):
             ### Selection
             child1, child2 = self.selection_process__(list_fitness)
 
@@ -374,7 +380,8 @@ class SingleGA(BaseGA):
     [1] Whitley, D., 1994. A genetic algorithm tutorial. Statistics and computing, 4(2), pp.65-85.
     """
 
-    def __init__(self, epoch: int = 10000, pop_size: int = 100, pc: float = 0.95, pm: float = 0.8, selection: str = "roulette",
+    def __init__(self, epoch: int = 10000, pop_size: int = 100, pc: float = 0.95, pm: float = 0.8,
+                 selection: str = "roulette",
                  crossover: str = "uniform", mutation: str = "swap", k_way: float = 0.2, **kwargs: object) -> None:
         """
         Args:
@@ -389,7 +396,8 @@ class SingleGA(BaseGA):
         """
         super().__init__(epoch, pop_size, pc, pm, **kwargs)
         self.selection = self.validator.check_str("selection", selection, ["tournament", "random", "roulette"])
-        self.crossover = self.validator.check_str("crossover", crossover, ["one_point", "multi_points", "uniform", "arithmetic"])
+        self.crossover = self.validator.check_str("crossover", crossover,
+                                                  ["one_point", "multi_points", "uniform", "arithmetic"])
         self.mutation = self.validator.check_str("mutation", mutation, ["flip", "swap", "scramble", "inversion"])
         self.k_way = self.validator.check_float("k_way", k_way, (0, 1.0))
         self.set_parameters(["epoch", "pop_size", "pc", "pm", "selection", "crossover", "mutation", "k_way"])
@@ -426,7 +434,7 @@ class SingleGA(BaseGA):
             self.generator.shuffle(temp)
             child[cut1:cut2] = temp
             return child
-        else:   # "flip"
+        else:  # "flip"
             idx = self.generator.integers(0, self.problem.n_dims)
             child[idx] = self.generator.uniform(self.problem.lb[idx], self.problem.ub[idx])
             return child
@@ -493,12 +501,14 @@ class EliteSingleGA(SingleGA):
                  crossover="uniform", mutation="swap", k_way=0.2,
                  elite_best=0.1, elite_worst=0.3, strategy=0, **kwargs):
         super().__init__(epoch, pop_size, pc, pm, selection, crossover, mutation, k_way, **kwargs)
-        self.elite_best = self.validator.check_is_int_and_float("elite_best", elite_best, [1, int(self.pop_size / 2)-1], (0, 0.5))
+        self.elite_best = self.validator.check_is_int_and_float("elite_best", elite_best,
+                                                                [1, int(self.pop_size / 2) - 1], (0, 0.5))
         self.n_elite_best = int(self.elite_best * self.pop_size) if self.elite_best < 1 else self.elite_best
         if self.n_elite_best < 1:
             self.n_elite_best = 1
 
-        self.elite_worst = self.validator.check_is_int_and_float("elite_worst", elite_worst, [1, int(self.pop_size / 2)-1], (0, 0.5))
+        self.elite_worst = self.validator.check_is_int_and_float("elite_worst", elite_worst,
+                                                                 [1, int(self.pop_size / 2) - 1], (0, 0.5))
         self.n_elite_worst = int(self.elite_worst * self.pop_size) if self.elite_worst < 1 else self.elite_worst
         if self.n_elite_worst < 1:
             self.n_elite_worst = 1
@@ -535,8 +545,8 @@ class EliteSingleGA(SingleGA):
                     pop_new[-1].target = self.get_target(pos_new)
             self.pop = self.update_target_for_population(pop_new)
         else:
-            pop_dad = self.pop[self.n_elite_best:self.n_elite_best+self.n_elite_worst]
-            pop_mom = self.pop[self.n_elite_best+self.n_elite_worst:]
+            pop_dad = self.pop[self.n_elite_best:self.n_elite_best + self.n_elite_worst]
+            pop_mom = self.pop[self.n_elite_best + self.n_elite_worst:]
             for idx in range(self.n_elite_best, self.pop_size):
                 ### Selection
                 child1, child2 = self.selection_process_01__(pop_dad, pop_mom)
@@ -609,7 +619,8 @@ class MultiGA(BaseGA):
     """
 
     def __init__(self, epoch: int = 10000, pop_size: int = 100, pc: float = 0.95, pm: float = 0.025,
-                 selection: str = "roulette", crossover: str = "arithmetic", mutation: str = "flip", k_way: float = 0.2, **kwargs: object) -> None:
+                 selection: str = "roulette", crossover: str = "arithmetic", mutation: str = "flip", k_way: float = 0.2,
+                 **kwargs: object) -> None:
         """
         Args:
             epoch: maximum number of iterations, default = 10000
@@ -623,7 +634,8 @@ class MultiGA(BaseGA):
         """
         super().__init__(epoch, pop_size, pc, pm, **kwargs)
         self.selection = self.validator.check_str("selection", selection, ["tournament", "random", "roulette"])
-        self.crossover = self.validator.check_str("crossover", crossover, ["one_point", "multi_points", "uniform", "arithmetic"])
+        self.crossover = self.validator.check_str("crossover", crossover,
+                                                  ["one_point", "multi_points", "uniform", "arithmetic"])
         self.mutation = self.validator.check_str("mutation", mutation, ["flip", "swap"])
         self.k_way = self.validator.check_float("k_way", k_way, (0, 1.0))
         self.set_parameters(["epoch", "pop_size", "pc", "pm", "selection", "crossover", "mutation", "k_way"])
@@ -646,7 +658,7 @@ class MultiGA(BaseGA):
                 idx_swap = self.generator.choice(list(set(range(0, self.problem.n_dims)) - {idx}))
                 child[idx], child[idx_swap] = child[idx_swap], child[idx]
                 return child
-        else:       # "flip"
+        else:  # "flip"
             mutation_child = self.problem.generate_solution()
             flag_child = self.generator.uniform(0, 1, self.problem.n_dims) < self.pm
             return np.where(flag_child, mutation_child, child)
@@ -700,12 +712,14 @@ class EliteMultiGA(MultiGA):
                  crossover="uniform", mutation="swap", k_way=0.2,
                  elite_best=0.1, elite_worst=0.3, strategy=0, **kwargs):
         super().__init__(epoch, pop_size, pc, pm, selection, crossover, mutation, k_way, **kwargs)
-        self.elite_best = self.validator.check_is_int_and_float("elite_best", elite_best, [1, int(self.pop_size / 2) - 1], (0, 0.5))
+        self.elite_best = self.validator.check_is_int_and_float("elite_best", elite_best,
+                                                                [1, int(self.pop_size / 2) - 1], (0, 0.5))
         self.n_elite_best = int(self.elite_best * self.pop_size) if self.elite_best < 1 else self.elite_best
         if self.n_elite_best < 1:
             self.n_elite_best = 1
 
-        self.elite_worst = self.validator.check_is_int_and_float("elite_worst", elite_worst, [1, int(self.pop_size / 2) - 1], (0, 0.5))
+        self.elite_worst = self.validator.check_is_int_and_float("elite_worst", elite_worst,
+                                                                 [1, int(self.pop_size / 2) - 1], (0, 0.5))
         self.n_elite_worst = int(self.elite_worst * self.pop_size) if self.elite_worst < 1 else self.elite_worst
         if self.n_elite_worst < 1:
             self.n_elite_worst = 1
@@ -742,8 +756,8 @@ class EliteMultiGA(MultiGA):
                     pop_new[-1].target = self.get_target(pos_new)
             self.pop = self.update_target_for_population(pop_new)
         else:
-            pop_dad = self.pop[self.n_elite_best:self.n_elite_best+self.n_elite_worst]
-            pop_mom = self.pop[self.n_elite_best+self.n_elite_worst:]
+            pop_dad = self.pop[self.n_elite_best:self.n_elite_best + self.n_elite_worst]
+            pop_mom = self.pop[self.n_elite_best + self.n_elite_worst:]
             for idx in range(self.n_elite_best, self.pop_size):
                 ### Selection
                 child1, child2 = self.selection_process_01__(pop_dad, pop_mom)
@@ -837,12 +851,14 @@ class OriginalGA(Optimizer):
         self.pc = self.validator.check_float("pc", pc, (0, 1.0))
         self.pm = self.validator.check_float("pm", pm, (0, 1.0))
         self.selection = self.validator.check_str("selection", selection, ["tournament", "random", "roulette"])
-        self.crossover = self.validator.check_str("crossover", crossover, ["one_point", "multi_points", "uniform", "arithmetic"])
+        self.crossover = self.validator.check_str("crossover", crossover,
+                                                  ["one_point", "multi_points", "uniform", "arithmetic"])
         self.mutation_multipoints = self.validator.check_bool("mutation_multipoints", mutation_multipoints)
         if self.mutation_multipoints:
             self.mutation = self.validator.check_str("mutation", mutation, ["flip", "swap"])
         else:
             self.mutation = self.validator.check_str("mutation", mutation, ["flip", "swap", "scramble", "inversion"])
         self.k_way = self.validator.check_float("k_way", k_way, (0, 1.0))
-        self.set_parameters(["epoch", "pop_size", "pc", "pm", "selection", "crossover", "mutation", "k_way", "mutation_multipoints"])
+        self.set_parameters(
+            ["epoch", "pop_size", "pc", "pm", "selection", "crossover", "mutation", "k_way", "mutation_multipoints"])
         self.sort_flag = False
