@@ -4,8 +4,6 @@
 #       Github: https://github.com/thieu1995        %                         
 # --------------------------------------------------%
 
-import numpy as np
-
 from mealpy.optimizer import Optimizer
 
 
