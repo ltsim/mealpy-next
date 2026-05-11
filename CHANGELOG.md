@@ -1,17 +1,3 @@
-
-Different versions of mealpy in terms of passing hyper-parameters. So please careful check your version before
-  using this library. (All releases can be found here: [Link](https://pypi.org/project/mealpy/#history))
-  * mealpy < 1.0.5
-  * 1.1.0 < mealpy < 1.2.2
-  * 2.0.0 <= mealpy <= 2.1.2
-  * mealpy == 2.2.0 
-  * mealpy == 2.3.0 
-  * 2.4.0 <= mealpy <= 2.4.2 (From this version, algorithms can solve discrete problem)
-  * mealpy >= 2.5.1 <= 2.5.4 (Define model 1 time, solve multiple problems)
-  * mealpy >= 3.0.0 (Everything is wrapped inside class and object)
-
-
-
 # Version 3.0.4.1
 
 + Maintenance version, with dependency updates
