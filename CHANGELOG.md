@@ -12,7 +12,12 @@ Different versions of mealpy in terms of passing hyper-parameters. So please car
 
 
 
+# Version 3.0.4.1
 
++ Maintenance version, with dependency updates
+
+
+---
 
 # Version 3.0.4
 
