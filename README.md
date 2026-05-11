@@ -1,4 +1,4 @@
-# mealpy (lts)
+# mealpy-lts
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![PyPI - Version](https://img.shields.io/pypi/v/mealpy-lts?style=flat-square)
