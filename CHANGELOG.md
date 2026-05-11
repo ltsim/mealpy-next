@@ -1,6 +1,7 @@
 # Version 3.0.4.1.1
 
 + Maintenance version, with dependency updates
++ Compatibility with Pypy
 
 
 ---
