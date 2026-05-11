@@ -8,6 +8,9 @@
 ![GitHub Release Date](https://img.shields.io/github/release-date/ltsim/mealpy-lts.svg?style=flat-square)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/mealpy-lts?style=flat-square)
 
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ltsim/mealpy-lts/publish.yml?style=flat-square&logo=pypi&label=Publish)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ltsim/mealpy-lts/test.yml?style=flat-square&logo=pytest&label=Testing)
+
 This is a maintenance release, a fork of [MEALPY](https://github.com/thieu1995/mealpy), which offers a collection of cutting-edge metaheuristic algorithms. These include nature-inspired algorithms, bio-inspired algorithms, black-box optimization, global search optimizers, iterative learning algorithms, continuous optimization, derivative-free optimization, gradient-free optimization, zero-order optimization, stochastic search optimization, and random search optimization.
 
 All of these methods fall under the category of population-based metaheuristics (PBM), which are among the most popular algorithms in the field of approximate optimization.
