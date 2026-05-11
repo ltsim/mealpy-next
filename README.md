@@ -1,13 +1,18 @@
-# mealpy (next)
+# mealpy (lts)
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3711948.svg)](https://doi.org/10.1016/j.sysarc.2023.102871)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![PyPI - Version](https://img.shields.io/pypi/v/mealpy-lts?style=flat-square)
+![PyPI - Implementation](https://img.shields.io/pypi/implementation/mealpy-lts?style=flat-square)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mealpy-lts?style=flat-square)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/mealpy-lts?style=flat-square)
+![GitHub Release Date](https://img.shields.io/github/release-date/ltsim/mealpy-lts.svg?style=flat-square)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/mealpy-lts?style=flat-square)
 
-MEALPY-next is a [fork of the world's largest Python library](https://github.com/thieu1995/mealpy), offering a collection of cutting-edge metaheuristic algorithms. These include nature-inspired algorithms, bio-inspired algorithms, black-box optimization, global search optimizers, iterative learning algorithms, continuous optimization, derivative-free optimization, gradient-free optimization, zero-order optimization, stochastic search optimization, and random search optimization. 
+This is a maintenance release, a fork of [MEALPY](https://github.com/thieu1995/mealpy), which offers a collection of cutting-edge metaheuristic algorithms. These include nature-inspired algorithms, bio-inspired algorithms, black-box optimization, global search optimizers, iterative learning algorithms, continuous optimization, derivative-free optimization, gradient-free optimization, zero-order optimization, stochastic search optimization, and random search optimization.
 
 All of these methods fall under the category of population-based metaheuristics (PBM), which are among the most popular algorithms in the field of approximate optimization.
 
-For detailed information about the updates in each new version, see the [ChangeLog](/ChangeLog.md) file.
+For detailed information about the updates in each new version, see the [ChangeLog](/CHANGELOG.md) file.
 
 * **Free software:** MIT license
 * **Total algorithms**: 233 (206 official (original, hybrid, variants), 27 developed)
@@ -67,21 +72,21 @@ Please include these citations if you plan to use this library:
 
 ## Installation
 
-* Install the stable (latest) version from [PyPI release](https://pypi.python.org/pypi/mealpy):
+* Install the stable (latest) version from [PyPI release](https://pypi.python.org/pypi/mealpy-lts):
 ```bash
-$ pip install mealpy-next --upgrade
+$ pip install mealpy-lts --upgrade
 ```
 
 * Install the pre-release version directly from the source code:
 ```bash
-$ git clone https://github.com/ltsim/mealpy-next.git
-$ cd mealpy
+$ git clone https://github.com/ltsim/mealpy-lts.git
+$ cd mealpy-lts
 $ python setup.py install
 ```
 
 * In case, you want to install the development version from Github:
 ```bash
-$ pip install git+https://github.com/ltsim/mealpy-next 
+$ pip install git+https://github.com/ltsim/mealpy-lts 
 ```
 
 After installation, check the version to ensure successful installation:
