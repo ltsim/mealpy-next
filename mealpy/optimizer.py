@@ -250,11 +250,7 @@ class Optimizer:
         self.before_main_loop()
 
         # Check tqdm
-        use_tqdm = self.problem.log_to != "console"
         loop = range(1, self.epoch + 1)
-        if use_tqdm:
-            desc = f"{self.__module__}.{self.__class__.__name__}"
-            loop = tqdm(loop, desc=desc, unit="epoch")
 
         for epoch in loop:
             time_epoch = time.perf_counter()
@@ -268,13 +264,6 @@ class Optimizer:
 
             time_epoch = time.perf_counter() - time_epoch
             self.track_optimize_step(self.pop, epoch, time_epoch)
-
-            # update tqdm postfix để hiển thị fitness
-            if use_tqdm:
-                loop.set_postfix({
-                    "c_best": f"{self.history.list_current_best[-1].target.fitness:.6f}",
-                    "g_best": f"{self.g_best.target.fitness:.6f}"
-                })
 
             if self.check_termination("end", None, epoch):
                 break
@@ -300,10 +289,6 @@ class Optimizer:
         pos_matrix = np.array([agent.solution for agent in pop])
         div = np.mean(np.abs(np.median(pos_matrix, axis=0) - pos_matrix), axis=0)
         self.history.list_diversity.append(np.mean(div, axis=0))
-        ## Print epoch
-        self.logger.info(
-            f">>>Problem: {self.problem.name}, Epoch: {epoch}, Current best: {self.history.list_current_best[-1].target.fitness}, "
-            f"Global best: {self.history.list_global_best[-1].target.fitness}, Runtime: {runtime:.5f} seconds")
 
     def track_optimize_process(self) -> None:
         """

@@ -32,7 +32,7 @@ p1 = {
     "obj_func": f1.evaluate,
     "minmax": "min",
     "name": "F5",
-    "log_to": "console",
+    "log_to": "console"
 }
 
 p2 = {
@@ -40,7 +40,7 @@ p2 = {
     "obj_func": f2.evaluate,
     "minmax": "min",
     "name": "F10",
-    "log_to": "console",
+    "log_to": "console"
 }
 
 p3 = {
@@ -48,7 +48,7 @@ p3 = {
     "obj_func": f3.evaluate,
     "minmax": "min",
     "name": "F29",
-    "log_to": "console",
+    "log_to": "console"
 }
 
 ## Define models
